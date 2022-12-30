@@ -110,8 +110,6 @@ const Dinosaur = () => {
 
                 }
 
-
-
                 renderer.render(scene, camera);
             };
 
