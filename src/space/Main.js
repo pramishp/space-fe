@@ -54,11 +54,14 @@ const Dinosaur = () => {
                 antialias: true,
                 alpha: true
             });
+            setRenderer(renderer);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(scW, scH);
             renderer.outputEncoding = THREE.sRGBEncoding;
-            container.appendChild(renderer.domElement);
-            setRenderer(renderer);
+
+            if(document.getElementsByTagName('canvas').length === 0) {
+                container.appendChild(renderer.domElement);
+            }
 
             const scene = new THREE.Scene();
             const scale = 5.6;
@@ -122,7 +125,7 @@ const Dinosaur = () => {
 
     return (
         <div
-            style={{ height: "540px", width: "540px", position: "relative" }}
+            style={{ height: window.innerHeight, width: window.innerWidth, position: "relative" }}
             ref={refContainer}
         >
             {loading && (
