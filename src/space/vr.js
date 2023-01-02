@@ -6,12 +6,44 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {ARButton} from 'three/addons/webxr/ARButton.js';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 import {XRControllerModelFactory} from 'three/addons/webxr/XRControllerModelFactory.js';
+import Button from "../common/buttons";
+import VRControl from "../controllers/VRControl";
 
 
 const intersected = [];
 const tempMatrix = new THREE.Matrix4();
 
 let controls, group;
+
+const mouse = new THREE.Vector2();
+mouse.x = mouse.y = null;
+
+let selectState = false;
+
+window.addEventListener('pointermove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('pointerdown', () => {
+    selectState = true;
+});
+
+window.addEventListener('pointerup', () => {
+    selectState = false;
+});
+
+window.addEventListener('touchstart', (event) => {
+    selectState = true;
+    mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('touchend', () => {
+    selectState = false;
+    mouse.x = null;
+    mouse.y = null;
+});
 
 const DraggableBoxesVR = () => {
     const refContainer = useRef();
@@ -33,7 +65,7 @@ const DraggableBoxesVR = () => {
             renderer.xr.enabled = true;
 
             // add dom elements
-            if(document.getElementsByTagName('canvas').length === 0) {
+            if (document.getElementsByTagName('canvas').length === 0) {
 
                 // add vr button
                 const vr_button = VRButton.createButton(renderer)
@@ -59,7 +91,7 @@ const DraggableBoxesVR = () => {
 
             //initialize controls
             controls = new OrbitControls(camera, container);
-            controls.target.set( 0, 1.6, 0 );
+            controls.target.set(0, 1.6, 0);
             controls.update();
 
             // add floor to the scene
@@ -100,7 +132,7 @@ const DraggableBoxesVR = () => {
             ];
 
             // randomly add geometries
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 0; i++) {
 
                 const geometry = geometries[Math.floor(Math.random() * geometries.length)];
                 const material = new THREE.MeshStandardMaterial({
@@ -239,6 +271,17 @@ const DraggableBoxesVR = () => {
             controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
             scene.add(controllerGrip2);
 
+            controller1.addEventListener( 'selectstart', () => {
+
+                selectState = true;
+
+            } );
+            controller2.addEventListener( 'selectend', () => {
+
+                selectState = false;
+
+            } );
+
             //
             const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -1)]);
 
@@ -249,9 +292,18 @@ const DraggableBoxesVR = () => {
             controller1.add(line.clone());
             controller2.add(line.clone());
 
-
             // handle events
             window.addEventListener('resize', onWindowResize);
+
+            // add button
+            let onClick = () => {
+            }
+            let objsToTest = []
+            let vrControl = VRControl( renderer, camera, scene );
+            let {container: buttonContainer, callback: updateButtonCallback} = Button({
+                scene, camera, controls,renderer,
+                onClick, raycaster, mouse, selectState, objsToTest, vrControl
+            })
 
             const render = () => {
                 // cleanIntersected();
@@ -265,8 +317,12 @@ const DraggableBoxesVR = () => {
             let animation_req;
             const animate = () => {
 
-                animation_req = requestAnimationFrame(animate);
+                updateButtonCallback({
+                    scene, camera, controls,renderer,
+                    onClick, raycaster, mouse, selectState, objsToTest, vrControl, meshContainer: buttonContainer
+                })
                 renderer.setAnimationLoop(render);
+                animation_req = requestAnimationFrame(animate);
                 controls.update();
 
             }
@@ -276,7 +332,7 @@ const DraggableBoxesVR = () => {
                 // clear animation frame if any
                 // dispose renderer
                 renderer.dispose();
-                // cancelAnimationFrame(animation_req);
+                cancelAnimationFrame(animation_req);
             };
         }
 
@@ -287,10 +343,12 @@ const DraggableBoxesVR = () => {
             style={{height: window.innerHeight, width: window.innerWidth, position: "relative"}}
             ref={refContainer}
         >
-            <div id={"vr_button"} style={{position:'absolute', bottom:100, left:0, zIndex:10000, width:400, height:45}}>
+            <div id={"vr_button"}
+                 style={{position: 'absolute', bottom: 100, left: 0, zIndex: 10000, width: 400, height: 45}}>
 
             </div>
-            <div id={"ar_button"} style={{position:'absolute', bottom:100, right:0, zIndex:10000, width:400, height:45}}>
+            <div id={"ar_button"}
+                 style={{position: 'absolute', bottom: 100, right: 0, zIndex: 10000, width: 400, height: 45}}>
 
             </div>
             {loading && (
