@@ -237,13 +237,10 @@ const DraggableBoxesVR = () => {
                     const object = intersection.object;
                     object.material.emissive.r = 1;
                     intersected.push(object);
-
                     line.scale.z = intersection.distance;
 
                 } else {
-
                     line.scale.z = 5;
-
                 }
 
             }

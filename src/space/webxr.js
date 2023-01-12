@@ -1,11 +1,13 @@
 import * as React from 'react'
 import * as THREE from 'three'
 import {VRButton, XR, Hands, useXR, Interactive, useHitTest, Controllers, useController} from '@react-three/xr'
-import {Box, Text} from '@react-three/drei'
+import {Box, Text, useHelper} from '@react-three/drei'
 import {useFrame, Canvas} from '@react-three/fiber'
+import {BoxHelper} from "../common/helpers";
 
 function ButtonXR(props) {
     const interactiveButton = React.useRef()
+    useHelper(interactiveButton, BoxHelper, 'cyan')
 
     const [hover, setHover] = React.useState(false)
     const [squeezeStart, setStartSqueeze] = React.useState(false)
@@ -39,6 +41,8 @@ function ButtonXR(props) {
         group.updateMatrixWorld()
 
         previousTransform.copy(controller.matrixWorld).invert()
+
+
     })
     const onSqueezeStart = (e) => {
         grabbingController.current = e.target.controller
@@ -52,12 +56,19 @@ function ButtonXR(props) {
             grabbingController.current = undefined
         }
     }
+
+    // const bounding_box = new Box3().setFromObject(interactiveButton.current);
+    // const size = bounding_box.getSize();
+
+    // If you want a visible bounding box
+    // scene.add(helper);
+    // useHelper(condition && mesh, BoxHelper, 'red')
     return (
         <Interactive onSelect={() => setColor((Math.random() * 0xffffff) | 0)} onHover={() => setHover(true)}
                      onBlur={() => {
                          setHover(false);
-
                      }} onSqueezeStart={onSqueezeStart} onSqueezeEnd={onSqueezeEnd}>
+
             <Box {...props} ref={interactiveButton} args={[0.4, 0.1, 0.1]}>
                 <meshStandardMaterial color={color}/>
                 <Text position={[0, 0, 0.06]} fontSize={0.05} color="#000" anchorX="center" anchorY="middle">
@@ -68,21 +79,6 @@ function ButtonXR(props) {
     )
 }
 
-
-function Button(props) {
-    const [hover, setHover] = React.useState(false)
-    const [color, setColor] = React.useState(0x123456)
-
-    return (
-
-        <Box {...props} args={[0.4, 0.1, 0.1]} scale={hover ? 1.5 : 1}>
-            <meshStandardMaterial color={color}/>
-            <Text position={[0, 0, 0.06]} fontSize={0.05} color="#000" anchorX="center" anchorY="middle">
-                Hello react-xr!
-            </Text>
-        </Box>
-    )
-}
 
 function PlayerExample() {
     const player = useXR((state) => state.player)
@@ -114,8 +110,10 @@ export default function XRApp() {
                     {/*    // modelLeft="/hand-left.gltf"*/}
                     {/*    // modelRight="/hand-right.gltf"*/}
                     {/*/>*/}
-                    <ButtonXR position={[0, 0.8, -1]}/>
+
                     <Controllers/>
+                    <ButtonXR position={[0, 0.8, -1]}/>
+
                     {/*<PlayerExample />*/}
                     {/* <HitTestExample/>*/}
 
