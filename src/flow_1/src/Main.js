@@ -23,11 +23,16 @@ function Button(props) {
     const hoverColor = 0x57a3c9
 
     const [hover, setHover] = React.useState(false)
-    const [color, setColor] = React.useState(0x777777)
+    const [color, setColor] = React.useState(props.isActive ? selectedColor : defaultColor)
+
+    useEffect(() => {
+        setColor(props.isActive ? selectedColor : defaultColor);
+    },[props.isActive])
 
     function onSelect() {
         // setColor(0xffffff);
         // props.onSelect();
+
         if (props.onSelect) {
             props.onSelect();
         }
@@ -35,7 +40,7 @@ function Button(props) {
     }
 
     function onHover() {
-        setColor(hoverColor);
+        // setColor(hoverColor);
         setHover(true);
         if (props.onHover) {
             props.onHover();
@@ -43,40 +48,41 @@ function Button(props) {
     }
 
     function onBlur() {
-        setColor(defaultColor);
+        // setColor((props.isActive ?? selectedColor) || defaultColor);
         setHover(false);
         if (props.onBlur) {
             props.onBlur();
         }
     }
 
-    function onSelectStart() {
-        setColor(selectedColor);
-    }
-
-    function onSelectEnd() {
-        setColor(defaultColor);
-    }
+    // function onSelectStart() {
+    //     setColor(selectedColor);
+    // }
+    //
+    // function onSelectEnd() {
+    //     setColor((props.isActive ?? selectedColor) || defaultColor);
+    // }
 
     return (
         <Interactive
             onSelect={onSelect}
-            onSelectStart={onSelectStart}
-            onSelectEnd={onSelectEnd}
+            // onSelectStart={onSelectStart}
+            // onSelectEnd={onSelectEnd}
             onHover={onHover}
             onBlur={onBlur}
+
         >
             <RoundedBox
                 {...props}
                 radius={0.009}
-                args={[0.4, 0.1, 0.01]}
-                scale={hover ? 1.5 : 1}
+                args={[0.4, 0.1, props.isActive ? 0.01 : 0.05]}
+                scale={hover ? 1.12 : 1}
             >
                 <meshStandardMaterial
                     color={color}
                 />
                 <Text
-                    position={[0, 0, 0.006]}
+                    position={[0, 0, props.isActive ? 0.006 : 0.05 / 2 + 0.001]}
                     fontSize={0.05}
                     color="#fff"
                     anchorX="center"
@@ -106,19 +112,25 @@ function MainNavigationButtons(props) {
     return (
         <mesh ref={ref} rotation={rotation}>
             <Button
+                key={1}
                 label={'Editor'}
                 position={[-0.5, y, z]}
                 onSelect={props.onEditSelect}
+                isActive={props.state === UIStates.Editor}
             ></Button>
             <Button
+                key={2}
                 label={'Animate'}
                 position={[0, y, z]}
                 onSelect={props.onAnimationSelect}
+                isActive={props.state === UIStates.Animation}
             ></Button>
             <Button
+                key={3}
                 label={'Preview'}
                 position={[0.5, y, z]}
                 onSelect={props.onPreviewSelect}
+                isActive={props.state === UIStates.Preview}
             ></Button>
         </mesh>
     )
@@ -132,7 +144,7 @@ export default function App() {
         cellColor: '#6f6f6f',
         sectionSize: {value: 3.3, min: 0, max: 10, step: 0.1},
         sectionThickness: {value: 1.5, min: 0, max: 5, step: 0.1},
-        sectionColor: '#ffffff',
+        sectionColor: '#919191',
         fadeDistance: {value: 25, min: 0, max: 100, step: 1},
         fadeStrength: {value: 1, min: 0, max: 1, step: 0.1},
         followCamera: false,
@@ -172,6 +184,7 @@ function SystemInterface() {
                 onEditSelect={onEditSelect}
                 onAnimationSelect={onAnimationSelect}
                 onPreviewSelect={onPreviewSelect}
+                state={state}
             />
             {state === UIStates.Editor && renderEditorView()}
             {state === UIStates.Animation && renderAnimationView()}
@@ -249,7 +262,6 @@ function TestComponent(props) {
                 >
                     <Box position={props.position || [0.5, 0.5, -3]} args={[0.5, 0.5, 0.5]} scale={scale}>
                         <meshStandardMaterial
-
                             color={color}
                         />
 
