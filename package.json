@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-three/drei": "^9.49.0",
     "@react-three/fiber": "^8.9.2",
     "@react-three/xr": "^5.1.2",
@@ -11,12 +14,14 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/three": "^0.147.1",
     "leva": "^0.9.34",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "three": "^0.148.0",
     "three-mesh-ui": "^6.5.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
