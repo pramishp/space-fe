@@ -97,7 +97,7 @@ function HitTestExample() {
 }
 
 export default function XRApp() {
-
+    console.log('l;aksdjfl;aksdf')
     return (
         <>
             <VRButton onError={(e) => console.error(e)}/>
