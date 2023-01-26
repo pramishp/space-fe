@@ -1,16 +1,12 @@
 import './App.css';
-import XRApp from "./space/Exp";
-import {useEffect} from "react";
+import Renderer from "./space/Renderer";
+import {sampleJson} from "./common/loader";
 
 function App() {
 
     return (
         <div className="App" style={{height: window.innerHeight}}>
-            {/*<DraggableBoxesVR/>*/}
-            {/*<Main/>*/}
-            {/*<Fiber/>*/}
-            <XRApp/>
-
+            <Renderer data={sampleJson}/>
         </div>
     );
 }
