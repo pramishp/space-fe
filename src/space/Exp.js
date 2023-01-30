@@ -5,7 +5,7 @@ import {Canvas, useFrame} from '@react-three/fiber'
 
 import {useMultiplayerState, room} from "./hooks/useMultiplayerState";
 
-import {roomID, yShapes} from "./store";
+import {roomID, yMeshes} from "./store";
 
 const shapesInitial = {}
 

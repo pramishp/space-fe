@@ -67,12 +67,12 @@ export function toJSX(data) {
 
     Object.values(data.objects).forEach(item => {
         let object, geometry, material;
-        var ref = React.useRef();
+        var ref = React.createRef();
         refs[item.uuid] = ref;
         switch (item.type) {
             case 'Mesh':
-                geometry = getGeometry(sampleJson.geometries, item.geometry)
-                material = getMaterial(sampleJson.materials, item.material)
+                geometry = getGeometry(data.geometries, item.geometry)
+                material = getMaterial(data.materials, item.material)
 
                 object = (
                     <mesh key={item.uuid} ref={ref} {...item}>
