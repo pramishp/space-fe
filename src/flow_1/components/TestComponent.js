@@ -25,7 +25,7 @@ export function TestComponent(props) {
             setActiveLeft(true);
         }
 
-        console.log(`\n\nStart  ${controllerType}::\n\n`)
+        // console.log(`\n\nStart  ${controllerType}::\n\n`)
         console.table({
             left: activeLeft,
             right: activeRight,
@@ -43,7 +43,7 @@ export function TestComponent(props) {
             setActiveLeft(false);
         }
 
-        console.log(`\n\nEnd  ${controllerType}::\n\n`)
+        // console.log(`\n\nEnd  ${controllerType}::\n\n`)
         console.table({
             left: activeLeft,
             right: activeRight,

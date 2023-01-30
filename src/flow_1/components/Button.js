@@ -1,8 +1,7 @@
-import {Interactive} from "@react-three/xr";
+import {Interactive, RayGrab} from "@react-three/xr";
 import {RoundedBox, Text} from "@react-three/drei";
 import {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function Button(props) {
     const defaultColor = props.defaultColor || 0x777777
@@ -16,69 +15,105 @@ export default function Button(props) {
         setColor(props.isActive ? selectedColor : defaultColor);
     }, [props.isActive])
 
-    function onSelect() {
+    function onSelect(e) {
         // setColor(0xffffff);
         // props.onSelect();
 
         if (props.onSelect) {
-            props.onSelect();
+            props.onSelect(e);
         }
 
     }
 
-    function onHover() {
+    function onHover(e) {
         setColor(hoverColor);
         setHover(true);
         if (props.onHover) {
-            props.onHover();
+            props.onHover(e);
         }
     }
 
-    function onBlur() {
+    function onBlur(e) {
         setColor(props.isActive ? selectedColor : defaultColor);
         setHover(false);
         if (props.onBlur) {
-            props.onBlur();
+            props.onBlur(e);
         }
     }
 
-    // function onSelectStart() {
-    //     setColor(selectedColor);
-    // }
-    //
-    // function onSelectEnd() {
-    //     setColor((props.isActive ?? selectedColor) || defaultColor);
-    // }
+    function onSelectStart(e){
+        if (props.onSelectStart) {
+            props.onSelectStart(e);
+        }
+    }
+
+    function onSelectEnd(e) {
+        if (props.onSelectEnd) {
+            props.onSelectEnd(e);
+        }
+    }
 
     return (
-        <Interactive
-            onSelect={onSelect}
-            // onSelectStart={onSelectStart}
-            // onSelectEnd={onSelectEnd}
-            onHover={onHover}
-            onBlur={onBlur}
+        <group>
+            <Wrapper
+                rayGrab={props.canGrab}
+                onSelect={onSelect}
+                onSelectStart={onSelectStart}
+                onSelectEnd={onSelectEnd}
+                onHover={onHover}
+                onBlur={onBlur}
 
-        >
-            <RoundedBox
-                {...props}
-                radius={0.009}
-                args={[0.4, 0.1, props.isActive ? 0.01 : 0.05]}
-                scale={hover ? 1.12 : 1}
             >
-                <meshStandardMaterial
-                    color={color}
-                />
-                <Text
-                    position={[0, 0, props.isActive ? 0.006 : 0.05 / 2 + 0.001]}
-                    fontSize={0.05}
-                    color="#fff"
-                    anchorX="center"
-                    anchorY="middle"
+                <RoundedBox
+                    {...props}
+                    radius={props.radius ?? 0.009}
+                    args={props.args ?? [0.4, 0.1, props.isActive ? 0.01 : 0.05]}
+                    scale={hover ? 1.12 : 1}
                 >
-                    {props.label}
-                </Text>
-            </RoundedBox>
-        </Interactive>
+                    <meshStandardMaterial
+                        color={color}
+                    />
+                    <Text
+                        position={[0, 0, props.isActive ? 0.006 : 0.05 / 2 + 0.001]}
+                        fontSize={props.fontSize ?? 0.05}
+                        color="#fff"
+                        anchorX="center"
+                        anchorY="middle"
+                    >
+                        {props.label}
+                    </Text>
+                </RoundedBox>
+            </Wrapper>
+        </group>
+
+    )
+}
+
+function Wrapper(props) {
+    return (
+        <>
+
+            {props.rayGrab ?
+                <RayGrab
+                    onSelect={props.onSelect}
+                    onSelectStart={props.onSelectStart}
+                    onSelectEnd={props.onSelectEnd}
+                    onHover={props.onHover}
+                    onBlur={props.onBlur}
+                >
+                    {props.children}
+                </RayGrab> :
+                <Interactive
+                    onSelect={props.onSelect}
+                    onSelectStart={props.onSelectStart}
+                    onSelectEnd={props.onSelectEnd}
+                    onHover={props.onHover}
+                    onBlur={props.onBlur}
+                >
+                    {props.children}
+                </Interactive>
+            }
+        </>
     )
 }
 
@@ -86,9 +121,25 @@ Button.propTypes = {
     onSelect: PropTypes.func,
     onHover: PropTypes.func,
     onBlur: PropTypes.func,
+    onSelectStart: PropTypes.func,
+    onSelectEnd: PropTypes.func,
     label: PropTypes.string,
+    fontSize: PropTypes.number,
+    radius: PropTypes.number,
+    args: PropTypes.array,
     isActive: PropTypes.bool,
     defaultColor: PropTypes.number,
     selectedColor: PropTypes.number,
     hoverColor: PropTypes.number,
+    canGrab: PropTypes.bool,
+}
+
+
+Wrapper.propTypes = {
+    rayGrab: PropTypes.bool,
+    onSelect: PropTypes.func,
+    onHover: PropTypes.func,
+    onBlur: PropTypes.func,
+    onSelectStart: PropTypes.func,
+    onSelectEnd: PropTypes.func,
 }

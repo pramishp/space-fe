@@ -1,43 +1,72 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {Canvas, useThree} from '@react-three/fiber'
-import {Box, Environment, Grid, Html, OrbitControls, RoundedBox, Text} from '@react-three/drei'
-import {useControls} from 'leva'
-import {Controllers, Interactive, RayGrab, XR} from "@react-three/xr";
-import Button from "../components/Button";
-import PropTypes from "prop-types";
+import React, {useRef, useState} from 'react'
+import {Canvas, useFrame} from '@react-three/fiber'
+import {Environment, GradientTexture, OrbitControls} from '@react-three/drei'
+import {RayGrab, XR} from "@react-three/xr";
 import SystemInterface from "../containers/SystemInterface";
-import {TestComponent} from "../components/TestComponent";
+import {ObjectTypes, ShapesPreset, UIStates} from "../constants/constants";
+import {useUIStore} from "../utils/UIStore";
 
 
 export default function App() {
-    const {gridSize, ...gridConfig} = useControls({
-        gridSize: [10.5, 10.5],
-        cellSize: {value: 0.6, min: 0, max: 10, step: 0.1},
-        cellThickness: {value: 1, min: 0, max: 5, step: 0.1},
-        cellColor: '#6f6f6f',
-        sectionSize: {value: 3.3, min: 0, max: 10, step: 0.1},
-        sectionThickness: {value: 1.5, min: 0, max: 5, step: 0.1},
-        sectionColor: '#919191',
-        fadeDistance: {value: 25, min: 0, max: 100, step: 1},
-        fadeStrength: {value: 1, min: 0, max: 1, step: 0.1},
-        followCamera: false,
-        infiniteGrid: true
-    })
+    const [isLoading, setIsLoading] = useState(false)
+
+    const [objects, setObjects] = useState({})
+    //
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     console.log(isLoading);
+    //     const objects = {
+    //         type: "basic",
+    //         color: "ff0000",
+    //         name: "sphere",
+    //         position: [0, 0, 0],
+    //         animationData: [
+    //             {
+    //                 type: 'translate',
+    //                 args: {
+    //                     path: 'circle',
+    //                     radius: 3,
+    //                     infinite: true,
+    //                 },
+    //             },
+    //             {
+    //                 type: 'rotate',
+    //                 args: {
+    //                     degree: 360,
+    //                     infinite: true,
+    //                 },
+    //             },
+    //         ]
+    //     }
+    //
+    //     setTimeout(() => {
+    //         setObjects(objects);
+    //         setIsLoading(false)
+    //     }, 5000)
+    // }, [objects, isLoading])
 
 
     return (
         <Canvas style={{backgroundColor: '#2c2c2c', width: window.innerWidth, height: window.innerHeight}} shadows
-                camera={{position: [0, 12, 0], fov: 25}}>
+                camera={{position: [-3, 6, 6], fov: 25}}>
             <XR>
                 <SystemInterface>
-                    <TestComponent
-                        boxColor={0x04defd}
-                        stateColor={0xa3fe1f}
-                        position={[-1.5, 0.5, -3]}
-                    />
+                    <Sphere/>
+                    {/*{*/}
+                    {/*    isLoading ?*/}
+                    {/*        <TestComponent*/}
+                    {/*            boxColor={0x04defd}*/}
+                    {/*            stateColor={0xa3fe1f}*/}
+                    {/*            position={[-1.5, 0.5, -3]}*/}
+                    {/*        /> :*/}
+                    {/*        <TestComponent*/}
+                    {/*            boxColor={0xff0000}*/}
+                    {/*            stateColor={0xa3fe1f}*/}
+                    {/*            position={[-1.5, 0.5, -3]}*/}
+                    {/*        />*/}
+                    {/*}*/}
+
                 </SystemInterface>
-                <Grid position={[0, -0.01, 0]} args={gridSize} {...gridConfig} />
-                <Controllers/>
             </XR>
             <OrbitControls makeDefault/>
             <Environment preset="city"/>
@@ -45,10 +74,78 @@ export default function App() {
     )
 }
 
+function Sphere() {
+    const sunRef = useRef();
+    const mercuryRef = useRef();
+    const UIState = useUIStore();
+    var t = 0;
+    useFrame(({clock}) => {
+        if ((UIState.currentState === UIStates.Preview) && sunRef.current) {
+            sunRef.current.rotation.z = clock.getElapsedTime();
+            t += 0.009;
+            mercuryRef.current.rotation.z = clock.getElapsedTime();
+            mercuryRef.current.position.x = 3 * Math.cos(t) + sunRef.current.position.x;
+            mercuryRef.current.position.z = 3 * Math.sin(t) + sunRef.current.position.z;
+        }
+    });
 
+    return (
+        <>
+            <RayGrab onSelectStart={(e) => {
+                console.log("Select start ::", e);
+            }
+            }>
+                <mesh ref={sunRef} position={[0.5, 2, -6]} rotation={[Math.PI / 2, 0, 0]}>
+                    <sphereGeometry args={[1, 100, 100]}/>
+                    <meshBasicMaterial>
+                        <GradientTexture
+                            stops={[0, 1]} // As many stops as you want
+                            colors={['red', 'orange']} // Colors need to match the number of stops
+                            size={1024} // Size is optional, default = 1024
+                        />
+                    </meshBasicMaterial>
+                </mesh>
+            </RayGrab>
+            <RayGrab onSelectStart={(e) => {
+                console.log("Select start ::", e);
+            }
+            }>
+                <mesh ref={mercuryRef} position={[0.5, 2, -3]} rotation={[Math.PI / 2, 0, 0]}>
+                    <sphereGeometry args={[0.2, 100, 100]}/>
+                    <meshBasicMaterial>
+                        <GradientTexture
+                            stops={[0, 1]} // As many stops as you want
+                            colors={['orange', 'brown']} // Colors need to match the number of stops
+                            size={2000} // Size is optional, default = 1024
+                        />
+                    </meshBasicMaterial>
+                </mesh>
+            </RayGrab>
+        </>
+    )
+}
 
+function CustomGrab(props) {
+    const UIStore = useUIStore();
+    return (
+        <>
+            <RayGrab>
+                {props.children}
+            </RayGrab>
+            {/*{*/}
+            {/*    UIStore.currentState === UIStates.Preview ?*/}
+            {/*        <group>*/}
+            {/*            {props.children}*/}
+            {/*        </group> :*/}
+            {/*        <RayGrab>*/}
+            {/*            {props.children}*/}
+            {/*        </RayGrab>*/}
 
+            {/*}*/}
+        </>
+    )
+}
 
-
+CustomGrab.propTypes = RayGrab.propTypes;
 
 
