@@ -1,0 +1,57 @@
+{
+  "data": {
+    "light": {
+      "id": "T_001",
+      "name": "Light",
+      "colors": {
+        "body": "#0f0f0f",
+        "card": "#212121",
+        "menus": "rgba(0,0,0,0.5)",
+        "border": "rgba(255,255,255,0.09)",
+        "hover": "rgba(255,255,255,0.04)",
+        "shadow": "rgba(0,0,0,0.09)",
+        "primary": "rgba(30,136,127, 1)",
+        "primary_shade_1": "rgba(10,120,110, 1)",
+        "primary_01": "rgba(30,136,127, 0.1)",
+        "primary_02": "rgba(30,136,127, 0.2)",
+        "primary_03": "rgba(30,136,127, 0.3)",
+        "primary_04": "rgba(30,136,127, 0.4)",
+        "primary_05": "rgba(30,136,127, 0.5)",
+        "primary_06": "rgba(30,136,127, 0.6)",
+        "primary_07": "rgba(30,136,127, 0.7)",
+        "primary_08": "rgba(30,136,127, 0.8)",
+        "primary_09": "rgba(30,136,127, 0.9)",
+        "primaryText": "rgba(255,255,255,0.87)",
+        "secondaryText": "rgba(255,255,255,0.6)",
+        "tertiaryText": "rgba(255,255,255,0.45)",
+        "button": {
+          "primary": {
+            "defaultBG": "blue",
+            "hoverBG": "darkblue",
+            "element": "white"
+          }
+        },
+        "link": {
+          "text": "teal",
+          "opacity": 1
+        }
+      }
+    },
+    "seaWave": {
+      "id": "T_007",
+      "name": "Sea Wave",
+      "colors": {
+        "body": "#9be7ff",
+        "text": "#0d47a1",
+        "button": {
+          "text": "#ffffff",
+          "background": "#0d47a1"
+        },
+        "link": {
+          "text": "#0d47a1",
+          "opacity": 0.8
+        }
+      }
+    }
+  }
+}

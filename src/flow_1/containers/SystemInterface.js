@@ -8,6 +8,7 @@ import {Controllers, useXR} from "@react-three/xr";
 import {useUIStore} from "../utils/UIStore";
 import {Grid} from "@react-three/drei";
 import {useControls} from "leva";
+import styled from "styled-components";
 
 export default function SystemInterface(props) {
     const sceneRef = useRef();
@@ -50,8 +51,9 @@ export default function SystemInterface(props) {
         fadeDistance: {value: 25, min: 0, max: 100, step: 1},
         fadeStrength: {value: 1, min: 0, max: 1, step: 0.1},
         followCamera: false,
-        infiniteGrid: true
-    })
+        infiniteGrid: true,
+        // showGridControls: false,
+    });
 
     function getCellColor() {
         switch (UIStore.currentState) {
@@ -95,31 +97,30 @@ export default function SystemInterface(props) {
         }
     })
 
+
     return (
         <>
             {!(UIStore.currentState === UIStates.Preview) &&
-                <Grid position={[0, -0.01, 0]} args={gridSize} {...gridConfig} />}
+                <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />}
             <Controllers/>
             {
-                showUI &&
-                <MainNavigationButtons
-                    onEditSelect={onEditSelect}
-                    onAnimationSelect={onAnimationSelect}
-                    onPreviewSelect={onPreviewSelect}
-                    state={UIStore.currentState}
-                />
-            }
-            <group ref={sceneRef}>
-                {props.children}
-            </group>
-            {
-                showUI &&
+                session &&
                 <group>
+                    <XRNavigationButtons
+                        onEditSelect={onEditSelect}
+                        onAnimationSelect={onAnimationSelect}
+                        onPreviewSelect={onPreviewSelect}
+                        state={UIStore.currentState}
+                    />
                     {UIStore.currentState === UIStates.Editor && renderEditorUI()}
                     {UIStore.currentState === UIStates.Animation && renderAnimationUI()}
                     {UIStore.currentState === UIStates.Preview && renderPreviewUI()}
                 </group>
+
             }
+            <group ref={sceneRef}>
+                {props.children}
+            </group>
         </>
 
     );
@@ -216,7 +217,7 @@ SystemInterface.defaultProps = {
 }
 
 
-function MainNavigationButtons(props) {
+function XRNavigationButtons(props) {
 
     const {camera} = useThree();
     const ref = useRef();

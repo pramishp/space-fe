@@ -4,13 +4,16 @@ import './index.css';
 import App from './App';
 // import App from './flow_1/App';
 import reportWebVitals from './reportWebVitals';
+import {setToLocalStorage} from "./utils/storage";
+import * as themes from "./utils/theme/themeSchema.json"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+setToLocalStorage('themes', themes.default);
+console.log(themes.default);
 root.render(
-  <React.StrictMode>
-    {/*<App />*/}
-      <App/>
-  </React.StrictMode>
+    <React.StrictMode>
+        <App/>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
