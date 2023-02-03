@@ -7,7 +7,59 @@
 import * as React from 'react';
 
 export const sampleJson = {
+    shapes: {},
+    animations: {},
+    geometries: {
+        'f7cb7dbc-12bd-4549-acd0-d8e313217d23': {
+            uuid: 'f7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            type: 'BoxGeometry',
+            width: 10,
+            height: 10,
+            depth: 10,
+            widthSegments: 1,
+            heightSegments: 1,
+            depthSegments: 1
 
+        }
+    },
+    images: {},
+    textures: {},
+    materials: {
+        '4fe98168-1558-4541-bc2c-e457d62f21fd': {
+            uuid: '4fe98168-1558-4541-bc2c-e457d62f21fd',
+            type: 'MeshBasicMaterial',
+            color: 65280,
+            reflectivity: 1,
+            refractionRatio: 0.98,
+            depthFunc: 3,
+            depthTest: true,
+            depthWrite: true,
+            colorWrite: true,
+            stencilWrite: false,
+            stencilWriteMask: 255,
+            stencilFunc: 519,
+            stencilRef: 0,
+            stencilFuncMask: 255,
+            stencilFail: 7680,
+            stencilZFail: 7680,
+            stencilZPass: 7680
+
+        }
+    },
+    skeletons: {},
+    objects: {
+        cube1: {
+            uuid: 'cube1',
+            type: 'Mesh',
+            geometry: 'f7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            material: '4fe98168-1558-4541-bc2c-e457d62f21fd',
+            position: [2, 0, 0],
+            rotation: [1, 2, 3],
+        }
+    }
+}
+
+export const sampleObjects = {
     shapes: {},
     animations: {},
     geometries: {
@@ -57,8 +109,23 @@ export const sampleJson = {
             position: [2, 0, 0],
             rotation: [1, 2, 3],
         },
+        cube2: {
+            uuid: 'cube2',
+            type: 'Mesh',
+            geometry: 'f7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            material: '4fe98168-1558-4541-bc2c-e457d62f21fd',
+            position: [0, 0, 0],
+            rotation: [1, 1, 3],
+        },
+        cube3: {
+            uuid: 'cube3',
+            type: 'Mesh',
+            geometry: 'f7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            material: '4fe98168-1558-4541-bc2c-e457d62f21fd',
+            position: [1, 1, 4],
+            rotation: [-1, 4, 3],
+        },
     }
-
 }
 
 export function toJSX(data) {
@@ -103,15 +170,14 @@ function getGeometry(geometries, id) {
 
     }
 
-    const geomData =  geometries[id];
+    const geomData = geometries[id];
 
-    switch (geomData.type){
+    switch (geomData.type) {
         case 'BoxGeometry':
             return <boxGeometry {...geomData}/>
         default:
             console.error('geometry not defined')
     }
-
 
 
 }
@@ -156,9 +222,9 @@ function getMaterial(materials, ids) {
     return getMaterialJSX(materials[ids]);
 }
 
-function getMaterialJSX(materialData){
+function getMaterialJSX(materialData) {
     if (materialData === undefined) return undefined;
-    switch (materialData.type){
+    switch (materialData.type) {
         case "MeshBasicMaterial":
             return <meshBasicMaterial {...materialData}/>
         default:

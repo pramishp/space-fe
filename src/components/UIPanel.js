@@ -9,8 +9,8 @@ export default function UIPanel(props) {
     const Panel = styled.div`
       position: absolute;
       z-index: 1;
-      overflow: auto;
-      resize: horizontal;
+      //overflow: auto;
+      //resize: horizontal;
       top: 20px;
       ${position === UIPanelPosition.Left ? 'left:' + sideOffset + 'px;' : (position === UIPanelPosition.Right ? 'right:' + sideOffset + 'px;' : 'right:' + sideOffset + 'px;')}
       border-radius: 10px;

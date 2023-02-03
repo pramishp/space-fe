@@ -61,15 +61,15 @@ export default function Renderer({data, setRefs}) {
 
     app.insertMesh = ({uuid, val}) => {
         // get ref and add to the scene
-        const {jsxs: localJsxs, refs:localRefs} = toJSX(val);
+        const {jsxs: localJsxs, refs: localRefs} = toJSX(val);
         const localTransformRefGraph = {};
         // single mesh is received
-        Object.entries(localJsxs).forEach(([id, jsx])=>{
+        Object.entries(localJsxs).forEach(([id, jsx]) => {
             localTransformRefGraph[uuid] = createRef();
         });
-        setGraph(current=>({...current, ...localJsxs}))
-        setRefGraph(current=> ({...current, ...localRefs}))
-        setTransformRefGraph(current=>({...current, ...localTransformRefGraph}));
+        setGraph(current => ({...current, ...localJsxs}))
+        setRefGraph(current => ({...current, ...localRefs}))
+        setTransformRefGraph(current => ({...current, ...localTransformRefGraph}));
     }
 
     app.updateMesh = ({uuid, keys, val}) => {
@@ -119,18 +119,18 @@ export default function Renderer({data, setRefs}) {
     }
 
     return (
-            <>
-                <Box args={[1,0.3,0.1]} position={[0,1,0]} onClick={insertMesh}/>
-                {Object.entries(graph).map(([uuid, item]) => {
-                    return (
-                        <>
-                            <TransformControls key={`transform-${uuid}`} ref={transformRefs[uuid]}
-                                               onChange={() => onPositionChange(uuid)}/>
-                            {item}
-                        </>
-                    )
-                })}
-            </>
+        <>
+            <Box args={[1, 0.3, 0.1]} position={[0, 1, 0]} onClick={insertMesh}/>
+            {Object.entries(graph).map(([uuid, item]) => {
+                return (
+                    <>
+                        <TransformControls key={`transform-${uuid}`} ref={transformRefs[uuid]}
+                                           onChange={() => onPositionChange(uuid)}/>
+                        {item}
+                    </>
+                )
+            })}
+        </>
 
     )
 }

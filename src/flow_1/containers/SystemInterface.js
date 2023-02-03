@@ -8,7 +8,8 @@ import {Controllers, useXR} from "@react-three/xr";
 import {useUIStore} from "../utils/UIStore";
 import {Grid} from "@react-three/drei";
 import {useControls} from "leva";
-import styled from "styled-components";
+import styled, {useTheme} from "styled-components";
+import {useValues} from "leva/plugin";
 
 export default function SystemInterface(props) {
     const sceneRef = useRef();
@@ -40,20 +41,20 @@ export default function SystemInterface(props) {
     } = useXR()
 
     const UIStore = useUIStore()
-    const {gridSize, ...gridConfig} = useControls({
-        gridSize: [10.5, 10.5],
-        cellSize: {value: 0.6, min: 0, max: 10, step: 0.1},
-        cellThickness: {value: 1, min: 0, max: 5, step: 0.1},
-        cellColor: getCellColor(),
-        sectionSize: {value: 3.3, min: 0, max: 10, step: 0.1},
-        sectionThickness: {value: 1.5, min: 0, max: 5, step: 0.1},
-        sectionColor: '#919191',
-        fadeDistance: {value: 25, min: 0, max: 100, step: 1},
-        fadeStrength: {value: 1, min: 0, max: 1, step: 0.1},
-        followCamera: false,
-        infiniteGrid: true,
-        // showGridControls: false,
-    });
+    // const {gridSize, ...gridConfig} = useControls({
+    //     gridSize: [10.5, 10.5],
+    //     cellSize: {value: 0.6, min: 0, max: 10, step: 0.1},
+    //     cellThickness: {value: 1, min: 0, max: 5, step: 0.1},
+    //     cellColor: getCellColor(),
+    //     sectionSize: {value: 3.3, min: 0, max: 10, step: 0.1},
+    //     sectionThickness: {value: 1.5, min: 0, max: 5, step: 0.1},
+    //     sectionColor: '#919191',
+    //     fadeDistance: {value: 25, min: 0, max: 100, step: 1},
+    //     fadeStrength: {value: 1, min: 0, max: 1, step: 0.1},
+    //     followCamera: false,
+    //     infiniteGrid: true,
+    //     // showGridControls: false,
+    // });
 
     function getCellColor() {
         switch (UIStore.currentState) {
@@ -97,11 +98,20 @@ export default function SystemInterface(props) {
         }
     })
 
+    const theme = useTheme()
 
     return (
         <>
             {!(UIStore.currentState === UIStates.Preview) &&
-                <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />}
+                <Grid position={[0, 0, 0]}
+                      args={[10.5, 10.5]}
+                      infiniteGrid={true}
+                      cellColor={theme.colors.tertiaryText}
+                      fadeDistance={25}
+                      fadeStrength={1}
+                      sectionColor={theme.colors.shadow}
+                />
+            }
             <Controllers/>
             {
                 session &&

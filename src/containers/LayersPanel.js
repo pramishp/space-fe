@@ -4,11 +4,13 @@ import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styled, {useTheme} from "styled-components";
 import PropTypes from "prop-types";
 
-export default function LayersPanel() {
+export default function LayersPanel({data, setRefs}) {
+
     const theme = useTheme();
     return (
         <>
-            <UIPanel position={UIPanelPosition.Left} headerLabel={"Layers"}>
+            <UIPanel position={UIPanelPosition.Right} headerLabel={"Layers"}>
+
                 <ObjectItem objectName={'Cube is the longest name possible'} isActive={true}/>
                 <ObjectItem objectName={'Cube02'} isActive={false}/>
                 <ObjectItem objectName={'Sphere'} isActive={false}/>

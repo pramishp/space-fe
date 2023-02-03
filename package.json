@@ -6,6 +6,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@hello-pangea/dnd": "^16.2.0",
     "@react-three/drei": "^9.49.0",
     "@react-three/fiber": "^8.9.2",
     "@react-three/xr": "^5.1.2",
