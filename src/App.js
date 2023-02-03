@@ -1,22 +1,20 @@
+import {Canvas} from "@react-three/fiber";
+
 import './App.css';
-import Main from "./space/Main";
-import DraggableBoxesVR from "./space/vr";
-import Fiber from "./space/fiber";
-import XRApp from "./space/webxr";
-import {useEffect} from "react";
+import Renderer from "./space/Renderer";
+import {sampleJson} from "./common/loader";
 
 function App() {
-    useEffect(() => {
-        // call api or anything
-        alert("loaded")
-    });
+    const setRefs = (refs) => {
+
+    }
+
+
     return (
         <div className="App" style={{height: window.innerHeight}}>
-            {/*<DraggableBoxesVR/>*/}
-            {/*<Main/>*/}
-            {/*<Fiber/>*/}
-            <XRApp/>
-
+            <Canvas>
+                <Renderer data={sampleJson} setRefs={setRefs}/>
+            </Canvas>
         </div>
     );
 }
