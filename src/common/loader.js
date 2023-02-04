@@ -161,16 +161,16 @@ export const sampleJson = {
                 },
                 'uuid-892374-ert': {
                     uuid: 'uuid-892374-ert',
-                    type: ANIMATION_TYPES.INFINITY,
+                    type: ANIMATION_TYPES.LOOP_ONCE,
                     object_uuid: 'cube1',
-                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
-                    animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84",//rotation
+                    trigger: ANIMATION_TRIGGERS.ON_KEY_PRESSED,
+                    animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84", //rotation
                     order: 1
                 },
                 'uuid-345kjh346': {
                     uuid: 'uuid-345kjh346',
                     type: ANIMATION_TYPES.LOOP_ONCE,
-                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    trigger: ANIMATION_TRIGGERS.ON_KEY_PRESSED,
                     object_uuid: 'cube1',
                     animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scaling
                     order: 2
