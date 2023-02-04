@@ -1,7 +1,17 @@
 import * as React from 'react'
 import * as THREE from 'three'
 import * as ReactDOM from 'react-dom/client'
-import {VRButton, XR, Hands, useXR, Interactive, useHitTest, Controllers, ARButton} from '@react-three/xr'
+import {
+    VRButton,
+    XR,
+    Hands,
+    useXR,
+    Interactive,
+    useHitTest,
+    Controllers,
+    ARButton,
+    useController
+} from '@react-three/xr'
 import {Box, OrbitControls, Text} from '@react-three/drei'
 import {useFrame, Canvas} from '@react-three/fiber'
 
@@ -56,16 +66,23 @@ function PlayerExample() {
     return null
 }
 
-function HitTestExample() {
+function HitTestExample({controllersRef}) {
+    const controllers = useXR(state=>state)
+    const leftController = useController('left')
+    const rightController = useController('right')
     const boxRef = React.useRef()
-    useHitTest((hitMatrix) => {
-        hitMatrix.decompose(boxRef.current.position, boxRef.current.quaternion, boxRef.current.scale)
+    // useHitTest((hitMatrix) => {
+    //     hitMatrix.decompose(boxRef.current.position, boxRef.current.quaternion, boxRef.current.scale)
+    // })
+    useFrame((state, delta, xrFrame)=>{
+        // console.log(controllers)
     })
 
     return <Box ref={boxRef} args={[0.1, 0.1, 0.1]}/>
 }
 
 export default function XRApp() {
+    const controllersRef = React.useRef();
     return (
         <>
             <VRButton onError={(e) => console.error(e)}/>
@@ -74,15 +91,12 @@ export default function XRApp() {
                 <XR>
                     <ambientLight intensity={0.5}/>
                     <pointLight position={[5, 5, 5]}/>
-                    <Hands
-                        // modelLeft="/hand-left.gltf"
-                        // modelRight="/hand-right.gltf"
-                    />
+
                     <Button position={[0, 0.8, -1]}/>
-                    <Controllers/>
-                    <PlayerExample/>
-                    <HitTestExample/>
-                    <OrbitControls/>
+                    <Controllers ref={controllersRef}/>
+                    {/*<PlayerExample/>*/}
+                    <HitTestExample controllersRef={controllersRef}/>
+                    {/*<OrbitControls/>*/}
                 </XR>
             </Canvas>
         </>

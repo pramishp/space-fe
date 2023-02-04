@@ -3,16 +3,83 @@
 * Takes JSON from Yjs internal data structure and converts into JSX with refs to all the mesh
 *
 *  */
-
+import * as THREE from 'three';
 import * as React from 'react';
+import {AnimationClip} from "three";
+import {ANIMATION_TRIGGERS, ANIMATION_TYPES} from "./consts";
 
 export const sampleJson = {
 
     shapes: {},
-    animations: {},
+    animations: {
+        'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d': {
+            name: 'position',
+            duration: 3,
+            tracks: [
+                {
+                    name: '.position',
+                    times: [0, 1, 2],
+                    values: [
+                        2, 0, 0, 3, 0,
+                        0, 2, 0, 0
+                    ],
+                    type: 'vector'
+                }
+            ],
+            uuid: 'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d',
+            blendMode: 2500
+        },
+        'd77c5fc4-f70b-4ec3-ace7-3dd187185451': {
+            name: 'scale',
+            duration: 3,
+            tracks: [
+                {
+                    name: '.scale',
+                    times: [0, 1, 2],
+                    values: [
+                        1, 1, 1, 2, 2,
+                        2, 1, 1, 1
+                    ],
+                    type: 'vector'
+                }
+
+            ],
+            uuid: 'd77c5fc4-f70b-4ec3-ace7-3dd187185451',
+            blendMode: 2500
+        },
+        "fc0a8baa-2226-49b9-989b-3ddfc3051a84": {
+            name: 'rotation',
+            duration: 3,
+            tracks: [
+                {
+                    name: '.quaternion',
+                    times: [0, 1, 2],
+                    values: [0, 0, 0, 1, 1, 0, 0, 6.123234262925839e-17, 0, 0, 0, 1],
+                    type: 'quaternion'
+                }
+
+            ],
+            uuid: 'fc0a8baa-2226-49b9-989b-3ddfc3051a84',
+            clampWhenFinished: true,
+            blendMode: 2500
+        }
+
+
+    },
     geometries: {
         'f7cb7dbc-12bd-4549-acd0-d8e313217d23': {
             uuid: 'f7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            type: 'BoxGeometry',
+            width: 10,
+            height: 10,
+            depth: 10,
+            widthSegments: 1,
+            heightSegments: 1,
+            depthSegments: 1
+
+        },
+        'g7cb7dbc-12bd-4549-acd0-d8e313217d23': {
+            uuid: 'g7cb7dbc-12bd-4549-acd0-d8e313217d23',
             type: 'BoxGeometry',
             width: 10,
             height: 10,
@@ -45,6 +112,11 @@ export const sampleJson = {
             stencilZFail: 7680,
             stencilZPass: 7680
 
+        },
+        '5fe98168-1558-4541-bc2c-e457d62f21fd': {
+            uuid: '5fe98168-1558-4541-bc2c-e457d62f21fd',
+            type: 'MeshBasicMaterial',
+            color: 55280,
         }
     },
     skeletons: {},
@@ -57,6 +129,89 @@ export const sampleJson = {
             position: [2, 0, 0],
             rotation: [1, 2, 3],
         },
+        cube2: {
+            uuid: 'cube2',
+            type: 'Mesh',
+            geometry: 'g7cb7dbc-12bd-4549-acd0-d8e313217d23',
+            material: '5fe98168-1558-4541-bc2c-e457d62f21fd',
+            position: [0, 0, 0],
+            rotation: [0, 0, 0],
+        },
+    },
+    slides: {
+        'uuid-834kjasf': {
+            uuid: "uuid-834kjasf",
+            order: 0,
+            animations: {
+                'uuid-9834ukajshdf': {
+                    uuid: 'uuid-9834ukajshdf',
+                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
+                    object_uuid: 'cube1',
+                    animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position
+                    order: 0,
+                },
+                'uuid-345kjh345': {
+                    uuid: 'uuid-345kjh345',
+                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
+                    object_uuid: 'cube2',
+                    animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scale
+                    order: 0
+                },
+                'uuid-892374-ert': {
+                    uuid: 'uuid-892374-ert',
+                    type: ANIMATION_TYPES.INFINITY,
+                    object_uuid: 'cube1',
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84",//rotation
+                    order: 1
+                },
+                'uuid-345kjh346': {
+                    uuid: 'uuid-345kjh346',
+                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    object_uuid: 'cube1',
+                    animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scaling
+                    order: 2
+                },
+                'uuid-345kjh348': {
+                    uuid: 'uuid-345kjh348',
+                    type: ANIMATION_TYPES.INFINITY,
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    object_uuid: 'cube2',
+                    animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position
+                    order: 2
+                },
+                'uuid-345kjh347': {
+                    uuid: 'uuid-345kjh347',
+                    type: ANIMATION_TYPES.INFINITY,
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    object_uuid: 'cube1',
+                    animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84", // rotation
+                    order: 3
+                },
+                'uuid-345kjh349': {
+                    uuid: 'uuid-345kjh349',
+                    type: ANIMATION_TYPES.INFINITY,
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    object_uuid: 'cube2',
+                    animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scaling
+                    order: 3
+                },
+                'uuid-345kjh350': {
+                    uuid: 'uuid-345kjh350',
+                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
+                    object_uuid: 'cube1',
+                    animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position
+                    order: 4
+                },
+
+            }
+
+
+        }
     }
 
 }
@@ -103,15 +258,14 @@ function getGeometry(geometries, id) {
 
     }
 
-    const geomData =  geometries[id];
+    const geomData = geometries[id];
 
-    switch (geomData.type){
+    switch (geomData.type) {
         case 'BoxGeometry':
             return <boxGeometry {...geomData}/>
         default:
             console.error('geometry not defined')
     }
-
 
 
 }
@@ -156,12 +310,28 @@ function getMaterial(materials, ids) {
     return getMaterialJSX(materials[ids]);
 }
 
-function getMaterialJSX(materialData){
+function getMaterialJSX(materialData) {
     if (materialData === undefined) return undefined;
-    switch (materialData.type){
+    switch (materialData.type) {
         case "MeshBasicMaterial":
             return <meshBasicMaterial {...materialData}/>
         default:
             console.error('Material not defined')
     }
+}
+
+
+export function parseAnimations(json) {
+
+    const animations = {};
+
+    if (json !== undefined) {
+        Object.entries(json).forEach(([id, val]) => {
+            const clip = AnimationClip.parse(val);
+            animations[clip.uuid] = clip;
+        })
+    }
+
+    return animations;
+
 }
