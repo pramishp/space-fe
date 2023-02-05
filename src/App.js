@@ -16,9 +16,9 @@ function App() {
     return (
         <div className="App" style={{height: window.innerHeight}}>
             <Canvas>
-                {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
+                <Renderer data={sampleJson} setRefs={setRefs}/>
                 {/*<AnimationApp/>*/}
-                <Presentation data={sampleJson}/>
+                {/*<Presentation data={sampleJson}/>*/}
             </Canvas>
             {/*<XRApp/>*/}
         </div>

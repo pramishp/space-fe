@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, createRef} from "react";
+import {useState, useEffect, useRef, createRef, useCallback} from "react";
 
 import * as THREE from "three";
 import {useThree, useGraph} from "@react-three/fiber";
@@ -70,7 +70,7 @@ export default function Renderer({data, setRefs}) {
         setGraph(current=>({...current, ...localJsxs}))
         setRefGraph(current=> ({...current, ...localRefs}))
         setTransformRefGraph(current=>({...current, ...localTransformRefGraph}));
-    }
+    };
 
     app.updateMesh = ({uuid, keys, val}) => {
 
@@ -92,7 +92,10 @@ export default function Renderer({data, setRefs}) {
         onChangePresence
     } = useMultiplayerState(roomID);
 
-    onMount(app); // to set the app for multiplayer
+    // onMount(app); // to set the app for multiplayer
+    useEffect(()=>{
+        onMount(app);
+    }, [graph])
 
     const insertMesh = () => {
         const mesh = {
@@ -113,7 +116,6 @@ export default function Renderer({data, setRefs}) {
             type: 'MeshBasicMaterial',
             color: 65280,
         }
-
         onInsertMesh({mesh, geometry, material})
 
     }

@@ -225,6 +225,12 @@ export default class AnimationSequence {
         }
     }
 
+    prev(){
+        if (this.currentIndex > 0){
+            //TODO: revert state to before state
+        }
+    }
+
     getNextActionTrigger(){
         if (this.currentIndex < this.length){
             const nextAnimations = this.sequence[this.currentIndex + 1]
