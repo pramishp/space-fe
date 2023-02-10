@@ -8,12 +8,13 @@ function App() {
     const setRefs = (refs) => {
 
     }
-
+// this is the original line that was removeed
+// <Renderer data={sampleJson} setRefs={setRefs}/>
 
     return (
         <div className="App" style={{height: window.innerHeight}}>
             <Canvas>
-                <Renderer data={sampleJson} setRefs={setRefs}/>
+                <Renderer />
             </Canvas>
         </div>
     );

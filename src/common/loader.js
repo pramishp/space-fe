@@ -69,6 +69,7 @@ export function toJSX(data) {
         let object, geometry, material;
         var ref = React.createRef();
         refs[item.uuid] = ref;
+        console.log(item)
         switch (item.type) {
             case 'Mesh':
                 geometry = getGeometry(data.geometries, item.geometry)
@@ -81,6 +82,12 @@ export function toJSX(data) {
                     </mesh>
                 )
                 break;
+             case 'Group':
+                 object = (
+                     <group key={item.uuid} ref ={ref} {...item}>
+                     </group>
+                 )
+                 break
             default:
                 console.log('no case found')
         }
