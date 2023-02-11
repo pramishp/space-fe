@@ -35,7 +35,7 @@ export default class Editor extends React.Component {
         this.transformRef = React.createRef();
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState) {
 
         const shouldUpdate = nextProps.initData !== this.props.initData;
         if ( shouldUpdate){
@@ -46,7 +46,7 @@ export default class Editor extends React.Component {
             })
             return shouldUpdate
         }
-        return shouldUpdate
+        return true
 
     }
 
