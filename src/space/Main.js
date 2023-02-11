@@ -4,6 +4,9 @@ import * as THREE from "three";
 import {Canvas} from "@react-three/fiber";
 import {toJSX, sampleJson} from "../common/loaders/loader";
 
+
+//this is where the mesh is getting rendered.
+//or this might be just for testing
 function Scene() {
     const {jsxs, refs} = toJSX(sampleJson);
 
@@ -12,7 +15,7 @@ function Scene() {
             <Canvas>
                 {jsxs.map(item=>item)}
             </Canvas>
-            
+
         </div>
     )
 }
