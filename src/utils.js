@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import * as _ from "lodash";
 
 function getRandom(max, min = 0) {
     return Math.ceil(Math.random() * (max - min) + min);
@@ -43,5 +44,25 @@ function objectToYMap(jsonObject) {
     return map
 }
 
+/**
+ *
+ * @param arr:Array [[],[]]
+ * @param key: key to search the array for
+ * @param value: value of the obj[key]
+ */
 
-export {getRandom, generateUniqueId, deepSearch, objectToYMap};
+function getIndexAndSubIndex(arr, key, value){
+    const result = _.reduce(arr, (acc, subArray, i) => {
+        const j = _.findIndex(subArray, (obj) => obj[key] === value);
+        if (j !== -1) {
+            acc.i = i;
+            acc.j = j;
+        }
+        return acc;
+    }, {});
+
+    return result
+}
+
+
+export {getRandom, generateUniqueId, deepSearch, objectToYMap, getIndexAndSubIndex};
