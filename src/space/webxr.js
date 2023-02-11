@@ -67,9 +67,7 @@ function PlayerExample() {
 }
 
 function HitTestExample({controllersRef}) {
-    const controllers = useXR(state=>state)
-    const leftController = useController('left')
-    const rightController = useController('right')
+    const {player} = useXR()
     const boxRef = React.useRef()
     // useHitTest((hitMatrix) => {
     //     hitMatrix.decompose(boxRef.current.position, boxRef.current.quaternion, boxRef.current.scale)
@@ -77,8 +75,11 @@ function HitTestExample({controllersRef}) {
     useFrame((state, delta, xrFrame)=>{
         // console.log(controllers)
     })
-
-    return <Box ref={boxRef} args={[0.1, 0.1, 0.1]}/>
+    const onClick = ()=>{
+        const camera = player.children[0];
+        console.log(camera)
+    }
+    return <Box ref={boxRef} onClick={onClick} args={[0.1, 0.1, 0.1]}/>
 }
 
 export default function XRApp() {

@@ -5,8 +5,9 @@
 *  */
 import * as THREE from 'three';
 import * as React from 'react';
-import {AnimationClip} from "three";
-import {ANIMATION_TRIGGERS, ANIMATION_TYPES} from "./consts";
+import {AnimationClip, DirectionalLightHelper} from "three";
+import {ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES} from "../consts";
+import {useHelper} from "@react-three/drei";
 
 export const sampleJson = {
 
@@ -129,14 +130,14 @@ export const sampleJson = {
             position: [2, 0, 0],
             rotation: [1, 2, 3],
         },
-        cube2: {
-            uuid: 'cube2',
-            type: 'Mesh',
-            geometry: 'g7cb7dbc-12bd-4549-acd0-d8e313217d23',
-            material: '5fe98168-1558-4541-bc2c-e457d62f21fd',
-            position: [0, 0, 0],
-            rotation: [0, 0, 0],
-        },
+        // cube2: {
+        //     uuid: 'cube2',
+        //     type: 'Mesh',
+        //     geometry: 'g7cb7dbc-12bd-4549-acd0-d8e313217d23',
+        //     material: '5fe98168-1558-4541-bc2c-e457d62f21fd',
+        //     position: [0, 0, 0],
+        //     rotation: [0, 0, 0],
+        // },
     },
     slides: {
         'uuid-834kjasf': {
@@ -216,19 +217,36 @@ export const sampleJson = {
 
 }
 
-export function toJSX(data) {
+export function toJSX(data, clickCallbacks) {
     const jsxs = {};
     let refs = {};
 
+    if (data.type && data.type === IMPORT_MESH_TYPES.GLTF_GROUP){
+        //TODO: traverse through all the children and not use primitive item
+        const {jsx, ref}  = gltf2JSX(data, clickCallbacks)
+        return {jsxs: jsx, refs: ref}
+    }
+    if (!data.objects){
+        return {jsxs, refs}
+    }
     Object.values(data.objects).forEach(item => {
         let object, geometry, material;
         var ref = React.createRef();
         refs[item.uuid] = ref;
+
+        // required to see effects of light in the scene
+        item.layers = 0;
+
+        if (clickCallbacks){
+            // set callbacks
+            Object.entries(clickCallbacks).forEach(([id, callback])=>{
+                item[id] = (e)=>callback(e, item.uuid)
+            })
+        }
         switch (item.type) {
             case 'Mesh':
                 geometry = getGeometry(data.geometries, item.geometry)
                 material = getMaterial(data.materials, item.material)
-
                 object = (
                     <mesh key={item.uuid} ref={ref} {...item}>
                         {geometry}
@@ -236,10 +254,50 @@ export function toJSX(data) {
                     </mesh>
                 )
                 break;
+            case 'Group':
+                break
+
+            case IMPORT_MESH_TYPES.GLTF_GROUP:
+
+                break
+            case 'AmbientLight':
+                object = <ambientLight key={item.uuid} ref={ref} args={[item.color, item.intensity]} {...item}/>
+                break;
+
+            case 'DirectionalLight':
+
+                object = <directionalLight key={item.uuid} ref={ref} args={[item.color, item.intensity]} {...item}/>
+                break;
+
+            case 'PointLight':
+
+                object = <pointLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.distance, item.decay]} {...item}/>
+
+                break;
+
+            case 'RectAreaLight':
+
+                object = <rectAreaLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.width, item.height]} {...item}/>
+
+                break;
+
+            case 'SpotLight':
+
+                object = <spotLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.distance, item.angle, item.penumbra, item.decay]} {...item}/>
+
+                break;
+
+            case 'HemisphereLight':
+
+                object = <hemisphereLight ref={ref} key={item.uuid} args={[item.color, item.groundColor, item.intensity]} {...item}/>
+
+                break;
+
             default:
-                console.log('no case found')
+                console.error('no case found')
         }
         jsxs[item.uuid] = object;
+
     })
     return {jsxs, refs};
 }
@@ -262,7 +320,13 @@ function getGeometry(geometries, id) {
 
     switch (geomData.type) {
         case 'BoxGeometry':
-            return <boxGeometry {...geomData}/>
+            return <boxGeometry key={geomData.uuid} {...geomData}/>
+        case 'SphereGeometry':
+            return <sphereGeometry key={geomData.uuid} {...geomData}/>
+        case 'CylinderGeometry':
+            return <cylinderGeometry key={geomData.uuid} {...geomData}/>
+        case 'PlaneGeometry':
+            return <planeGeometry key={geomData.uuid} {...geomData}/>
         default:
             console.error('geometry not defined')
     }
@@ -314,7 +378,7 @@ function getMaterialJSX(materialData) {
     if (materialData === undefined) return undefined;
     switch (materialData.type) {
         case "MeshBasicMaterial":
-            return <meshBasicMaterial {...materialData}/>
+            return <meshBasicMaterial key={materialData.uuid} {...materialData}/>
         default:
             console.error('Material not defined')
     }
@@ -334,4 +398,24 @@ export function parseAnimations(json) {
 
     return animations;
 
+}
+
+export function gltf2JSX(gltf, clickCallbacks){
+    const jsx = {}
+    const ref = {}
+    const {scene, animations} = gltf;
+    const uuid = scene.uuid;
+    const primitiveRef = React.createRef();
+    const props = {};
+    if (clickCallbacks){
+        // set callbacks
+        Object.entries(clickCallbacks).forEach(([id, callback])=>{
+            props[id] = (e)=>callback(e, scene.uuid)
+        })
+    }
+    const object = (<primitive ref={primitiveRef} object={scene} position={[0, 0, 0]} {...props} />)
+
+    jsx[uuid] = object;
+    ref[uuid] = primitiveRef;
+    return {jsx, ref}
 }

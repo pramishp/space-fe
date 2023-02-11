@@ -1,11 +1,15 @@
 import * as THREE from 'three'
 
 
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const geometry = new THREE.PlaneGeometry( 1, 1, 1 );
+const material = new THREE.MeshBasicMaterial();
 const mesh = new THREE.Mesh( geometry, material );
 
+// console.log(mesh.toJSON())
+
+const light = new THREE.Light()
 let mixer;
+
 // define animation
 // POSITION
 const positionKF = new THREE.VectorKeyframeTrack( '.position', [ 0, 1, 2 ], [ 0, 0, 0, 30, 0, 0, 0, 0, 0 ] );
@@ -32,4 +36,4 @@ const action = mixer.clipAction(clip3)
 
 const json = THREE.AnimationClip.toJSON(clip3)
 
-console.log(json.tracks)
+// console.log(json.tracks)

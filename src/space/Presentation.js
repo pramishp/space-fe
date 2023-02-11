@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {toJSX} from "../common/loader";
+import {toJSX} from "../common/loaders/loader";
 import {useFrame} from "@react-three/fiber";
 import {ANIMATION_TRIGGERS, ANIMATION_TYPES} from "../common/consts";
 import AnimationSequence from "./AnimationSequence";
@@ -8,7 +8,6 @@ function Presentation({data}) {
     const {jsxs, refs} = toJSX(data);
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
-
 
 
     const seq = new AnimationSequence({
