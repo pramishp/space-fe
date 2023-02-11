@@ -14,9 +14,7 @@ export function useMultiplayerState(roomId) {
     const onMount = useCallback((app_local) => {
         app_local.loadRoom(roomId);
         app_local.pause();
-        if (!app) {
-            setApp(app_local);
-        }
+        setApp(app_local);
 
     }, [roomId, app]);
 

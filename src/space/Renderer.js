@@ -1,10 +1,10 @@
-import {useState, useEffect, useRef, createRef} from "react";
+import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
 
 import * as THREE from "three";
 import {useThree, useGraph} from "@react-three/fiber";
 import {TransformControls, Box} from '@react-three/drei'
 
-import {toJSX} from "../common/loader";
+import {toJSX} from "../common/loaders/loader";
 import {room, useMultiplayerState} from "./hooks/useMultiplayerState";
 import {roomID} from "./store";
 
@@ -12,19 +12,24 @@ import {roomID} from "./store";
 export default function Renderer({data, setRefs}) {
 
     // const scene = useThree(state => state.scene)
-    const {jsxs, refs} = toJSX(data);
+    const {jsxs, refs} = useMemo(()=>{
+        const res =  toJSX(data);
+        return res
+    }, [data])
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
     const transformRefs = {};
     Object.keys(refGraph).forEach(item => {
         transformRefs[item] = createRef();
     })
+    console.log('transform refs', transformRefs)
+    console.log('graphs', graph)
     const [transformRefGraph, setTransformRefGraph] = useState(transformRefs);
 
 
-    useEffect(() => {
-        setRefs(refs)
-    }, [refGraph])
+    // useEffect(() => {
+    //     setRefs(refs)
+    // }, [refGraph])
 
     const onPositionChange = (uuid) => {
         const transformRef = transformRefs[uuid];
@@ -70,14 +75,26 @@ export default function Renderer({data, setRefs}) {
         setGraph(current=>({...current, ...localJsxs}))
         setRefGraph(current=> ({...current, ...localRefs}))
         setTransformRefGraph(current=>({...current, ...localTransformRefGraph}));
-    }
+    };
 
     app.updateMesh = ({uuid, keys, val}) => {
 
     }
 
     app.deleteMesh = ({uuid}) => {
-
+        console.log('delete ', uuid)
+        setTransformRefGraph(current=>{
+            delete current[uuid]
+            return {...current}
+        })
+        setRefGraph(current=>{
+            delete current[uuid]
+            return {...current}
+        })
+        setGraph(current=>{
+            delete current[uuid]
+            return {...current}
+        })
     }
 
 
@@ -92,7 +109,10 @@ export default function Renderer({data, setRefs}) {
         onChangePresence
     } = useMultiplayerState(roomID);
 
-    onMount(app); // to set the app for multiplayer
+    // onMount(app); // to set the app for multiplayer
+    useEffect(()=>{
+        onMount(app);
+    }, [graph])
 
     const insertMesh = () => {
         const mesh = {
@@ -113,7 +133,6 @@ export default function Renderer({data, setRefs}) {
             type: 'MeshBasicMaterial',
             color: 65280,
         }
-
         onInsertMesh({mesh, geometry, material})
 
     }
@@ -124,8 +143,12 @@ export default function Renderer({data, setRefs}) {
                 {Object.entries(graph).map(([uuid, item]) => {
                     return (
                         <>
+
                             <TransformControls key={`transform-${uuid}`} ref={transformRefs[uuid]}
-                                               onChange={() => onPositionChange(uuid)}/>
+                                               onObjectChange={() => onPositionChange(uuid)}/>
+                                {/*<Box args={[1,0.3,0.1]} position={[1,1,0]} onClick={()=>app.deleteMesh({uuid})}/>*/}
+
+                            {/*</TransformControls>*/}
                             {item}
                         </>
                     )
