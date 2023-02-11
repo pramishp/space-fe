@@ -9,13 +9,13 @@ import XRApp from "./space/webxr";
 import Editor from "./space/Editor/EditorClass";
 import {BASIC_LIGHTS} from "./space/Editor/constants";
 import {MyComponent} from "./space/RefTest";
+import {room, useMultiplayerState} from "./space/hooks/useMultiplayerState";
+import {roomID} from "./space/store";
 
 function App() {
+    const editorRef = useRef();
+
     const [isXR, setXR] = useState(false);
-    const setRefs = (refs) => {
-
-    }
-
     const checkXR = () => {
         if (navigator.xr) {
             setXR(true)
@@ -27,11 +27,111 @@ function App() {
         checkXR();
     })
 
+    const {
+        onMount,
+        onChangePage,
+        onInsertMesh,
+        onDelete,
+        onInsertGroup,
+        onAddChildren,
+        onRemoveChildren,
+        onUpdate,
+        onUndo,
+        onRedo,
+        loading,
+        onChangePresence,
+        getInitData
+    } = useMultiplayerState(roomID);
+    useEffect(() => {
+        onMount(app);
+    }, [isXR])
+
     const app = {}
-    app.user = {userId: "123"}
-    app.onMeshInserted = ({uuid, val}) => {
-        console.log('on mesh inserted with id ', uuid)
+    // load room
+    app.loadRoom = (roomId) => {
+        app.room = roomId
     }
+
+    // user handling
+    app.user = {instanceId: room.awareness.clientID}
+
+    app.pause = () => {}
+
+    app.removeUser = (userId) => {}
+    app.updateUser = (users) => {}
+
+    // mesh
+    app.onMeshInserted = ({uuid, val, instanceId}) => {
+        //TODO: update DB
+
+        const mesh = val.objects[Object.keys(val.objects)[0]]
+        mesh.instanceId = instanceId;
+        const geometry = val.geometries[Object.keys(val.geometries)[0]]
+        const material = val.materials[Object.keys(val.materials)[0]]
+        onInsertMesh({uuid, mesh, geometry, material})
+    }
+
+    app.insertMesh = ({ uuid, val, instanceId }) =>{
+
+        if (editorRef && editorRef.current){
+            const editor = editorRef.current;
+            if (instanceId !== app.user.instanceId){
+                editor.insertMesh({uuid, val, instanceId})
+            }
+        }
+    }
+
+    //group
+    app.insertGroup = ({ uuid, val, instanceId }) =>{
+
+    }
+
+    app.onInsertGroup = ({ uuid, val, instanceId })=>{
+
+    }
+
+    // add children
+    app.addChildren = ({ parent_id, child_id, instanceId }) => {
+
+    }
+
+    app.onAddChildren = ({ parent_id, child_id, instanceId }) =>{
+
+    }
+
+    // remove children
+    app.removeChildren = ({ parent_id, child_id, instanceId })=>{
+
+    }
+
+    app.onRemoveChildren = ({parent_id, child_id, instanceId})=>{
+
+    }
+
+    // delete
+
+    app.deleteMesh = ({uuid, instanceId})=>{
+
+    }
+
+    app.onDeleteMesh = ({uuid, instanceId})=>{
+
+    }
+
+    // updateMesh props
+
+    app.updateMesh = ({ uuid, key, val, instanceId })=>{
+
+    }
+
+    app.onUpdateMesh = ({uuid, key, val, instanceId})=>{
+
+    }
+
+
+
+
+
 
     /**
      * `animationOrderChanged` is a callback function triggered by Editor that takes an
@@ -39,31 +139,27 @@ function App() {
      * nothing
      */
 
-    app.animationOrderChanged = ({uuid, to})=>{
+    app.onAnimationOrderChanged = ({uuid, to})=>{
         console.log(uuid, " applied animation order changed to ", to)
     }
 
-    const initData = {
-
-    }
-
+    let initData = {...getInitData()}
+    //TODO: Why console.log(initData) here is called 8 times ?
     const slideData = {
 
     }
-    const editorRef = useRef();
+
     const onClick = ()=>{
         if (editorRef){
-            console.log(editorRef)
+            console.log(app)
         }
     }
 
     return (
         <div className="App" style={{height: window.innerHeight}}>
             {/*<Canvas>*/}
-            {/*    /!*<Renderer data={sampleJson} setRefs={setRefs}/>*!/*/}
-
+                {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
             {/*    /!*<AnimationApp/>*!/*/}
-
             {/*</Canvas>*/}
             <button onClick={onClick}>Get Editor Ref</button>
             <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR}/>
