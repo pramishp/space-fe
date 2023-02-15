@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { useThree, useGraph } from '@react-three/fiber'
 import { TransformControls, Box } from '@react-three/drei'
 
-import { toJSX } from '../common/loader'
+import { toJSX } from '../common/loaders/loader'
 import { room, useMultiplayerState } from './hooks/useMultiplayerState'
 import { roomID } from './store'
 
@@ -32,6 +32,7 @@ export default function Renderer() {
     const { jsxs: localJsxs, refs: localRefs } = toJSX(val)
 
     const localTransformRefGraph = {}
+
     // single mesh is received
     Object.entries(localJsxs).forEach(([id, jsx]) => {
       localTransformRefGraph[uuid] = createRef()
@@ -119,6 +120,7 @@ export default function Renderer() {
   useEffect(() => {
     onMount(app)
   }, [graph])
+
   const insertMesh = () => {
     const mesh = {
       type: 'Mesh',

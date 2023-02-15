@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import {WebsocketProvider} from "y-websocket";
 
-const VERSION = 2;
+const VERSION = 3;
 
 // Create the doc
 export const doc = new Y.Doc();
@@ -23,7 +23,7 @@ export const provider = new WebsocketProvider('ws://localhost:1234', roomID,
 // Export the provider's awareness API
 export const awareness = provider.awareness;
 
-export const yMeshes = doc.getMap("meshes");
+export const yMeshes = doc.getMap("objects");
 export const yGeometry = doc.getMap("geometries");
 export const yMaterial = doc.getMap("materials");
 

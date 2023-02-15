@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { Room } from "@y-presence/client";
+import {useCallback, useEffect, useState} from "react";
+import {Room} from "@y-presence/client";
 import {
     awareness,
     doc,
@@ -9,7 +9,7 @@ import {
     yMaterial,
     yMeshes,
 } from "../store";
-import { generateUniqueId, objectToYMap } from "../../utils";
+import {generateUniqueId, objectToYMap} from "../../utils";
 
 export const room = new Room(awareness);
 
@@ -39,7 +39,7 @@ export function useMultiplayerState(roomId) {
         });
     }, []);
 
-    const onInsertMesh = useCallback(({ mesh, geometry, material }) => {
+    const onInsertMesh = useCallback(({mesh, geometry, material}) => {
         undoManager.stopCapturing();
 
         doc.transact(() => {
@@ -68,7 +68,8 @@ export function useMultiplayerState(roomId) {
             yMaterial.set(material_uuid, materialMap);
         });
     }, []);
-    const onInsertGroup = useCallback(({ group }) => {
+
+    const onInsertGroup = useCallback(({group}) => {
         undoManager.stopCapturing();
         const group_uuid = "group_" + generateUniqueId();
         // create the group in the first transaction
@@ -79,7 +80,7 @@ export function useMultiplayerState(roomId) {
         });
     }, []);
 
-    const onAddChildren = useCallback(({ group_id, children_id }) => {
+    const onAddChildren = useCallback(({group_id, children_id}) => {
         undoManager.stopCapturing();
         doc.transact(() => {
             const props = {};
@@ -91,7 +92,8 @@ export function useMultiplayerState(roomId) {
             });
         });
     }, []);
-    const onRemoveChildren = useCallback(({ children_id }) => {
+
+    const onRemoveChildren = useCallback(({children_id}) => {
         undoManager.stopCapturing()
         doc.transact(() => {
             children_id.forEach(item => {
@@ -99,6 +101,7 @@ export function useMultiplayerState(roomId) {
             });
         })
     })
+
     // there is no dependency array added here. Perhaps the dependency array to be used is the app as well. Just like in the insert method.
     const onDelete = useCallback((id) => {
         undoManager.stopCapturing();
@@ -129,7 +132,7 @@ export function useMultiplayerState(roomId) {
      */
     const onChangePresence = useCallback((app, user) => {
         if (!app.room) return;
-        room.setPresence({ id: app.room.userId, tdUser: user });
+        room.setPresence({id: app.room.userId, tdUser: user});
     }, []);
 
     /**
@@ -141,14 +144,13 @@ export function useMultiplayerState(roomId) {
 
         const unsubOthers = room.subscribe("others", (users) => {
             if (!app.room) return;
-
             const ids = users
                 .filter((user) => user.presence)
                 .map((user) => user.presence.tdUser.id);
 
             Object.values(app.room.users).forEach((user) => {
                 if (user && !ids.includes(user.id) && user.id !== app.room?.userId) {
-                    app.removeUser(user.id);
+                    app.removeUser(user);
                 }
             });
 
@@ -177,7 +179,7 @@ export function useMultiplayerState(roomId) {
         function handleMeshChanges(events) {
             events.forEach((event) => {
                 const parents = Array.from(event.transaction.changedParentTypes);
-                console.log(event)
+
                 const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
                 event.changes.keys.forEach((val, key) => {
                     switch (val.action) {
@@ -196,9 +198,9 @@ export function useMultiplayerState(roomId) {
                             if (level === 1) {
                                 const mesh = yMeshes.get(key);
                                 const meshJson = mesh.toJSON();
-                                const yMeshObjects = yMeshes.toJSON();
+                                // const yMeshObjects = yMeshes.toJSON();
 
-                                let children_ids = [];
+                                // let children_ids = [];
                                 const fullData = {
                                     objects: {
                                         [meshJson.uuid]: meshJson,
@@ -221,6 +223,7 @@ export function useMultiplayerState(roomId) {
                                 } else {
                                     const mesh = yMeshes.get(key);
                                     const meshJson = mesh.toJSON();
+                                    const instanceId = meshJson.instanceId;
                                     if (meshJson.type === "Group") {
                                         const fullData = {
                                             objects: {
@@ -228,7 +231,8 @@ export function useMultiplayerState(roomId) {
                                             },
                                         };
 
-                                        app.insertMesh({ uuid: key, val: fullData });
+
+                                        app.insertMesh({uuid: key, val: fullData, instanceId});
                                     } else if (meshJson.type === "Mesh") {
                                         const material = yMaterial.get(mesh.get("material"));
                                         const geometry = yGeometry.get(mesh.get("geometry"));
@@ -248,7 +252,7 @@ export function useMultiplayerState(roomId) {
                                             },
                                         };
                                         // this is where the insertMesh function defined in the renderer gets used
-                                        app.insertMesh({ uuid: key, val: fullData });
+                                        app.insertMesh({uuid: key, val: fullData, instanceId});
                                     }
                                 }
                                 // it is a mesh
@@ -266,9 +270,8 @@ export function useMultiplayerState(roomId) {
                                         child_id: mesh.uuid,
                                     }
                                 )
-                            }
-                            else {
-                                app.deleteMesh({ uuid: key });
+                            } else {
+                                app.deleteMesh({uuid: key});
                             }
 
                             break;
@@ -297,7 +300,13 @@ export function useMultiplayerState(roomId) {
             window.removeEventListener("beforeunload", handleDisconnect);
             yMeshes.unobserveDeep(handleMeshChanges);
         };
+
     }, [app]);
+
+    const getInitData = useCallback(() => {
+        const data = doc.toJSON();
+        return data;
+    }, [])
 
     return {
         onMount,
@@ -312,5 +321,6 @@ export function useMultiplayerState(roomId) {
         loading,
         onChangePresence,
         onChangePage,
+        getInitData
     };
 }
