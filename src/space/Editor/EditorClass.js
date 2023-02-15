@@ -16,6 +16,7 @@ import Helpers from "./Helpers";
 import PropsEditor from "./components/PropsEditor";
 import AnimationList from "./components/AnimationEditor/AnimationList";
 import {AnimationTree} from "./components/AnimationEditor/AnimationSequenceEditor";
+import DisplayUsers from "./components/DisplayUsers";
 
 export default class Editor extends React.Component {
 
@@ -221,7 +222,7 @@ export default class Editor extends React.Component {
 
     render() {
         const {selectedItems, graph, refGraph} = this.state;
-        const {isXR, slideData} = this.props;
+        const {isXR, slideData, otherUsers} = this.props;
 
         return (
             <div>
@@ -235,9 +236,7 @@ export default class Editor extends React.Component {
                         <input type="file" onChange={this.onModelUpload}/>
                     </div>
 
-
                 </div>
-
                 <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph}/>
                 <AnimationTree slides={slideData} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>
                 <div style={{height: window.innerHeight}}>
@@ -249,6 +248,8 @@ export default class Editor extends React.Component {
                             }}
                             onPointerMissed={this.onPointerMissed}>
                         <XR>
+                            <DisplayUsers otherUsers={otherUsers}/>
+
                             <AnimationList isXR={isXR} refs={refGraph}
                                            selectedItems={selectedItems}
                                            onClick={this.onAnimationListClicked}/>

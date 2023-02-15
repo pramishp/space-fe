@@ -14,8 +14,9 @@ import {roomID} from "./space/store";
 
 function App() {
     const editorRef = useRef();
-
     const [isXR, setXR] = useState(false);
+    let joinedUsers = room.getOthers();
+    const [otherUsers, setOtherUsers] = useState(joinedUsers.map(i=>i.presence.tdUser));
     const checkXR = () => {
         if (navigator.xr) {
             setXR(true)
@@ -42,23 +43,35 @@ function App() {
         onChangePresence,
         getInitData
     } = useMultiplayerState(roomID);
+
     useEffect(() => {
         onMount(app);
-    }, [isXR])
+        onChangePresence(app, app.user)
+    }, [isXR, otherUsers]);
 
     const app = {}
+
     // load room
     app.loadRoom = (roomId) => {
-        app.room = roomId
+        app.room = {roomId, userId: room.awareness.clientID, users: otherUsers}
     }
 
     // user handling
-    app.user = {instanceId: room.awareness.clientID}
+    app.user = {instanceId: room.awareness.clientID, id: room.awareness.clientID} //TODO: change user id
 
     app.pause = () => {}
 
-    app.removeUser = (userId) => {}
-    app.updateUser = (users) => {}
+    app.removeUser = (userId) => {
+        // console.log('remove user :', userId.instanceId)
+        // setOtherUsers(currentUsers=>{
+        //     delete currentUsers[currentUsers.map(i=> i.instanceId).indexOf(userId)]
+        //     return [...currentUsers]
+        // })
+    }
+
+    app.updateUsers = (users) => {
+        setOtherUsers([...users])
+    }
 
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
@@ -72,7 +85,6 @@ function App() {
     }
 
     app.insertMesh = ({ uuid, val, instanceId }) =>{
-
         if (editorRef && editorRef.current){
             const editor = editorRef.current;
             if (instanceId !== app.user.instanceId){
@@ -129,10 +141,6 @@ function App() {
     }
 
 
-
-
-
-
     /**
      * `animationOrderChanged` is a callback function triggered by Editor that takes an
      * object with a `uuid`:(animation uuid from slide) and a `to`: (order) property and returns
@@ -145,9 +153,7 @@ function App() {
 
     let initData = {...getInitData()}
     //TODO: Why console.log(initData) here is called 8 times ?
-    const slideData = {
-
-    }
+    const slideData = {};
 
     const onClick = ()=>{
         if (editorRef){
@@ -162,7 +168,7 @@ function App() {
             {/*    /!*<AnimationApp/>*!/*/}
             {/*</Canvas>*/}
             <button onClick={onClick}>Get Editor Ref</button>
-            <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR}/>
+            <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
             {/*<MyComponent/>*/}
             {/*<XRApp/>*/}
         </div>

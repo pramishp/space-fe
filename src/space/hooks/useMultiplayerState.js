@@ -92,6 +92,7 @@ export function useMultiplayerState(roomId) {
             });
         });
     }, []);
+
     const onRemoveChildren = useCallback(({children_id}) => {
         undoManager.stopCapturing()
         doc.transact(() => {
@@ -100,6 +101,7 @@ export function useMultiplayerState(roomId) {
             });
         })
     })
+
     // there is no dependency array added here. Perhaps the dependency array to be used is the app as well. Just like in the insert method.
     const onDelete = useCallback((id) => {
         undoManager.stopCapturing();
@@ -142,14 +144,13 @@ export function useMultiplayerState(roomId) {
 
         const unsubOthers = room.subscribe("others", (users) => {
             if (!app.room) return;
-
             const ids = users
                 .filter((user) => user.presence)
                 .map((user) => user.presence.tdUser.id);
 
             Object.values(app.room.users).forEach((user) => {
                 if (user && !ids.includes(user.id) && user.id !== app.room?.userId) {
-                    app.removeUser(user.id);
+                    app.removeUser(user);
                 }
             });
 
