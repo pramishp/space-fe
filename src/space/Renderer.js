@@ -32,6 +32,7 @@ export default function Renderer() {
     const { jsxs: localJsxs, refs: localRefs } = toJSX(val)
 
     const localTransformRefGraph = {}
+
     // single mesh is received
     Object.entries(localJsxs).forEach(([id, jsx]) => {
       localTransformRefGraph[uuid] = createRef()
@@ -119,6 +120,7 @@ export default function Renderer() {
   useEffect(() => {
     onMount(app)
   }, [graph])
+
   const insertMesh = () => {
     const mesh = {
       type: 'Mesh',

@@ -237,10 +237,12 @@ export function toJSX(data, clickCallbacks) {
         // required to see effects of light in the scene
         item.layers = 0;
 
+        const callbackProps = {}
+
         if (clickCallbacks){
             // set callbacks
             Object.entries(clickCallbacks).forEach(([id, callback])=>{
-                item[id] = (e)=>callback(e, item.uuid)
+                callbackProps[id] = (e)=>callback(e, item.uuid)
             })
         }
         switch (item.type) {
@@ -248,7 +250,7 @@ export function toJSX(data, clickCallbacks) {
                 geometry = getGeometry(data.geometries, item.geometry)
                 material = getMaterial(data.materials, item.material)
                 object = (
-                    <mesh key={item.uuid} ref={ref} {...item}>
+                    <mesh key={item.uuid} ref={ref} {...item} {...callbackProps}>
                         {geometry}
                         {material}
                     </mesh>
@@ -261,35 +263,54 @@ export function toJSX(data, clickCallbacks) {
 
                 break
             case 'AmbientLight':
-                object = <ambientLight key={item.uuid} ref={ref} args={[item.color, item.intensity]} {...item}/>
+                object = <ambientLight key={item.uuid}
+                                       ref={ref} args={[item.color, item.intensity]}
+                                       {...callbackProps}
+                                       {...item}/>
                 break;
 
             case 'DirectionalLight':
 
-                object = <directionalLight key={item.uuid} ref={ref} args={[item.color, item.intensity]} {...item}/>
+                object = <directionalLight key={item.uuid} ref={ref}
+                                           args={[item.color, item.intensity]}
+                                           {...callbackProps}
+                                           {...item}/>
                 break;
 
             case 'PointLight':
 
-                object = <pointLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.distance, item.decay]} {...item}/>
+                object = <pointLight ref={ref} key={item.uuid}
+                                     args={[item.color, item.intensity, item.distance, item.decay]}
+                                     {...callbackProps}
+                                     {...item}/>
 
                 break;
 
             case 'RectAreaLight':
 
-                object = <rectAreaLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.width, item.height]} {...item}/>
+                object = <rectAreaLight ref={ref} key={item.uuid}
+                                        args={[item.color, item.intensity, item.width, item.height]}
+                                        {...callbackProps}
+                                        {...item}/>
 
                 break;
 
             case 'SpotLight':
 
-                object = <spotLight ref={ref} key={item.uuid} args={[item.color, item.intensity, item.distance, item.angle, item.penumbra, item.decay]} {...item}/>
+                object = <spotLight ref={ref} key={item.uuid}
+                                    args={[item.color, item.intensity, item.distance, item.angle, item.penumbra, item.decay]}
+                                    {...item}
+                                    {...callbackProps}
+                />
 
                 break;
 
             case 'HemisphereLight':
 
-                object = <hemisphereLight ref={ref} key={item.uuid} args={[item.color, item.groundColor, item.intensity]} {...item}/>
+                object = <hemisphereLight ref={ref} key={item.uuid}
+                                          args={[item.color, item.groundColor, item.intensity]}
+                                          {...callbackProps}
+                                          {...item}/>
 
                 break;
 

@@ -16,6 +16,7 @@ import Helpers from "./Helpers";
 import PropsEditor from "./components/PropsEditor";
 import AnimationList from "./components/AnimationEditor/AnimationList";
 import {AnimationTree} from "./components/AnimationEditor/AnimationSequenceEditor";
+import DisplayUsers from "./components/DisplayUsers";
 
 export default class Editor extends React.Component {
 
@@ -31,8 +32,23 @@ export default class Editor extends React.Component {
             refGraph: this.jsxData.refs,
         }
         //user
-        this.userId = this.props.app.user.userId;
+        this.instanceId = this.props.app.user.instanceId;
         this.transformRef = React.createRef();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+
+        const shouldUpdate = nextProps.initData !== this.props.initData;
+        if ( shouldUpdate){
+            this.jsxData = toJSX(nextProps.initData, this.clickCallbacks);
+            this.setState({
+                graph: this.jsxData.jsxs,
+                refGraph: this.jsxData.refs,
+            })
+            return shouldUpdate
+        }
+        return true
+
     }
 
     // set jsx and refs as states variables
@@ -52,18 +68,19 @@ export default class Editor extends React.Component {
     // editor operational methods
     notifyApp = ({type, data}) => {
         const {app} = this.props;
-        const {val, userId, uuid} = data;
-        // notify only if data.userId === app.user.userId
+        const {val, instanceId, uuid} = data;
+        // notify only if data.instanceId === app.user.instanceId
         if (!app) {
             console.error("app is undefined/null ", app)
         }
-        if (userId !== app.user.userId) {
+        if (instanceId !== app.user.instanceId) {
             // as this is the operation performed by other user, no need to notify
             return
         }
+
         switch (type) {
             case EDITOR_OPS.INSERT_MESH:
-                app.onMeshInserted({uuid: uuid, val})
+                app.onMeshInserted({uuid: uuid, val, instanceId})
                 break
             default:
                 console.error("No such operation is defined in editor: ", type)
@@ -71,7 +88,7 @@ export default class Editor extends React.Component {
     }
 
     // insertMesh in the editor
-    insertMesh = ({uuid, val, userId}) => {
+    insertMesh = ({uuid, val, instanceId}) => {
         const {app} = this.props;
         const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks);
 
@@ -81,16 +98,16 @@ export default class Editor extends React.Component {
         }))
 
         // if same user insert a mesh, select inserted mesh
-        if (userId === app.user.userId) {
+        if (instanceId === app.user.instanceId) {
             this.setState(prevState => ({selectedItems: [uuid]}))
         }
 
         // notify app
-        this.notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, userId, uuid}, app})
+        this.notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, instanceId, uuid}, app})
     }
 
     // insertLight in the editor
-    insertLight = ({uuid, val, userId}) => {
+    insertLight = ({uuid, val, instanceId}) => {
         const jsonData = {
             [uuid]: {
                 ...val.object
@@ -100,14 +117,16 @@ export default class Editor extends React.Component {
             "objects": jsonData
         }
 
-        this.insertMesh({uuid, val: fullData, userId});
+        this.insertMesh({uuid, val: fullData, instanceId});
 
     }
 
     onPositionChange = (e) => {
+
         const {selectedItems, refGraph} = this.state;
         if (selectedItems.length === 1) {
             const uuid = selectedItems[0];
+            //TODO: debug meshRef is undefined
             const meshRef = refGraph[uuid];
             if (meshRef.current && this.transformRef.current) {
                 // meshRef.current.position.x = transformRef.current.worldPosition.x;
@@ -152,17 +171,18 @@ export default class Editor extends React.Component {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
         const {uuid, val} = BASIC_OBJECTS[id].get();
-        this.insertMesh({uuid, val, userId: app.user.userId});
+        this.insertMesh({uuid, val, instanceId: app.user.instanceId});
     }
+
     onAddLightSelected = (id) => {
         const {app} = this.props;
         const {uuid, val} = BASIC_LIGHTS[id].get();
-        this.insertLight({uuid, val, userId: app.user.userId})
+        this.insertLight({uuid, val, instanceId: app.user.instanceId})
     }
 
     onAddGroupSelected = (id) => {
         const {uuid, val} = BASIC_LIGHTS[id];
-        // insertMesh({uuid, val, userId: app.user.userId})
+        // insertMesh({uuid, val, instanceId: app.user.instanceId})
     }
 
     // upload model
@@ -179,7 +199,7 @@ export default class Editor extends React.Component {
                     const uuid = gltf.scene.uuid;
                     gltf.type = IMPORT_MESH_TYPES.GLTF_GROUP;
                     // console.log(gltf)
-                    this.insertMesh({uuid, val: gltf, userId: app.user.userId})
+                    this.insertMesh({uuid, val: gltf, instanceId: app.user.instanceId})
                 },
                 (error) => {
                     console.log(error)
@@ -198,12 +218,14 @@ export default class Editor extends React.Component {
      * nothing
      */
     onAnimationTimelineDragNDrop = ({uuid, to}) => {
-
+        const {app} = this.prop;
+        app.onAnimationOrderChanged({uuid, to})
     }
 
     render() {
         const {selectedItems, graph, refGraph} = this.state;
-        const {isXR, slideData, app} = this.props;
+        const {isXR, slideData, otherUsers} = this.props;
+
         return (
             <div>
                 <div>
@@ -216,9 +238,7 @@ export default class Editor extends React.Component {
                         <input type="file" onChange={this.onModelUpload}/>
                     </div>
 
-
                 </div>
-
                 <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph}/>
                 <AnimationTree slides={slideData} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>
                 <div style={{height: window.innerHeight}}>
@@ -230,6 +250,8 @@ export default class Editor extends React.Component {
                             }}
                             onPointerMissed={this.onPointerMissed}>
                         <XR>
+                            <DisplayUsers otherUsers={otherUsers}/>
+
                             <AnimationList isXR={isXR} refs={refGraph}
                                            selectedItems={selectedItems}
                                            onClick={this.onAnimationListClicked}/>
