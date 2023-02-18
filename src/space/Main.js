@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from "react";
 
 import * as THREE from "three";
 import {Canvas} from "@react-three/fiber";
-import {toJSX, sampleJson} from "../common/loader";
+import {toJSX, sampleJson} from "../common/loaders/loader";
 
 
 //this is where the mesh is getting rendered.
