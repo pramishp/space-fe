@@ -77,6 +77,7 @@ export default class Editor extends React.Component {
             // as this is the operation performed by other user, no need to notify
             return
         }
+
         switch (type) {
             case EDITOR_OPS.INSERT_MESH:
                 app.onMeshInserted({uuid: uuid, val, instanceId})
@@ -172,6 +173,7 @@ export default class Editor extends React.Component {
         const {uuid, val} = BASIC_OBJECTS[id].get();
         this.insertMesh({uuid, val, instanceId: app.user.instanceId});
     }
+
     onAddLightSelected = (id) => {
         const {app} = this.props;
         const {uuid, val} = BASIC_LIGHTS[id].get();

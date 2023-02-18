@@ -13,4 +13,5 @@ export function loadGltf(fileContents, onLoad, onError) {
 
             onError(error);
         });
+
 }

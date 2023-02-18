@@ -7,8 +7,7 @@ import AnimationApp from "./space/Animation";
 import Presentation from "./space/Presentation";
 import XRApp from "./space/webxr";
 import Editor from "./space/Editor/EditorClass";
-import {BASIC_LIGHTS} from "./space/Editor/constants";
-import {MyComponent} from "./space/RefTest";
+
 import {room, useMultiplayerState} from "./space/hooks/useMultiplayerState";
 import {roomID} from "./space/store";
 
@@ -75,7 +74,6 @@ function App() {
 
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
-        //TODO: update DB
 
         const mesh = val.objects[Object.keys(val.objects)[0]]
         mesh.instanceId = instanceId;
