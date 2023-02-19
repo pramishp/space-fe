@@ -10,6 +10,7 @@ function Main() {
     setUploadView((prevState) => !prevState)
     modelView && setModelView((prevState) => !prevState)
   }
+
   const handleModelsClick = () => {
     setModelView((prevState) => !prevState)
     uploadView && setUploadView((prevState) => !prevState)

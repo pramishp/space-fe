@@ -9,24 +9,15 @@ import XRApp from "../webxr";
 import Editor from "../Editor/EditorClass";
 import Main from '../../space/Components/Main';
 
-import {room, useMultiplayerState} from "../hooks/useMultiplayerState";
-import {roomID} from "../store";
+import {useMultiplayerState} from "../hooks/useMultiplayerState";
 
-function Workspace() {
+
+function Workspace({roomId, user, isXR}) {
     const editorRef = useRef();
-    const [isXR, setXR] = useState(false);
-    let joinedUsers = room.getOthers();
-    const [otherUsers, setOtherUsers] = useState(joinedUsers.map(i=>i.presence.tdUser));
-    const checkXR = () => {
-        if (navigator.xr) {
-            setXR(true)
-        } else {
-            setXR(false)
-        }
-    }
-    useEffect(() => {
-        checkXR();
-    })
+
+    const [otherUsers, setOtherUsers] = useState([]);
+    const [initData, setInitData] = useState([]);
+
 
     const {
         onMount,
@@ -41,23 +32,39 @@ function Workspace() {
         onRedo,
         loading,
         onChangePresence,
-        getInitData
-    } = useMultiplayerState(roomID);
+        getInitData,
+        getYRoom,
+    } = useMultiplayerState(roomId);
 
     useEffect(() => {
         onMount(app);
         onChangePresence(app, app.user)
     }, [isXR, otherUsers]);
 
+    const room = getYRoom();
+
     const app = {}
 
+    // set other users
+    app.setOtherUsers = (joinedUsers)=>{
+        const otherUsers = joinedUsers.map(i=>i.presence.tdUser);
+        setOtherUsers(otherUsers);
+
+    }
+
+
     // load room
-    app.loadRoom = (roomId) => {
+    app.loadRoom = (roomId, room) => {
         app.room = {roomId, userId: room.awareness.clientID, users: otherUsers}
     }
 
+    // set instance id
+    app.setInstanceId = (instanceId)=>{
+        app.user = {...app.user, instanceId}
+    }
+
     // user handling
-    app.user = {instanceId: room.awareness.clientID, id: room.awareness.clientID} //TODO: change user id
+    app.user = {id: user.userId} //TODO: change user id
 
     app.pause = () => {}
 
@@ -150,14 +157,15 @@ function Workspace() {
         console.log(uuid, " applied animation order changed to ", to)
     }
 
-    let initData = {...getInitData()}
+    app.setInitData = (data)=>{
+        setInitData(data)
+    }
+
     //TODO: Why console.log(initData) here is called 8 times ?
     const slideData = {};
 
-    const onClick = ()=>{
-        if (editorRef){
-            console.log(app)
-        }
+    if (loading){
+        return <div>Loading</div>
     }
 
     return (
@@ -168,7 +176,6 @@ function Workspace() {
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
             {/*    /!*<AnimationApp/>*!/*/}
             {/*</Canvas>*/}
-            <button onClick={onClick}>Get Editor Ref</button>
             <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
             {/*<MyComponent/>*/}
             {/*<XRApp/>*/}
