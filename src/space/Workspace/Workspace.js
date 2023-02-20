@@ -1,11 +1,6 @@
 import {useEffect, useRef, useState} from "react";
-import {Canvas} from "@react-three/fiber";
-
 import '../../App.css';
-import Renderer from "../Renderer";
-import AnimationApp from "../Animation";
-import Presentation from "../Presentation";
-import XRApp from "../webxr";
+
 import Editor from "../Editor/EditorClass";
 import Menu from './Menu';
 

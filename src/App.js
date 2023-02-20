@@ -7,13 +7,17 @@ import LoginPage from './space/Workspace/Pages/LoginPage'
 import Navbar from './space/Workspace/Components/Navbar'
 import Register from './space/Workspace/Pages/Register'
 
-const App = () => {
+import Workspace from "./space/Workspace/Workspace";
+import {useEffect, useState} from "react";
+
+export const Navigator = () => {
     return (
         <div className='App'>
             <Router>
                 <AuthProvider>
                     <Navbar />
                     <Routes>
+                        <Route path="/" element={<App/>}/>
                         <Route path='/register' element={<Register/>} />
                         <Route path='/login' element={<LoginPage/>} />
                         <Route 
@@ -29,8 +33,7 @@ const App = () => {
             </Router>
         </div>
     )
-import Workspace from "./space/Workspace/Workspace";
-import {useEffect, useState} from "react";
+}
 
 function App(){
     const [isXR, setXR] = useState(false);

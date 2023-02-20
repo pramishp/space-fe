@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import AuthContext from "../Context/AuthContext";
 
@@ -12,7 +12,6 @@ function FileUpload() {
     const files = event.target.files;
     setSelectedFiles(files);
   };
-
 
 
   const handleSubmit = (event) => {
