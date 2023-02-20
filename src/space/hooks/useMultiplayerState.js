@@ -6,7 +6,9 @@ import * as Y from "yjs";
 import {generateUniqueId, objectToYMap} from "../../utils";
 import SingletonSocketProvider from "./Provider";
 import {UndoManager} from "yjs";
+import {TYPES} from "../Editor/constants";
 
+const _ = require('lodash');
 
 export function useMultiplayerState(roomId, appInit) {
     const [app, setApp] = useState(appInit);
@@ -56,7 +58,7 @@ export function useMultiplayerState(roomId, appInit) {
             provider.on('sync', function (isSynced) {
                 if (doc && isSynced && loading) {
                     setLoading(false);
-                    if (app){
+                    if (app) {
                         app.updateUsers(room.getOthers())
                     }
 
@@ -140,13 +142,19 @@ export function useMultiplayerState(roomId, appInit) {
         });
     },);
 
-    const onUpdate = useCallback((uuid, val) => {
+    const onUpdate = useCallback(({uuid, key, val, type}) => {
         undoManager.stopCapturing();
         doc.transact(() => {
-            Object.entries(val).forEach(([id, prop]) => {
-                yMeshes.get(uuid).set(id, prop);
-            });
-            // console.log('transaction: ',shapes)
+            switch (type) {
+                case TYPES.MATERIAL:
+                    yMaterial.get(uuid).set(key, val)
+                    break
+                case TYPES.MESH:
+                    yMeshes.get(uuid).set(key, val);
+                    break
+                default:
+                    console.error("No case handled for ", type, "onUpdate")
+            }
         });
     },);
 
@@ -242,7 +250,7 @@ export function useMultiplayerState(roomId, appInit) {
                                         [meshJson.uuid]: meshJson,
                                     },
                                 };
-                                if (isFromUndoManager){
+                                if (isFromUndoManager) {
                                     //
                                     app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
                                 } else {
@@ -329,8 +337,48 @@ export function useMultiplayerState(roomId, appInit) {
             // );
         }
 
+        function handleMaterialChanges(events) {
+            events.forEach((event) => {
+
+                const parents = Array.from(event.transaction.changedParentTypes);
+                const origin = event.transaction.origin;
+                const isFromUndoManager = origin instanceof UndoManager
+                const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
+                // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
+                const genericProps = {isFromUndoManager}
+                event.changes.keys.forEach((val, key) => {
+
+                    switch (val.action) {
+                        case "update":
+                            const material = event.target.toJSON()
+                            const objectsList = Object.entries(yMeshes.toJSON()).map(([uuid, val]) => val);
+                            // get mesh uuid
+                            const object = _.find(objectsList, {material: material.uuid});
+                            app.updateMaterial({
+                                uuid: material.uuid, object_uuid: object.uuid,
+                                key, val: material[key]
+                            })
+                            break;
+
+                        case "add":
+                            break
+
+                        case "delete":
+                            break
+
+                        default:
+                            console.error("no such action");
+                    }
+                    //console.log('handle mesh changes called')
+                    //console.log(key, val.action, 'level:', level)
+                });
+            });
+
+        }
+
         async function setup() {
             yMeshes.observeDeep(handleMeshChanges);
+            yMaterial.observeDeep(handleMaterialChanges)
             setLoading(false);
         }
 
