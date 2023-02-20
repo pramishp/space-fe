@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Sidebar from './Sidebar.js'
-import SearchModel from './SearchModel.js'
-import FileUpload from './FileUpload.js'
-function Main() {
+import Sidebar from './Components/Sidebar.js'
+import SearchModel from './Components/SearchModel.js'
+import FileUpload from './Components/FileUpload.js'
+function Menu() {
   const [modelView, setModelView] = useState(false)
   const [uploadView, setUploadView] = useState(false)
 
@@ -27,4 +27,4 @@ function Main() {
   )
 }
 
-export default Main
+export default Menu

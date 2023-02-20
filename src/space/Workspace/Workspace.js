@@ -7,12 +7,12 @@ import AnimationApp from "../Animation";
 import Presentation from "../Presentation";
 import XRApp from "../webxr";
 import Editor from "../Editor/EditorClass";
-import Main from '../../space/Components/Main';
+import Menu from './Menu';
 
 import {room, useMultiplayerState} from "../hooks/useMultiplayerState";
-import {roomID} from "../store";
+// import {roomID} from "../store";
 
-function Workspace() {
+function Workspace({roomID}) {
     const editorRef = useRef();
     const [isXR, setXR] = useState(false);
     let joinedUsers = room.getOthers();
@@ -162,7 +162,7 @@ function Workspace() {
 
     return (
         <>
-        <Main />
+        <Menu />
         <div className="App" style={{height: window.innerHeight}}>
             {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
