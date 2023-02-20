@@ -1,16 +1,23 @@
-import {generateUniqueId} from "../../utils";
 import * as THREE from "three";
 
 export const EDITOR_OPS = {
     INSERT_MESH: "INSERT_MESH",
     DELETE_MESH: "DELETE_MESH",
-    GROUP_MESH: "GROUP_MESH"
+    GROUP_MESH: "GROUP_MESH",
+    INSERT_LIGHT: "INSERT_LIGHT",
+    UPDATE_MESH: "UPDATE_MESH"
 }
 
-function three2spaceJSON(json) {
-    const geometry = json.geometries[0];
-    const material = json.materials[0]
-    const object = json.object;
+function three2spaceJSON(jsonData) {
+
+    const json = {...jsonData}
+    let geometry = json.geometries[0];
+    geometry = {...geometry}
+    let material = json.materials[0];
+    material = {...material}
+    let object = json.object;
+    object = {...object}
+
     return {
         geometries: {[geometry.uuid]: geometry},
         materials: {[material.uuid]: material},
@@ -21,8 +28,11 @@ function three2spaceJSON(json) {
 
 function mesh2json(mesh) {
     const json = mesh.toJSON();
-    json.object.layers = 0;
-    const spaceJson = three2spaceJSON(json);
+    // Make a deep copy of the JSON object
+    const copyJson = JSON.parse(JSON.stringify(json));
+    copyJson.object.layers = 0;
+
+    const spaceJson = three2spaceJSON(copyJson);
     return {uuid: json.object.uuid, val: spaceJson}
 }
 
@@ -56,63 +66,11 @@ export const BASIC_LIGHTS = {
 }
 export const BASIC_OBJECTS = {
     box: {
-        id: "box",
-        geometry: {
-            type: 'BoxGeometry',
-            width: 10,
-            height: 10,
-            depth: 10,
-            widthSegments: 1,
-            heightSegments: 1,
-            depthSegments: 1
-        },
-        material: {
-            type: 'MeshBasicMaterial',
-            color: 65280,
-            reflectivity: 1,
-            refractionRatio: 0.98,
-            depthFunc: 3,
-            depthTest: true,
-            depthWrite: true,
-            colorWrite: true,
-            stencilWrite: false,
-            stencilWriteMask: 255,
-            stencilFunc: 519,
-            stencilRef: 0,
-            stencilFuncMask: 255,
-            stencilFail: 7680,
-            stencilZFail: 7680,
-            stencilZPass: 7680
-        },
-        object: {
-            type: 'Mesh',
-            position: [1, 0, 0],
-            rotation: [1, 2, 3],
-        },
         get: function () {
-            const mesh_uuid = generateUniqueId();
-            const geometry_uuid = generateUniqueId();
-            const material_uuid = generateUniqueId();
-            const geometry = {...this.geometry};
-            geometry.uuid = geometry_uuid;
-            const material = {...this.material};
-            material.uuid = material_uuid;
-            const object = {...this.object};
-            object.uuid = mesh_uuid;
-            object.geometry = geometry_uuid;
-            object.material = material_uuid;
-            const data = {
-                objects: {
-                    [mesh_uuid]: object
-                },
-                geometries: {
-                    [geometry_uuid]: geometry
-                },
-                materials: {
-                    [material_uuid]: material
-                }
-            }
-            return {uuid: mesh_uuid, val: data}
+            const geometry = new THREE.BoxGeometry(10, 10, 10);
+            const material = new THREE.MeshBasicMaterial();
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh2json(mesh)
         }
 
     },
@@ -142,4 +100,10 @@ export const BASIC_OBJECTS = {
         }
     }
 
+}
+
+export const TYPES = {
+    MESH: "Mesh",
+    GEOMETRY: "Gemometry",
+    MATERIAL: "Material"
 }

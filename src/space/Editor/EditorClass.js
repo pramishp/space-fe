@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from 'three';
-import { useState, useEffect, useRef, createRef, useCallback, useMemo } from "react";
-import { BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS } from "./constants";
+
+import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
+import {BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, TYPES} from "./constants";
+
 import MenuBar from "./components/MenuBar";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { XR, VRButton, Controllers } from '@react-three/xr';
@@ -68,12 +70,18 @@ export default class Editor extends React.Component {
     }
 
     // editor operational methods
-    notifyApp = ({ type, data }) => {
-        const { app } = this.props;
-        const { val, instanceId, uuid } = data;
+
+    notifyApp = ({type, data}, notify = true) => {
+        const {app} = this.props;
+        const {val, instanceId, uuid, key} = data;
+
         // notify only if data.instanceId === app.user.instanceId
         if (!app) {
             console.error("app is undefined/null ", app)
+        }
+        // notify is true by default, but for the operations from undo manager, notification are not to be called
+        if (!notify){
+            return;
         }
         if (instanceId !== app.user.instanceId) {
             // as this is the operation performed by other user, no need to notify
@@ -88,15 +96,21 @@ export default class Editor extends React.Component {
             case EDITOR_OPS.DELETE_MESH:
                 app.onDeleteMesh({ uuid, instanceId })
                 break
+
+            case EDITOR_OPS.UPDATE_MESH:
+                app.onUpdateMesh({uuid, instanceId, key, val})
+                break
+
             default:
                 console.error("No such operation is defined in editor: ", type)
         }
     }
 
     // insertMesh in the editor
-    insertMesh = ({ uuid, val, instanceId }) => {
-        const { app } = this.props;
-        const { jsxs: localJsxs, refs: localRefs } = toJSX(val, this.clickCallbacks);
+
+    insertMesh = ({uuid, val, instanceId}, notify=true) => {
+        const {app} = this.props;
+        const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks);
 
         this.setState(prevState => ({
             graph: { ...prevState.graph, ...localJsxs },
@@ -109,11 +123,11 @@ export default class Editor extends React.Component {
         }
 
         // notify app
-        this.notifyApp({ type: EDITOR_OPS.INSERT_MESH, data: { val, instanceId, uuid }, app })
+        this.notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, instanceId, uuid}, app}, notify)
     }
 
-    deleteMesh = ({ uuid, instanceId }) => {
-        const { app } = this.props;
+    deleteMesh = ({uuid, instanceId}, notify=true)=>{
+        const {app} = this.props;
 
         // perform mesh deletion
         this.setState(prevState => {
@@ -129,14 +143,15 @@ export default class Editor extends React.Component {
             })
         })
 
-        console.log('mesh is deleted ', uuid)
 
         // notify app
-        this.notifyApp({ type: EDITOR_OPS.DELETE_MESH, data: { instanceId, uuid }, app })
+
+        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {instanceId, uuid}, app}, notify)
     }
 
     // insertLight in the editor
-    insertLight = ({ uuid, val, instanceId }) => {
+    insertLight = ({uuid, val, instanceId}, notify=true) => {
+
         const jsonData = {
             [uuid]: {
                 ...val.object
@@ -199,8 +214,10 @@ export default class Editor extends React.Component {
         if (!Object.keys(BASIC_OBJECTS).includes(id)) {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
-        const { uuid, val } = BASIC_OBJECTS[id].get();
-        this.insertMesh({ uuid, val, instanceId: app.user.instanceId });
+        const {uuid, val} = BASIC_OBJECTS[id].get();
+        // console.log('on add mesh',val)
+        this.insertMesh({uuid, val, instanceId: app.user.instanceId});
+
     }
 
     onAddLightSelected = (id) => {
@@ -251,6 +268,20 @@ export default class Editor extends React.Component {
         app.onAnimationOrderChanged({ uuid, to })
     }
 
+    onObjectPropsChanged = ({uuid, key, val, type})=>{
+        // console.log(uuid, key, val, type)
+        const {instanceId} = this.props;
+        switch (type){
+            case TYPES.MESH:
+                this.notifyApp({uuid, key, val, instanceId})
+                break
+            case TYPES.MATERIAL:
+                break
+            default:
+                console.error("No such type handled on onObjectPropsChanged method", type)
+        }
+    }
+
     render() {
         const { selectedItems, graph, refGraph } = this.state;
         const { isXR, slideData, otherUsers } = this.props;
@@ -268,7 +299,8 @@ export default class Editor extends React.Component {
                     </div>
 
                 </div>
-                <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph} />
+
+                <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph} onObjectPropsChanged={this.onObjectPropsChanged}/>
 
                 <AnimationTree slides={slideData} onDragAndDrop={this.onAnimationTimelineDragNDrop} />
                 <VRButton />
