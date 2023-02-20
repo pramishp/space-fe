@@ -16,6 +16,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/three": "^0.147.1",
     "@y-presence/client": "^2.0.1",
+    "axios": "^1.3.3",
     "leva": "^0.9.34",
     "lodash": "^4.17.21",
     "mui-color-input": "^1.0.4",

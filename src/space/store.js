@@ -17,6 +17,7 @@ export const roomID = `y-space-${VERSION}`;
 //         connect: true,
 //     }
 // );
+
 export const provider = new WebsocketProvider('ws://localhost:1234', roomID,
      doc, {connect: true})
 //
@@ -26,7 +27,6 @@ export const awareness = provider.awareness;
 export const yMeshes = doc.getMap("objects");
 export const yGeometry = doc.getMap("geometries");
 export const yMaterial = doc.getMap("materials");
-
 
 // Create an undo manager for the shapes and binding maps
 export const undoManager = new Y.UndoManager([yMeshes]);
