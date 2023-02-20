@@ -5,6 +5,7 @@ import * as Y from "yjs";
 
 import {generateUniqueId, objectToYMap} from "../../utils";
 import SingletonSocketProvider from "./Provider";
+import {UndoManager} from "yjs";
 
 
 export function useMultiplayerState(roomId, appInit) {
@@ -26,7 +27,7 @@ export function useMultiplayerState(roomId, appInit) {
 
     const {undoManager} = useMemo(() => {
         //TODO: undo manager for geometry, materials
-        const undoManager = new Y.UndoManager([yMeshes]);
+        const undoManager = new Y.UndoManager([yMeshes, yGeometry, yMaterial]);
         return {undoManager}
     }, [roomId]);
 
@@ -84,19 +85,6 @@ export function useMultiplayerState(roomId, appInit) {
         undoManager.stopCapturing();
 
         doc.transact(() => {
-            // generate unique id
-            const mesh_uuid = generateUniqueId();
-            const geometry_uuid = generateUniqueId();
-            const material_uuid = generateUniqueId();
-
-            //set uuids
-            mesh.uuid = mesh_uuid;
-            geometry.uuid = geometry_uuid;
-            material.uuid = material_uuid;
-
-            // assign geometry and material to mesh
-            mesh.geometry = geometry_uuid;
-            mesh.material = material_uuid;
 
             // convert JS object to Yjs Map
             const shapesMap = objectToYMap(mesh);
@@ -104,9 +92,9 @@ export function useMultiplayerState(roomId, appInit) {
             const materialMap = objectToYMap(material);
 
             //insert into yJs
-            yMeshes.set(mesh_uuid, shapesMap);
-            yGeometry.set(geometry_uuid, geometryMap);
-            yMaterial.set(material_uuid, materialMap);
+            yMeshes.set(mesh.uuid, shapesMap);
+            yGeometry.set(geometry.uuid, geometryMap);
+            yMaterial.set(material.uuid, materialMap);
 
         });
     },);
@@ -223,8 +211,11 @@ export function useMultiplayerState(roomId, appInit) {
 
             events.forEach((event) => {
                 const parents = Array.from(event.transaction.changedParentTypes);
-
+                const origin = event.transaction.origin;
+                const isFromUndoManager = origin instanceof UndoManager
                 const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
+                // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
+                const genericProps = {isFromUndoManager}
                 event.changes.keys.forEach((val, key) => {
                     switch (val.action) {
                         case "update": {
@@ -234,6 +225,7 @@ export function useMultiplayerState(roomId, appInit) {
                                     uuid: fullData.uuid,
                                     key: key,
                                     val: fullData[key],
+                                    ...genericProps
                                 });
                             }
                             break;
@@ -250,11 +242,18 @@ export function useMultiplayerState(roomId, appInit) {
                                         [meshJson.uuid]: meshJson,
                                     },
                                 };
-                                // we mus also send the group data through here.
-                                app.insertGroup({
-                                    uuid: key,
-                                    val: fullData,
-                                });
+                                if (isFromUndoManager){
+                                    //
+                                    app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
+                                } else {
+                                    // we must also send the group data through here.
+                                    app.insertGroup({
+                                        uuid: key,
+                                        val: fullData,
+                                        ...genericProps
+                                    });
+                                }
+
                             } else if (level === 3) {
                                 // maybe the recursive function needs to be added here.
                                 // maybe we can see if the group exists here.
@@ -275,8 +274,7 @@ export function useMultiplayerState(roomId, appInit) {
                                             },
                                         };
 
-
-                                        app.insertMesh({uuid: key, val: fullData, instanceId});
+                                        app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
                                     } else if (meshJson.type === "Mesh") {
                                         const material = yMaterial.get(mesh.get("material"));
                                         const geometry = yGeometry.get(mesh.get("geometry"));
@@ -296,7 +294,7 @@ export function useMultiplayerState(roomId, appInit) {
                                             },
                                         };
                                         // this is where the insertMesh function defined in the renderer gets used
-                                        app.insertMesh({uuid: key, val: fullData, instanceId});
+                                        app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
                                     }
                                 }
                                 // it is a mesh
@@ -315,7 +313,7 @@ export function useMultiplayerState(roomId, appInit) {
                                     }
                                 )
                             } else {
-                                app.deleteMesh({uuid: key, instanceId});
+                                app.deleteMesh({uuid: key, instanceId, ...genericProps});
                             }
                             break;
                         default:

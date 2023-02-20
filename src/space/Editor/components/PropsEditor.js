@@ -3,7 +3,8 @@ import LightEditor from "./PropsEditor/LightPropsEditor";
 import GroupEditor from "./PropsEditor/GroupPropsEditor";
 import MeshEditor from "./PropsEditor/MeshPropsEditor";
 
-function PropsEditor({isXR, selectedItems, refs}) {
+function PropsEditor(props) {
+    const {isXR, selectedItems, refs} = props;
     const Empty = <div style={{'margin': '40px'}}/>
     if (selectedItems.length === 0){
         return Empty
@@ -19,9 +20,9 @@ function PropsEditor({isXR, selectedItems, refs}) {
 
     return (
         <>
-            {object.type.indexOf("Light") !== -1 && <LightEditor light={object}/>}
-            {object.type.indexOf("Group") !== -1 && <GroupEditor group={object}/>}
-            {object.type.indexOf("Mesh") !== -1 && <MeshEditor mesh={object}/>}
+            {object.type.indexOf("Light") !== -1 && <LightEditor light={object} {...props} />}
+            {object.type.indexOf("Group") !== -1 && <GroupEditor group={object} {...props} />}
+            {object.type.indexOf("Mesh") !== -1 && <MeshEditor mesh={object} {...props} />}
         </>
     )
 }

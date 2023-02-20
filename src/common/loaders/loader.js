@@ -217,7 +217,8 @@ export const sampleJson = {
 
 }
 
-export function toJSX(data, clickCallbacks) {
+export function toJSX(val, clickCallbacks) {
+    const data = {...val}
     const jsxs = {};
     let refs = {};
 

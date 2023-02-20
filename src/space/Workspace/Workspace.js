@@ -75,18 +75,19 @@ function Workspace({roomId, user, isXR}) {
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
         const mesh = val.objects[Object.keys(val.objects)[0]]
-        mesh.instanceId = instanceId;
+        mesh.instanceId = instanceId; //TODO: better way to send around instance-id
         const geometry = val.geometries[Object.keys(val.geometries)[0]]
         const material = val.materials[Object.keys(val.materials)[0]]
         onInsertMesh({uuid, mesh, geometry, material})
     }
 
-    app.insertMesh = ({ uuid, val, instanceId }) =>{
+    app.insertMesh = ({ uuid, val, instanceId, isFromUndoManager }) =>{
 
         if (editorRef && editorRef.current){
             const editor = editorRef.current;
-            if (instanceId !== app.user.instanceId){
-                editor.insertMesh({uuid, val, instanceId})
+            if (instanceId !== app.user.instanceId || isFromUndoManager){
+                console.log('insertMesh', val)
+                editor.insertMesh({uuid, val, instanceId}, false)
             }
         }
     }
@@ -123,12 +124,12 @@ function Workspace({roomId, user, isXR}) {
 
     // delete
 
-    app.deleteMesh = ({uuid, instanceId})=>{
+    app.deleteMesh = ({uuid, instanceId, isFromUndoManager})=>{
         if (editorRef && editorRef.current){
             const editor = editorRef.current;
             // console.log('delete Mesh is called')
-            if (instanceId !== app.user.instanceId){
-                editor.deleteMesh({uuid, instanceId})
+            if (instanceId !== app.user.instanceId || isFromUndoManager){
+                editor.deleteMesh({uuid, instanceId}, false)
             }
 
         }
@@ -145,6 +146,18 @@ function Workspace({roomId, user, isXR}) {
     }
 
     app.onUpdateMesh = ({uuid, key, val, instanceId})=>{
+
+    }
+
+    app.updateMaterial = ({ uuid, key, val, instanceId })=>{
+
+    }
+
+    app.onUpdateMaterial = ({uuid, key, val, instanceId})=>{
+
+    }
+
+     app.onReplaceGeometry = ({uuid, key, val, instanceId})=>{
 
     }
 
@@ -175,7 +188,7 @@ function Workspace({roomId, user, isXR}) {
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
             {/*    /!*<AnimationApp/>*!/*/}
             {/*</Canvas>*/}
-            <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
+            <Editor ref={editorRef} instanceId={instanceId} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
             {/*<MyComponent/>*/}
             {/*<XRApp/>*/}
         </div>
