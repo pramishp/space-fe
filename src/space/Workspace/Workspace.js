@@ -7,7 +7,7 @@ import AnimationApp from "../Animation";
 import Presentation from "../Presentation";
 import XRApp from "../webxr";
 import Editor from "../Editor/EditorClass";
-import Main from '../../space/Components/Main';
+import Menu from './Menu';
 
 import {useMultiplayerState} from "../hooks/useMultiplayerState";
 
@@ -151,7 +151,7 @@ function Workspace({roomId, user, isXR}) {
 
     return (
         <>
-        <Main />
+        <Menu />
         <div className="App" style={{height: window.innerHeight}}>
             {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
