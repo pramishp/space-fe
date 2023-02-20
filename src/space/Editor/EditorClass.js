@@ -82,6 +82,10 @@ export default class Editor extends React.Component {
             case EDITOR_OPS.INSERT_MESH:
                 app.onMeshInserted({uuid: uuid, val, instanceId})
                 break
+
+            case EDITOR_OPS.DELETE_MESH:
+                app.onDeleteMesh({uuid, instanceId})
+                break
             default:
                 console.error("No such operation is defined in editor: ", type)
         }
@@ -104,6 +108,28 @@ export default class Editor extends React.Component {
 
         // notify app
         this.notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, instanceId, uuid}, app})
+    }
+
+    deleteMesh = ({uuid, instanceId})=>{
+        const {app} = this.props;
+
+        // perform mesh deletion
+        this.setState(prevState => {
+            const graph = prevState.graph;
+            const refGraph = prevState.refGraph;
+
+            delete graph[uuid]
+            delete refGraph[uuid]
+
+            return({
+            graph: {...graph},
+            refGraph: {...refGraph}
+        })})
+
+        console.log('mesh is deleted ', uuid)
+
+        // notify app
+        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {instanceId, uuid}, app})
     }
 
     // insertLight in the editor
@@ -240,6 +266,7 @@ export default class Editor extends React.Component {
 
                 </div>
                 <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph}/>
+
                 <AnimationTree slides={slideData} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>
                 <div style={{height: window.innerHeight}}>
                     <Canvas legacy={false}
