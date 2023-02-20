@@ -5,6 +5,7 @@ import Editor from "../Editor/EditorClass";
 import Menu from './Menu';
 
 import {useMultiplayerState} from "../hooks/useMultiplayerState";
+import {TYPES} from "../Editor/constants";
 
 
 function Workspace({roomId, user, isXR}) {
@@ -145,15 +146,20 @@ function Workspace({roomId, user, isXR}) {
 
     }
 
-    app.onUpdateMesh = ({uuid, key, val, instanceId})=>{
-
+    app.onUpdateMesh = ({uuid, key, val,  instanceId})=>{
+        onUpdate({uuid, key, val, type: TYPES.MESH})
     }
 
-    app.updateMaterial = ({ uuid, key, val, instanceId })=>{
+    app.updateMaterial = ({ uuid, key, val, object_uuid })=>{
+        if (editorRef && editorRef.current){
+            const editor = editorRef.current;
+            editor.updateMaterial({uuid, key, val, object_uuid})
 
+        }
     }
 
     app.onUpdateMaterial = ({uuid, key, val, instanceId})=>{
+        onUpdate({uuid, key, val, type: TYPES.MATERIAL})
 
     }
 
