@@ -74,9 +74,9 @@ export default function AnimationList({isXR, onClick, refs, selectedItems}) {
             <Flex justifyContent="center" alignItems="center">
                 {Object.entries(animations).map(([uuid, item]) => {
                     return (
-                        <Box centerAnchor>
+                        <Box key={`box-${uuid}`} centerAnchor>
 
-                            <Button isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
+                            <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
                                     onHover={() => onItemHovered({uuid, val: item})}
                                     title={item.name}/>
 

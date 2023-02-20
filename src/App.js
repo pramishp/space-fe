@@ -51,7 +51,7 @@ function App(){
     }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v1"
+    const roomId = "1234-v1.5"
 
     return <Workspace roomId={roomId} user={user}/>
 
