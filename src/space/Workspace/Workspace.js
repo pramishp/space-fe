@@ -9,55 +9,14 @@ import XRApp from "../webxr";
 import Editor from "../Editor/EditorClass";
 import Menu from './Menu';
 
-import {room, useMultiplayerState} from "../hooks/useMultiplayerState";
-// import {roomID} from "../store";
+import {useMultiplayerState} from "../hooks/useMultiplayerState";
 
-function Workspace({roomID}) {
+
+function Workspace({roomId, user, isXR}) {
     const editorRef = useRef();
-    const [isXR, setXR] = useState(false);
-    let joinedUsers = room.getOthers();
-    const [otherUsers, setOtherUsers] = useState(joinedUsers.map(i=>i.presence.tdUser));
-    const checkXR = () => {
-        if (navigator.xr) {
-            setXR(true)
-        } else {
-            setXR(false)
-        }
-    }
-    useEffect(() => {
-        checkXR();
-    })
-
-    const {
-        onMount,
-        onChangePage,
-        onInsertMesh,
-        onDelete,
-        onInsertGroup,
-        onAddChildren,
-        onRemoveChildren,
-        onUpdate,
-        onUndo,
-        onRedo,
-        loading,
-        onChangePresence,
-        getInitData
-    } = useMultiplayerState(roomID);
-
-    useEffect(() => {
-        onMount(app);
-        onChangePresence(app, app.user)
-    }, [isXR, otherUsers]);
+    const [otherUsers, setOtherUsers] = useState([]);
 
     const app = {}
-
-    // load room
-    app.loadRoom = (roomId) => {
-        app.room = {roomId, userId: room.awareness.clientID, users: otherUsers}
-    }
-
-    // user handling
-    app.user = {instanceId: room.awareness.clientID, id: room.awareness.clientID} //TODO: change user id
 
     app.pause = () => {}
 
@@ -73,9 +32,39 @@ function Workspace({roomID}) {
         setOtherUsers([...users])
     }
 
+    const {
+        onMount,
+        onChangePage,
+        onInsertMesh,
+        onDelete,
+        onInsertGroup,
+        onAddChildren,
+        onRemoveChildren,
+        onUpdate,
+        onUndo,
+        onRedo,
+        loading,
+        onChangePresence,
+        getInitData,
+        room,
+        instanceId
+    } = useMultiplayerState(roomId, app);
+
+    // load room
+    app.room = {roomId, userId: instanceId, users: otherUsers}
+
+    // user handling
+    app.user = {id: instanceId, instanceId} //TODO: change user id
+
+    useEffect(() => {
+        onMount(app);
+        onChangePresence(app, app.user);
+    }, [isXR, otherUsers]);
+
+    // console.log('other users: ', instanceId)
+
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
-
         const mesh = val.objects[Object.keys(val.objects)[0]]
         mesh.instanceId = instanceId;
         const geometry = val.geometries[Object.keys(val.geometries)[0]]
@@ -84,6 +73,7 @@ function Workspace({roomID}) {
     }
 
     app.insertMesh = ({ uuid, val, instanceId }) =>{
+
         if (editorRef && editorRef.current){
             const editor = editorRef.current;
             if (instanceId !== app.user.instanceId){
@@ -150,15 +140,14 @@ function Workspace({roomID}) {
         console.log(uuid, " applied animation order changed to ", to)
     }
 
-    let initData = {...getInitData()}
     //TODO: Why console.log(initData) here is called 8 times ?
     const slideData = {};
 
-    const onClick = ()=>{
-        if (editorRef){
-            console.log(app)
-        }
+    if (loading){
+        return <div>Loading</div>
     }
+
+    const initData = getInitData();
 
     return (
         <>
@@ -168,7 +157,6 @@ function Workspace({roomID}) {
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
             {/*    /!*<AnimationApp/>*!/*/}
             {/*</Canvas>*/}
-            <button onClick={onClick}>Get Editor Ref</button>
             <Editor ref={editorRef} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
             {/*<MyComponent/>*/}
             {/*<XRApp/>*/}

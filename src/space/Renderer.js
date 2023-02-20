@@ -5,7 +5,7 @@ import { useThree, useGraph } from '@react-three/fiber'
 import { TransformControls, Box } from '@react-three/drei'
 
 import { toJSX } from '../common/loaders/loader'
-import { room, useMultiplayerState } from './hooks/useMultiplayerState'
+import { useMultiplayerState } from './hooks/useMultiplayerState'
 import { roomID } from './store'
 
 export default function Renderer() {
@@ -18,9 +18,9 @@ export default function Renderer() {
     // get actions; insert, update, delete, group
   }
 
-  app.loadRoom = (roomId) => {
-    app.room = room
-  }
+  // app.loadRoom = (roomId) => {
+  //   app.room = room
+  // }
 
   app.pause = () => {}
 
