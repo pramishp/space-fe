@@ -1,41 +1,26 @@
-import {useCallback, useEffect, useState, useMemo} from "react";
+import {useCallback, useState, useMemo, useEffect} from "react";
 import {Room} from "@y-presence/client";
 import {WebsocketProvider} from "y-websocket";
 import * as Y from "yjs";
 
 import {generateUniqueId, objectToYMap} from "../../utils";
+import SingletonSocketProvider from "./Provider";
 
 
-export function useMultiplayerState(roomId) {
-    const [app, setApp] = useState();
+export function useMultiplayerState(roomId, appInit) {
+    const [app, setApp] = useState(appInit);
     const [loading, setLoading] = useState(true);
-    // const [provider, setProvider] = useState(null)
-    // const [room, setRoom] = useState(null);
-
-    // internal data
-    // const [doc, setDoc] = useState(null);
-    // const [yMeshes, setYMeshes] = useState(null);
-    // const [yGeometry, setYGeometry] = useState(null);
-    // const [yMaterial, setYMaterial] = useState(null);
-
-    // const [undoManager, setUndoManager] = useState(null);
-
 
     const {doc, provider, room} = useMemo(() => {
-        // Create the doc
-        const doc = new Y.Doc();
+
 
         // create provider
-        const provider = new WebsocketProvider('ws://localhost:1234', roomId,
-            doc, {connect: true})
-
+        const {provider, doc} = new SingletonSocketProvider().getProvider(roomId)
         const room = new Room(provider.awareness);
-
-
-
         return {doc, provider, room}
 
     }, [roomId])
+
     const yMeshes = doc.getMap("objects");
     const yGeometry = doc.getMap("geometries");
     const yMaterial = doc.getMap("materials");
@@ -47,66 +32,34 @@ export function useMultiplayerState(roomId) {
     }, [roomId]);
 
     let joinedUsers = room.getOthers();
+    const instanceId = room.awareness.clientID;
 
-
-    useMemo(() => {
-
-        if (!provider || provider.roomname !== roomId) {
-            console.log(provider, roomId, provider && provider.roomname)
-
-            // Create the doc
-            const doc = new Y.Doc();
-
-            const yMeshes = doc.getMap("objects");
-            const yGeometry = doc.getMap("geometries");
-            const yMaterial = doc.getMap("materials");
-
-            setDoc(doc)
-            setYMeshes(yMeshes)
-            setYGeometry(yGeometry)
-            setYMaterial(yMaterial)
-
-            // Create an undo manager for the shapes and binding maps
-            const undoManager = new Y.UndoManager([yMeshes]);
-            setUndoManager(undoManager)
-
-            const initProvider = new WebsocketProvider('ws://localhost:1234', roomId,
-                doc, {connect: true})
-
-            setProvider(initProvider);
-
-            const room = new Room(initProvider.awareness);
-            setRoom(room);
-
-            let joinedUsers = room.getOthers();
-            if (app) {
-                app.loadRoom(roomId, room);
-                app.setInstanceId(room.awareness.clientID);
-                app.setOtherUsers(joinedUsers)
-                app.setInitData(doc.toJSON())
-            }
-
-            return {doc, yMaterial, yMeshes, yGeometry, undoManager, provider: initProvider, room}
-
-        }
-
-    }, [roomId]);
+    /*
+    *   app.loadRoom(roomId, room);
+        app.setInstanceId(room.awareness.clientID);
+        app.setOtherUsers(joinedUsers)
+        app.setInitData(doc.toJSON())
+    * */
 
 
     const onMount = useCallback(
         (app_local) => {
+            // app_local.loadRoom(roomId);
             app_local.pause();
             setApp(app_local);
         },
         [roomId, app],
     );
 
-    const useEffect = () => {
+
+    useEffect(() => {
         if (provider) {
             provider.on('sync', function (isSynced) {
                 if (doc && isSynced && loading) {
-                    // console.log('syn: ',doc.toJSON())
                     setLoading(false);
+                    if (app){
+                        app.updateUsers(room.getOthers())
+                    }
 
                 }
             })
@@ -114,7 +67,7 @@ export function useMultiplayerState(roomId) {
         return () => {
 
         }
-    }
+    })
 
     const onChangePage = useCallback((app, shapes) => {
         undoManager.stopCapturing();
@@ -156,6 +109,7 @@ export function useMultiplayerState(roomId) {
             yMeshes.set(mesh_uuid, shapesMap);
             yGeometry.set(geometry_uuid, geometryMap);
             yMaterial.set(material_uuid, materialMap);
+
         });
     },);
 
@@ -217,6 +171,7 @@ export function useMultiplayerState(roomId) {
     const onRedo = useCallback(() => {
         undoManager.redo();
     },);
+
     /**
      * Callback to update user's (self) presence
      */
@@ -255,7 +210,7 @@ export function useMultiplayerState(roomId) {
         return () => {
             unsubOthers();
         };
-    }, [app]);
+    }, [app, room]);
 
     useEffect(() => {
         if (!app) return;
@@ -267,6 +222,7 @@ export function useMultiplayerState(roomId) {
         window.addEventListener("beforeunload", handleDisconnect);
 
         function handleMeshChanges(events) {
+
             events.forEach((event) => {
                 const parents = Array.from(event.transaction.changedParentTypes);
 
@@ -391,7 +347,7 @@ export function useMultiplayerState(roomId) {
             yMeshes.unobserveDeep(handleMeshChanges);
         };
 
-    }, [app]);
+    }, [app, doc, yMeshes]);
 
     const getInitData = useCallback(() => {
         if (doc) {
@@ -401,13 +357,6 @@ export function useMultiplayerState(roomId) {
         return {};
     },)
 
-    const getYDoc = () => {
-        return doc
-    }
-
-    const getYRoom = () => {
-        return room
-    }
 
     return {
         onMount,
@@ -423,7 +372,9 @@ export function useMultiplayerState(roomId) {
         onChangePresence,
         onChangePage,
         getInitData,
-        getYRoom,
-        getYDoc
+        room,
+        doc,
+        joinedUsers,
+        instanceId
     };
 }

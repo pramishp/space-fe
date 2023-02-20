@@ -14,57 +14,9 @@ import {useMultiplayerState} from "../hooks/useMultiplayerState";
 
 function Workspace({roomId, user, isXR}) {
     const editorRef = useRef();
-
     const [otherUsers, setOtherUsers] = useState([]);
-    const [initData, setInitData] = useState([]);
-
-
-    const {
-        onMount,
-        onChangePage,
-        onInsertMesh,
-        onDelete,
-        onInsertGroup,
-        onAddChildren,
-        onRemoveChildren,
-        onUpdate,
-        onUndo,
-        onRedo,
-        loading,
-        onChangePresence,
-        getInitData,
-        getYRoom,
-    } = useMultiplayerState(roomId);
-
-    useEffect(() => {
-        onMount(app);
-        onChangePresence(app, app.user)
-    }, [isXR, otherUsers]);
-
-    const room = getYRoom();
 
     const app = {}
-
-    // set other users
-    app.setOtherUsers = (joinedUsers)=>{
-        const otherUsers = joinedUsers.map(i=>i.presence.tdUser);
-        setOtherUsers(otherUsers);
-
-    }
-
-
-    // load room
-    app.loadRoom = (roomId, room) => {
-        app.room = {roomId, userId: room.awareness.clientID, users: otherUsers}
-    }
-
-    // set instance id
-    app.setInstanceId = (instanceId)=>{
-        app.user = {...app.user, instanceId}
-    }
-
-    // user handling
-    app.user = {id: user.userId} //TODO: change user id
 
     app.pause = () => {}
 
@@ -80,9 +32,39 @@ function Workspace({roomId, user, isXR}) {
         setOtherUsers([...users])
     }
 
+    const {
+        onMount,
+        onChangePage,
+        onInsertMesh,
+        onDelete,
+        onInsertGroup,
+        onAddChildren,
+        onRemoveChildren,
+        onUpdate,
+        onUndo,
+        onRedo,
+        loading,
+        onChangePresence,
+        getInitData,
+        room,
+        instanceId
+    } = useMultiplayerState(roomId, app);
+
+    // load room
+    app.room = {roomId, userId: instanceId, users: otherUsers}
+
+    // user handling
+    app.user = {id: instanceId, instanceId} //TODO: change user id
+
+    useEffect(() => {
+        onMount(app);
+        onChangePresence(app, app.user);
+    }, [isXR, otherUsers]);
+
+    // console.log('other users: ', instanceId)
+
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
-
         const mesh = val.objects[Object.keys(val.objects)[0]]
         mesh.instanceId = instanceId;
         const geometry = val.geometries[Object.keys(val.geometries)[0]]
@@ -91,6 +73,7 @@ function Workspace({roomId, user, isXR}) {
     }
 
     app.insertMesh = ({ uuid, val, instanceId }) =>{
+
         if (editorRef && editorRef.current){
             const editor = editorRef.current;
             if (instanceId !== app.user.instanceId){
@@ -157,16 +140,14 @@ function Workspace({roomId, user, isXR}) {
         console.log(uuid, " applied animation order changed to ", to)
     }
 
-    app.setInitData = (data)=>{
-        setInitData(data)
-    }
-
     //TODO: Why console.log(initData) here is called 8 times ?
     const slideData = {};
 
     if (loading){
         return <div>Loading</div>
     }
+
+    const initData = getInitData();
 
     return (
         <>
