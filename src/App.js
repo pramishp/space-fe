@@ -4,7 +4,6 @@ import {useEffect, useState} from "react";
 function App(){
     const [isXR, setXR] = useState(false);
 
-
     useEffect(() => {
         checkXR();
     })
@@ -18,9 +17,10 @@ function App(){
     }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234"
+    const roomId = "1234-v1"
 
     return <Workspace roomId={roomId} user={user}/>
+
 }
 
 export default App;

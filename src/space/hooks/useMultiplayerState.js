@@ -13,7 +13,6 @@ export function useMultiplayerState(roomId, appInit) {
 
     const {doc, provider, room} = useMemo(() => {
 
-
         // create provider
         const {provider, doc} = new SingletonSocketProvider().getProvider(roomId)
         const room = new Room(provider.awareness);
@@ -50,7 +49,6 @@ export function useMultiplayerState(roomId, appInit) {
         },
         [roomId, app],
     );
-
 
     useEffect(() => {
         if (provider) {
@@ -317,9 +315,8 @@ export function useMultiplayerState(roomId, appInit) {
                                     }
                                 )
                             } else {
-                                app.deleteMesh({uuid: key});
+                                app.deleteMesh({uuid: key, instanceId});
                             }
-
                             break;
                         default:
                             console.error("no such action");
