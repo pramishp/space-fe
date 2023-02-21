@@ -4,6 +4,7 @@ import React from 'react'
 function VRItem(props) {
     const handleSelect = (event) => {
         console.log(event);
+        // props.onSelect()
         // 
     }
 
