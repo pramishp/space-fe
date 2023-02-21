@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three'
-import { Box, Text } from "@react-three/drei";
+import { Box, Text, Billboard } from "@react-three/drei";
 import { Interactive } from '@react-three/xr';
 
 
@@ -28,13 +28,14 @@ function VRMenuBar({ isXR, onMeshSelected, onLightSelected, onGroupSelected }) {
 
     const handleButtonSelect = (event, menuItem) => {
         const selectedId = event.intersection.object.name;
+        console.log("Selected Id : ", selectedId);
         onMeshSelected(selectedId);
     }
 
     const handleButtonHover = (event) => {
         const selectedId = event.intersection.object.name;
     }
-    
+
 
     const displayMenuOptions = () => {
         let result = [];
@@ -42,11 +43,11 @@ function VRMenuBar({ isXR, onMeshSelected, onLightSelected, onGroupSelected }) {
         result.push(meshOptions.map((menuItem, index) => {
             // change the position based on the index of the button
             let position = [0, 1 - index * 0.08, -2];
-            if (planeRef.current){
+            if (planeRef.current) {
                 const planePosition = planeRef.current.position
                 position = [planePosition.x, 1 - index * 0.08, planePosition.z]
             }
-            
+
             return <Interactive
                 onSelect={(e, menuItem) => handleButtonSelect(e, menuItem)}
             >
@@ -57,7 +58,7 @@ function VRMenuBar({ isXR, onMeshSelected, onLightSelected, onGroupSelected }) {
                     position={position}
                     value={menuItem.id}
                     name={menuItem.id}
-                    
+
                 >
                     <meshPhongMaterial
                         color={'#669'}
@@ -67,22 +68,25 @@ function VRMenuBar({ isXR, onMeshSelected, onLightSelected, onGroupSelected }) {
                     </Text>
                 </Box>
             </Interactive>
-            }
+        }
         ))
 
         return result
     }
 
-    
+
 
     return (
         <>
-            <mesh ref = {planeRef} position={[0, 0, -2]}>
+
+            <mesh ref={planeRef} position={[0, 0, -2]}>
                 <planeBufferGeometry attach="geometry" args={[2, 2]} />
                 <meshBasicMaterial attach="material" color="green" />
             </mesh>
 
             {displayMenuOptions()}
+
+
         </>
     )
 }
