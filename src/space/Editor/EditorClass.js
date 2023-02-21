@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as THREE from 'three';
 
-import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
-import {BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, TYPES} from "./constants";
+import { useState, useEffect, useRef, createRef, useCallback, useMemo } from "react";
+import { BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, TYPES } from "./constants";
 
 import MenuBar from "./components/MenuBar";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -21,6 +21,7 @@ import { AnimationTree } from "./components/AnimationEditor/AnimationSequenceEdi
 import DisplayUsers from "./components/DisplayUsers";
 
 import VRMenuBar from "./components/VRMenuBar";
+import VRItem from "./components/VRItem";
 
 export default class Editor extends React.Component {
 
@@ -71,16 +72,16 @@ export default class Editor extends React.Component {
 
     // editor operational methods
 
-    notifyApp = ({type, data}, notify = true) => {
-        const {app} = this.props;
-        const {val, instanceId, uuid, key} = data;
+    notifyApp = ({ type, data }, notify = true) => {
+        const { app } = this.props;
+        const { val, instanceId, uuid, key } = data;
 
         // notify only if data.instanceId === app.user.instanceId
         if (!app) {
             console.error("app is undefined/null ", app)
         }
         // notify is true by default, but for the operations from undo manager, notification are not to be called
-        if (!notify){
+        if (!notify) {
             return;
         }
         if (instanceId !== app.user.instanceId) {
@@ -98,7 +99,7 @@ export default class Editor extends React.Component {
                 break
 
             case EDITOR_OPS.UPDATE_MESH:
-                app.onUpdateMesh({uuid, instanceId, key, val})
+                app.onUpdateMesh({ uuid, instanceId, key, val })
                 break
 
             default:
@@ -108,9 +109,9 @@ export default class Editor extends React.Component {
 
     // insertMesh in the editor
 
-    insertMesh = ({uuid, val, instanceId}, notify=true) => {
-        const {app} = this.props;
-        const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks);
+    insertMesh = ({ uuid, val, instanceId }, notify = true) => {
+        const { app } = this.props;
+        const { jsxs: localJsxs, refs: localRefs } = toJSX(val, this.clickCallbacks);
 
         this.setState(prevState => ({
             graph: { ...prevState.graph, ...localJsxs },
@@ -123,11 +124,11 @@ export default class Editor extends React.Component {
         }
 
         // notify app
-        this.notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, instanceId, uuid}, app}, notify)
+        this.notifyApp({ type: EDITOR_OPS.INSERT_MESH, data: { val, instanceId, uuid }, app }, notify)
     }
 
-    deleteMesh = ({uuid, instanceId}, notify=true)=>{
-        const {app} = this.props;
+    deleteMesh = ({ uuid, instanceId }, notify = true) => {
+        const { app } = this.props;
 
         // perform mesh deletion
         this.setState(prevState => {
@@ -146,11 +147,11 @@ export default class Editor extends React.Component {
 
         // notify app
 
-        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {instanceId, uuid}, app}, notify)
+        this.notifyApp({ type: EDITOR_OPS.DELETE_MESH, data: { instanceId, uuid }, app }, notify)
     }
 
     // insertLight in the editor
-    insertLight = ({uuid, val, instanceId}, notify=true) => {
+    insertLight = ({ uuid, val, instanceId }, notify = true) => {
 
         const jsonData = {
             [uuid]: {
@@ -214,9 +215,9 @@ export default class Editor extends React.Component {
         if (!Object.keys(BASIC_OBJECTS).includes(id)) {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
-        const {uuid, val} = BASIC_OBJECTS[id].get();
+        const { uuid, val } = BASIC_OBJECTS[id].get();
         // console.log('on add mesh',val)
-        this.insertMesh({uuid, val, instanceId: app.user.instanceId});
+        this.insertMesh({ uuid, val, instanceId: app.user.instanceId });
 
     }
 
@@ -268,12 +269,12 @@ export default class Editor extends React.Component {
         app.onAnimationOrderChanged({ uuid, to })
     }
 
-    onObjectPropsChanged = ({uuid, key, val, type})=>{
+    onObjectPropsChanged = ({ uuid, key, val, type }) => {
         // console.log(uuid, key, val, type)
-        const {instanceId} = this.props;
-        switch (type){
+        const { instanceId } = this.props;
+        switch (type) {
             case TYPES.MESH:
-                this.notifyApp({uuid, key, val, instanceId})
+                this.notifyApp({ uuid, key, val, instanceId })
                 break
             case TYPES.MATERIAL:
                 break
@@ -300,7 +301,7 @@ export default class Editor extends React.Component {
 
                 </div>
 
-                <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph} onObjectPropsChanged={this.onObjectPropsChanged}/>
+                <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph} onObjectPropsChanged={this.onObjectPropsChanged} />
 
                 <AnimationTree slides={slideData} onDragAndDrop={this.onAnimationTimelineDragNDrop} />
                 <VRButton />
@@ -350,9 +351,9 @@ export default class Editor extends React.Component {
                             {
                                 Object.entries(graph).map(([uuid, item]) => {
                                     return (
-                                        <>
+                                        <VRItem uuid={uuid} onSelect={this.onSelect} onPositionChange={this.onPositionChange}>
                                             {item}
-                                        </>
+                                        </VRItem>
                                     )
                                 })
 

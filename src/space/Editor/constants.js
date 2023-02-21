@@ -67,24 +67,26 @@ export const BASIC_LIGHTS = {
 export const BASIC_OBJECTS = {
     box: {
         get: function () {
-            const geometry = new THREE.BoxGeometry(10, 10, 10);
-            const material = new THREE.MeshBasicMaterial();
+            const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const material = new THREE.MeshBasicMaterial({color:'red'});
             const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(-1, 0, 0);
             return mesh2json(mesh)
         }
 
     },
     sphere: {
         get: function () {
-            const geometry = new THREE.SphereGeometry(0.5);
-            const material = new THREE.MeshBasicMaterial();
+            const geometry = new THREE.SphereGeometry(0.2);
+            const material = new THREE.MeshBasicMaterial({color:'green'});
             const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(1, 0, 0)
             return mesh2json(mesh);
         }
     },
     cylinder: {
         get: function () {
-            const geometry = new THREE.CylinderGeometry(1, 1, 1);
+            const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5);
             const material = new THREE.MeshBasicMaterial();
             const mesh = new THREE.Mesh(geometry, material);
             return mesh2json(mesh);
