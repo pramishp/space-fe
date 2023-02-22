@@ -26,6 +26,8 @@ export function useMultiplayerState(roomId, appInit) {
     const yMeshes = doc.getMap("objects");
     const yGeometry = doc.getMap("geometries");
     const yMaterial = doc.getMap("materials");
+    const yAnimation = doc.getMap("animations");
+
 
     const {undoManager} = useMemo(() => {
         //TODO: undo manager for geometry, materials
@@ -42,7 +44,6 @@ export function useMultiplayerState(roomId, appInit) {
         app.setOtherUsers(joinedUsers)
         app.setInitData(doc.toJSON())
     * */
-
 
     const onMount = useCallback(
         (app_local) => {
@@ -158,6 +159,25 @@ export function useMultiplayerState(roomId, appInit) {
         });
     },);
 
+    const onAnimationAdd = useCallback(({uuid, val}) => {
+        undoManager.stopCapturing();
+        doc.transact(() => {
+            // convert JS object to Yjs Map
+            const animationMap = objectToYMap(val);
+            //insert into yJs
+            yAnimation.set(uuid, animationMap);
+        });
+    },);
+
+    const onAnimationDelete = useCallback(({uuid}) => {
+        undoManager.stopCapturing();
+        doc.transact(() => {
+
+            yAnimation.delete(uuid);
+        });
+    },);
+
+
     const onUndo = useCallback(() => {
         undoManager.undo();
     },);
@@ -216,14 +236,15 @@ export function useMultiplayerState(roomId, appInit) {
         window.addEventListener("beforeunload", handleDisconnect);
 
         function handleMeshChanges(events) {
-
             events.forEach((event) => {
                 const parents = Array.from(event.transaction.changedParentTypes);
                 const origin = event.transaction.origin;
                 const isFromUndoManager = origin instanceof UndoManager
+                // isFromSelf holds if the change is client's own change or the event if from a remote client
+                const isMyEvent = !(origin instanceof WebsocketProvider)
                 const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
                 // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
-                const genericProps = {isFromUndoManager}
+                const genericProps = {isFromUndoManager, isMyEvent}
                 event.changes.keys.forEach((val, key) => {
                     switch (val.action) {
                         case "update": {
@@ -252,7 +273,7 @@ export function useMultiplayerState(roomId, appInit) {
                                 };
                                 if (isFromUndoManager) {
                                     //
-                                    app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
+                                    app.insertMesh({uuid: key, val: fullData, ...genericProps});
                                 } else {
                                     // we must also send the group data through here.
                                     app.insertGroup({
@@ -274,7 +295,6 @@ export function useMultiplayerState(roomId, appInit) {
                                 } else {
                                     const mesh = yMeshes.get(key);
                                     const meshJson = mesh.toJSON();
-                                    const instanceId = meshJson.instanceId;
                                     if (meshJson.type === "Group") {
                                         const fullData = {
                                             objects: {
@@ -282,7 +302,7 @@ export function useMultiplayerState(roomId, appInit) {
                                             },
                                         };
 
-                                        app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
+                                        app.insertMesh({uuid: key, val: fullData, ...genericProps});
                                     } else if (meshJson.type === "Mesh") {
                                         const material = yMaterial.get(mesh.get("material"));
                                         const geometry = yGeometry.get(mesh.get("geometry"));
@@ -302,7 +322,7 @@ export function useMultiplayerState(roomId, appInit) {
                                             },
                                         };
                                         // this is where the insertMesh function defined in the renderer gets used
-                                        app.insertMesh({uuid: key, val: fullData, instanceId, ...genericProps});
+                                        app.insertMesh({uuid: key, val: fullData, ...genericProps});
                                     }
                                 }
                                 // it is a mesh
@@ -321,7 +341,7 @@ export function useMultiplayerState(roomId, appInit) {
                                     }
                                 )
                             } else {
-                                app.deleteMesh({uuid: key, instanceId, ...genericProps});
+                                app.deleteMesh({uuid: key, ...genericProps});
                             }
                             break;
                         default:
@@ -343,6 +363,8 @@ export function useMultiplayerState(roomId, appInit) {
                 const parents = Array.from(event.transaction.changedParentTypes);
                 const origin = event.transaction.origin;
                 const isFromUndoManager = origin instanceof UndoManager
+                const isMyEvent = !(origin instanceof WebsocketProvider)
+
                 const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
                 // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
                 const genericProps = {isFromUndoManager}
@@ -350,6 +372,7 @@ export function useMultiplayerState(roomId, appInit) {
 
                     switch (val.action) {
                         case "update":
+                            //TODO: bug: called 3 times for single event
                             const material = event.target.toJSON()
                             const objectsList = Object.entries(yMeshes.toJSON()).map(([uuid, val]) => val);
                             // get mesh uuid
@@ -376,9 +399,44 @@ export function useMultiplayerState(roomId, appInit) {
 
         }
 
+        function handleAnimationChanges(events) {
+            events.forEach((event) => {
+                const parents = Array.from(event.transaction.changedParentTypes);
+                const origin = event.transaction.origin;
+                const isFromUndoManager = origin instanceof UndoManager
+                const isMyEvent = !(origin instanceof WebsocketProvider)
+
+                const level = parents.length; // if level == 4, it is the property of a mesh object like {position, rotation, ...}
+                // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
+                const genericProps = {isFromUndoManager}
+                event.changes.keys.forEach((val, key) => {
+                    switch (val.action) {
+                        case "update":
+
+                            break;
+                        case "add":
+                            const data = yAnimation.get(key).toJSON();
+                            app.addAnimation({uuid: data.uuid, val: data, ...genericProps})
+                            break
+
+                        case "delete":
+                            app.deleteAnimation({uuid: key, ...genericProps})
+                            break
+
+                        default:
+                            console.error("no such action");
+                    }
+                    //console.log('handle mesh changes called')
+                    //console.log(key, val.action, 'level:', level)
+                });
+            });
+
+        }
+
         async function setup() {
             yMeshes.observeDeep(handleMeshChanges);
-            yMaterial.observeDeep(handleMaterialChanges)
+            yMaterial.observeDeep(handleMaterialChanges);
+            yAnimation.observeDeep(handleAnimationChanges);
             setLoading(false);
         }
 
@@ -409,6 +467,8 @@ export function useMultiplayerState(roomId, appInit) {
         onInsertGroup,
         onAddChildren,
         onRemoveChildren,
+        onAnimationAdd,
+        onAnimationDelete,
         onUndo,
         onRedo,
         loading,

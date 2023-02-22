@@ -45,9 +45,9 @@ export function Button(props) {
                 {...props}
                 args={[0.4, 0.1, 0.1]}
                 scale={hover ? 1.5 : 1}
-                onClick={!isXR?onSelect:()=>{}}
-                onPointerOver={!isXR?onItemHovered:()=>{}}
-                onPointerOut={!isXR?onBlur:()=>{}}
+                onClick={!isXR && onSelect?onSelect:()=>{}}
+                onPointerOver={!isXR && onItemHovered?onItemHovered:()=>{}}
+                onPointerOut={!isXR && onBlur?onBlur:()=>{}}
             >
                 <meshStandardMaterial
                     color={color}

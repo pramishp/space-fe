@@ -10,6 +10,7 @@ import Register from './space/Workspace/Pages/Register'
 import Workspace from "./space/Workspace/Workspace";
 import {useEffect, useState} from "react";
 
+
 export const Navigator = () => {
     return (
         <div className='App'>
@@ -51,10 +52,9 @@ function App(){
     }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v1.5"
+    const roomId = "1234-v1.9"
 
     return <Workspace roomId={roomId} user={user}/>
-
 }
 
 export default App
