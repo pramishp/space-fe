@@ -1,35 +1,44 @@
 import * as React from "react";
 import * as THREE from 'three';
 
-import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
-import {BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, TYPES} from "./constants";
+import { useState, useEffect, useRef, createRef, useCallback, useMemo } from "react";
+import { BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, TYPES } from "./constants";
 
 import MenuBar from "./components/MenuBar";
-import {Canvas, useFrame} from "@react-three/fiber";
-import {XR, VRButton, Controllers} from '@react-three/xr';
-import {gltf2JSX, sampleJson, toJSX} from "../../common/loaders/loader";
-import {OrbitControls, TransformControls, GizmoHelper, GizmoViewport, useHelper} from "@react-three/drei";
-import {Selection} from "./Selection";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { XR, VRButton, Controllers } from '@react-three/xr';
+import { gltf2JSX, sampleJson, toJSX } from "../../common/loaders/loader";
+import { OrbitControls, TransformControls, GizmoHelper, GizmoViewport, useHelper } from "@react-three/drei";
+import { Selection } from "./Selection";
 import Controls from "./Controls";
 import Ground from "./components/Ground";
+
 import {loadGltf} from "../../common/loaders/FileLoaders";
 import {ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES} from "../../common/consts";
+
 import Helpers from "./Helpers";
 import PropsEditor from "./components/PropsEditor";
 import AnimationList from "./components/AnimationEditor/AnimationList";
-import {AnimationTree} from "./components/AnimationEditor/AnimationSequenceEditor";
+import { AnimationTree } from "./components/AnimationEditor/AnimationSequenceEditor";
 import DisplayUsers from "./components/DisplayUsers";
+
 
 import VRMenuBar from "./components/VRMenuBar";
 import VRPropsEditor from "./components/VRPropsEditor";
 import {generateUniqueId} from "../../utils";
+
+import MeshMenuBar from "./components/VRMenuBar/MeshMenuBar";
+import LightMenuBar from "./components/VRMenuBar/LightMenuBar";
+
+import VRItem from "./components/VRItem";
+
 
 export default class Editor extends React.Component {
 
     constructor(props) {
         super(props);
         // mesh click callback
-        this.clickCallbacks = {onClick: this.onMeshClickCallback, onDoubleClick: this.onMeshDoubleClick};
+        this.clickCallbacks = { onClick: this.onMeshClickCallback, onDoubleClick: this.onMeshDoubleClick };
 
         this.jsxData = toJSX(props.initData, this.clickCallbacks);
         this.state = {
@@ -60,7 +69,7 @@ export default class Editor extends React.Component {
 
     // set jsx and refs as states variables
     onMeshClickCallback = (e, uuid) => {
-        this.onSelect({uuid, object: e.object});
+        this.onSelect({ uuid, object: e.object });
     }
 
     onMeshDoubleClick = (e, uuid) => {
@@ -123,8 +132,8 @@ export default class Editor extends React.Component {
         const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks);
 
         this.setState(prevState => ({
-            graph: {...prevState.graph, ...localJsxs},
-            refGraph: {...prevState.refGraph, ...localRefs}
+            graph: { ...prevState.graph, ...localJsxs },
+            refGraph: { ...prevState.refGraph, ...localRefs }
         }))
 
         // // if same user insert a mesh, select inserted mesh
@@ -149,8 +158,8 @@ export default class Editor extends React.Component {
             delete refGraph[uuid]
 
             return ({
-                graph: {...graph},
-                refGraph: {...refGraph}
+                graph: { ...graph },
+                refGraph: { ...refGraph }
             })
         })
 
@@ -162,6 +171,7 @@ export default class Editor extends React.Component {
 
     // insertLight in the editor
     insertLight = ({uuid, val}, notify = true) => {
+
         const jsonData = {
             [uuid]: {
                 ...val.object
@@ -177,7 +187,7 @@ export default class Editor extends React.Component {
 
     onPositionChange = (e) => {
 
-        const {selectedItems, refGraph} = this.state;
+        const { selectedItems, refGraph } = this.state;
         if (selectedItems.length === 1) {
             const uuid = selectedItems[0];
             //TODO: debug meshRef is undefined
@@ -220,39 +230,39 @@ export default class Editor extends React.Component {
     }
 
     // onSelect
-    onSelect = ({uuid, object}) => {
+    onSelect = ({ uuid, object }) => {
         const mesh = object;
-        const {selectedItems} = this.state;
-        const {transformRef} = this;
+        const { selectedItems } = this.state;
+        const { transformRef } = this;
         if ((selectedItems.length === 1 && uuid !== selectedItems[0]) || selectedItems.length === 0) {
             if (transformRef.current && mesh) {
                 transformRef.current.attach(mesh);
                 // also set rotation
             }
-            this.setState(prevState => ({selectedItems: [uuid]}))
+            this.setState(prevState => ({ selectedItems: [uuid] }))
 
         }
 
     }
 
     onDeselect = () => {
-        const {transformRef} = this;
+        const { transformRef } = this;
 
         // hide transform Control
         if (transformRef.current) {
             transformRef.current.detach();
         }
-        this.setState(prevState => ({selectedItems: []}))
+        this.setState(prevState => ({ selectedItems: [] }))
 
     }
 
     // onMeshSelected, onLightSelected, onGroupSelected
     onAddMeshSelected = (id) => {
-        const {app} = this.props;
+        const { app } = this.props;
         if (!Object.keys(BASIC_OBJECTS).includes(id)) {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
-        const {uuid, val} = BASIC_OBJECTS[id].get();
+        const { uuid, val } = BASIC_OBJECTS[id].get();
         // console.log('on add mesh',val)
         this.insertMesh({uuid, val});
 
@@ -270,7 +280,7 @@ export default class Editor extends React.Component {
 
     // upload model
     onModelUpload = (e) => {
-        const {app} = this.props;
+        const { app } = this.props;
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.readAsArrayBuffer(file)
@@ -282,6 +292,7 @@ export default class Editor extends React.Component {
                     const uuid = gltf.scene.uuid;
                     gltf.type = IMPORT_MESH_TYPES.GLTF_GROUP;
                     // console.log(gltf)
+
                     this.insertMesh({uuid, val: gltf})
                 },
                 (error) => {
@@ -291,9 +302,11 @@ export default class Editor extends React.Component {
     }
 
     // onAnimation clicked
+
     /* A function that is called when an animation is clicked in the animation list. */
     onAnimationListClicked = ({uuid, val}) => {
         // obtained uuid is of the animation that is clicked
+
 
         // generate unique uuid
         const id_ = generateUniqueId();
@@ -349,16 +362,17 @@ export default class Editor extends React.Component {
         return (
             <div>
                 <div>
-                    <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <MenuBar onLightSelected={this.onAddLightSelected}
-                                 onMeshSelected={this.onAddMeshSelected}
-                                 onGroupSelected={this.onAddGroupSelected}
+                            onMeshSelected={this.onAddMeshSelected}
+                            onGroupSelected={this.onAddGroupSelected}
                         />
 
-                        <input type="file" onChange={this.onModelUpload}/>
+                        <input type="file" onChange={this.onModelUpload} />
                     </div>
 
                 </div>
+
 
                 <PropsEditor isXR={isXR} selectedItems={selectedItems} refs={refGraph}
                              animations={animations}
@@ -369,40 +383,49 @@ export default class Editor extends React.Component {
                 <VRButton/>
                 <div style={{height: window.innerHeight}}>
                     <Canvas legacy={false}
-                            camera={{
-                                fov: 50, aspect: 1,
-                                near: 0.01, far: 1000,
-                                position: [0, 5, 10],
-                            }}
-                            onPointerMissed={this.onPointerMissed}>
+                        camera={{
+                            fov: 50, aspect: 1,
+                            near: 0.01, far: 1000,
+                            position: [0, 5, 10],
+                        }}
+                        onPointerMissed={this.onPointerMissed}>
                         <XR>
                             {/* FOr the XR controllers ray visibility */}
                             <Controllers
                                 /** Optional material props to pass to controllers' ray indicators */
-                                rayMaterial={{color: 'blue'}}
+                                rayMaterial={{ color: 'blue' }}
                                 /** Whether to hide controllers' rays on blur. Default is `false` */
                                 hideRaysOnBlur={false}
                             />
                             {/* Initial Setting for grid, light and background color */}
-                            <color attach="background" args={["#111"]}/>
-                            <ambientLight intensity={2}/>
-                            <pointLight position={[20, 10, -10]} intensity={2}/>
+                            <color attach="background" args={["#111"]} />
+                            <ambientLight intensity={2} />
+                            <pointLight position={[20, 10, -10]} intensity={2} />
                             {/* <primitive object={new THREE.AxesHelper(10, 10)} />
                             <primitive object={new THREE.GridHelper(6, 5)} /> */}
 
-                            {isXR &&
-                                <VRMenuBar onLightSelected={this.onAddLightSelected}
-                                           onMeshSelected={this.onAddMeshSelected}
-                                           onGroupSelected={this.onAddGroupSelected}/>}
-                            {/*{<VRPropsEditor/>}*/}
-                            <DisplayUsers otherUsers={otherUsers}/>
+                            {/* <VRMenuBar onLightSelected={this.onAddLightSelected}
+                                onMeshSelected={this.onAddMeshSelected}
+                                onGroupSelected={this.onAddGroupSelected} /> */}
+
+                            <MeshMenuBar onLightSelected={this.onAddLightSelected}
+                                onMeshSelected={this.onAddMeshSelected}
+                                onGroupSelected={this.onAddGroupSelected} />
+
+                            <LightMenuBar onLightSelected={this.onAddLightSelected}
+                                onMeshSelected={this.onAddMeshSelected}
+                                onGroupSelected={this.onAddGroupSelected} />
+
+
+
+                            <DisplayUsers otherUsers={otherUsers} />
 
                             <AnimationList isXR={isXR} refs={refGraph}
-                                           selectedItems={selectedItems}
-                                           onClick={this.onAnimationListClicked}/>
-                            <Helpers refs={refGraph} selectedItems={selectedItems} onSelect={this.onSelect}/>
+                                selectedItems={selectedItems}
+                                onClick={this.onAnimationListClicked} />
+                            <Helpers refs={refGraph} selectedItems={selectedItems} onSelect={this.onSelect} />
 
-                            <Ground/>
+                            <Ground />
 
                             {/*{*/}
                             {/*    !isXR &&*/}
@@ -410,13 +433,13 @@ export default class Editor extends React.Component {
                             {/*               setStart={setStart} setSelecting={setSelecting}/>*/}
                             {/*}*/}
                             <TransformControls ref={this.transformRef} visible={selectedItems.length > 0}
-                                               onObjectChange={(e) => this.onPositionChange(e)}/>
+                                onObjectChange={(e) => this.onPositionChange(e)} />
                             {
                                 Object.entries(graph).map(([uuid, item]) => {
                                     return (
-                                        <>
+                                        <VRItem uuid={uuid} onSelect={this.onSelect} onPositionChange={this.onPositionChange}>
                                             {item}
-                                        </>
+                                        </VRItem>
                                     )
                                 })
 
@@ -425,12 +448,12 @@ export default class Editor extends React.Component {
                             {/*<>*/}
                             {/*    <ambientLight ref={directionalLightRef} args={[0x505050]}/>*/}
                             {/*</>*/}
-                            <Controls makeDefault/>
+                            <Controls makeDefault />
                             <GizmoHelper
                                 alignment="bottom-right" // widget alignment within scene
                                 margin={[80, 80]} // widget margins (X, Y)
                             >
-                                <GizmoViewport axisColors={['red', 'green', 'blue']} labelColor="black"/>
+                                <GizmoViewport axisColors={['red', 'green', 'blue']} labelColor="black" />
                             </GizmoHelper>
                         </XR>
                     </Canvas>
