@@ -13,7 +13,9 @@ import { WorkspaceProvider } from './space/Workspace/Context/WorkspaceContext'
 import Workspace from "./space/Workspace/Workspace";
 import {useEffect, useState} from "react";
 
+
 // how to create a link for each workspace.
+
 export const Navigator = () => {
     return (
         <div className='App'>
@@ -55,10 +57,9 @@ function App(){
   }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v1.5"
+    const roomId = "1234-v1.9"
 
     return <Workspace roomId={roomId} user={user}/>
-
 }
 
 export default App
