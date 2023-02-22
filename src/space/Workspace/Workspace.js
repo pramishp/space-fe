@@ -1,11 +1,6 @@
 import {useEffect, useRef, useState} from "react";
-import {Canvas} from "@react-three/fiber";
-
 import '../../App.css';
-import Renderer from "../Renderer";
-import AnimationApp from "../Animation";
-import Presentation from "../Presentation";
-import XRApp from "../webxr";
+
 import Editor from "../Editor/EditorClass";
 import Menu from './Menu';
 
@@ -61,7 +56,21 @@ function Workspace({roomId, user, isXR}) {
         onChangePresence(app, app.user);
     }, [isXR, otherUsers]);
 
-    // console.log('other users: ', instanceId)
+
+    function handleKeyDown(event){
+        if ((event.ctrlKey||event.metaKey) && event.shiftKey && (event.key === 'z'|| event.key === 'Z' || event.key === 'KeyZ')) {
+            onRedo();
+        } else if ((event.ctrlKey||event.metaKey) && event.key === 'z') {
+            onUndo();
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     // mesh
     app.onMeshInserted = ({uuid, val, instanceId}) => {
@@ -82,6 +91,7 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
+    /*
     //group
     app.insertGroup = ({ uuid, val, instanceId }) =>{
 
@@ -109,10 +119,19 @@ function Workspace({roomId, user, isXR}) {
 
     }
 
+     */
+
     // delete
 
     app.deleteMesh = ({uuid, instanceId})=>{
+        if (editorRef && editorRef.current){
+            const editor = editorRef.current;
+            // console.log('delete Mesh is called')
+            if (instanceId !== app.user.instanceId){
+                editor.deleteMesh({uuid, instanceId})
+            }
 
+        }
     }
 
     app.onDeleteMesh = ({uuid, instanceId})=>{
@@ -148,7 +167,6 @@ function Workspace({roomId, user, isXR}) {
     }
 
     const initData = getInitData();
-
     return (
         <>
         <Menu />

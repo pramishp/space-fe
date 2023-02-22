@@ -21,7 +21,6 @@ function Register() {
         console.log(error.response.data);
       });
   }
-
   return (
     <form onSubmit={handleSubmit}>
       <input type="text" placeholder="Username" value={username} onChange={event => setUsername(event.target.value)} />

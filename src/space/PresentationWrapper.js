@@ -1,14 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
-import AuthContext from './Workspace/Context/AuthContext'
-import Workspace from './Workspace/Workspace'
+import { useContext, useEffect } from "react"
 
-// roomId/workspaceId is found uing project id.
-//HACK: does authTokens.access needs to be in the dependency array.
-const WorkspaceWrapper = (props) => {
-    const {user, authTokens} = useContext(AuthContext)
-  const [workspaceId, setWorkspaceId] = useState('')
-//TODO:
-  useEffect(() => {
+// go to this link after the fetch of workspaceId from the presentation link is completed
+const PresentationWrapper = (props) => {
+console.log(props.project_id)
+   const {user, authTokens} = useContext(AuthContext)
+    const [workspaceId, setWorkspaceId] = useState('')
+      useEffect(() => {
     const fetchWorkspaceId = async () => {
       try {
         const project_id = props.project_id
@@ -28,13 +25,12 @@ const WorkspaceWrapper = (props) => {
     }
     fetchWorkspaceId()
   }, [props.project_id])
-
-    //TODO: check if the user data is enough
+//TODO: send data to the presentation component
   return (
       <div>
-        <Workspace roomId={workspaceId} user={user} />
       </div>
 
   )
 }
-export default WorkspaceWrapper
+
+export default PresentationWrapper

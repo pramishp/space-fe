@@ -10,8 +10,37 @@ import WorkspaceWrapper from './space/WorkspaceWrapper'
 import { useEffect, useState } from 'react'
 import { WorkspaceProvider } from './space/Workspace/Context/WorkspaceContext'
 
-function App() {
-  const [isXR, setXR] = useState(false)
+import Workspace from "./space/Workspace/Workspace";
+import {useEffect, useState} from "react";
+
+// how to create a link for each workspace.
+export const Navigator = () => {
+    return (
+        <div className='App'>
+            <Router>
+                <AuthProvider>
+                    <Navbar />
+                    <Routes>
+                        <Route path="/" element={<App/>}/>
+                        <Route path='/register' element={<Register/>} />
+                        <Route path='/login' element={<LoginPage/>} />
+                        <Route
+                        path='/dashboard'
+                        element = {
+                            <PrivateRoute redirectTo='/login'>
+                                <Dashboard />
+                            </PrivateRoute>
+                        }
+                        />
+                    </Routes>
+                </AuthProvider>
+            </Router>
+        </div>
+    )
+}
+
+function App(){
+    const [isXR, setXR] = useState(false);
 
   useEffect(() => {
     checkXR()
@@ -25,35 +54,11 @@ function App() {
     }
   }
 
-  const user = { id: 'aadsd345-khajs43' }
-  const roomId = '1234'
+    const user = {id: "aadsd345-khajs43"}
+    const roomId = "1234-v1"
 
-  return (
-    <div className='App'>
-      <Router>
-        <AuthProvider>
-          <Navbar />
-          <Routes>
-            <Route path='/register' element={<Register />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route
-              path='/dashboard'
-              element={
-                <PrivateRoute redirectTo='/login'>
-                  <WorkspaceProvider>
-                    <Dashboard />
-                  </WorkspaceProvider>
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-          <WorkspaceProvider>
-            <WorkspaceWrapper />
-          </WorkspaceProvider>
-        </AuthProvider>
-      </Router>
-    </div>
-  )
+    return <Workspace roomId={roomId} user={user}/>
+
 }
 
 export default App
