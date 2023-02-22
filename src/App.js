@@ -6,13 +6,9 @@ import Dashboard from './space/Workspace/Dashboard'
 import LoginPage from './space/Workspace/Pages/LoginPage'
 import Navbar from './space/Workspace/Components/Navbar'
 import Register from './space/Workspace/Pages/Register'
-import WorkspaceWrapper from './space/WorkspaceWrapper'
 import { useEffect, useState } from 'react'
-import { WorkspaceProvider } from './space/Workspace/Context/WorkspaceContext'
 
 import Workspace from "./space/Workspace/Workspace";
-import {useEffect, useState} from "react";
-
 
 // how to create a link for each workspace.
 

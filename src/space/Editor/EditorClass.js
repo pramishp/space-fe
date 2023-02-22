@@ -22,9 +22,6 @@ import AnimationList from "./components/AnimationEditor/AnimationList";
 import { AnimationTree } from "./components/AnimationEditor/AnimationSequenceEditor";
 import DisplayUsers from "./components/DisplayUsers";
 
-
-import VRMenuBar from "./components/VRMenuBar";
-import VRPropsEditor from "./components/VRPropsEditor";
 import {generateUniqueId} from "../../utils";
 
 import MeshMenuBar from "./components/VRMenuBar/MeshMenuBar";
