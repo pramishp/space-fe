@@ -15,7 +15,6 @@ function FileUpload() {
     setSelectedFiles(files);
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();

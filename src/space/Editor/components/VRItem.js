@@ -3,12 +3,12 @@ import React from 'react'
 
 function VRItem(props) {
     const handleSelect = (event) => {
-        console.log(event);
+        // console.log(event);
         // props.onSelect()
         // 
     }
 
-    console.log("Props children : ", props.children);
+    // console.log("Props children : ", props.children);
     return (
         <>
             <RayGrab>

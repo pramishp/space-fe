@@ -15,9 +15,6 @@ export default function Helpers({selectedItems, refs, onSelect}) {
                 if (!mesh){
                     return null;
                 }
-                const picker = new THREE.Mesh(geometry, material);
-                picker.name = 'picker';
-                picker.userData.object = mesh;
 
                 if (mesh.type.indexOf("Light") !== -1) {
                     switch (mesh.type) {

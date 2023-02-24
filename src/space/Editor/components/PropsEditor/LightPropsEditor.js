@@ -1,29 +1,23 @@
 import React, {useState} from 'react';
 
-const LightEditor = ({light}) => {
-    const [color, setColor] = useState('#'+light.color.getHexString());
-    const [intensity, setIntensity] = useState(light.intensity);
-    const [distance, setDistance] = useState(light.distance);
-    const [decay, setDecay] = useState(light.decay);
+const LightEditor = ({light, onObjectPropsChanged}) => {
+
+    const {color, intensity, distance, decay} = light;
 
     const handleColorChange = e => {
-        setColor(e.target.value);
-        light.color.set(e.target.value);
+        onObjectPropsChanged({uuid: light.uuid, key: "color", val: e.target.value})
     };
 
     const handleIntensityChange = e => {
-        setIntensity(e.target.value);
-        light.intensity = e.target.value;
+        onObjectPropsChanged({uuid: light.uuid, key: "intensity", val: e.target.value})
     };
 
     const handleDistanceChange = e => {
-        setDistance(e.target.value);
-        light.distance = e.target.value;
+        onObjectPropsChanged({uuid: light.uuid, key: "distance", val: e.target.value})
     };
 
     const handleDecayChange = e => {
-        setDecay(e.target.value);
-        light.decay = e.target.value;
+        onObjectPropsChanged({uuid: light.uuid, key: "decay", val: e.target.value})
     };
 
     return (
@@ -36,7 +30,7 @@ const LightEditor = ({light}) => {
             }}>
             <div>
                 <label>Color:</label>
-                <input type="color" value={color} onChange={handleColorChange}/>
+                <input type="color" value={'#'+color.getHexString()} onChange={handleColorChange}/>
             </div>
             <div>
                 <label>Intensity:</label>
