@@ -1,4 +1,5 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
+import AuthContext from "./Workspace/Context/AuthContext"
 
 // go to this link after the fetch of workspaceId from the presentation link is completed
 const PresentationWrapper = (props) => {

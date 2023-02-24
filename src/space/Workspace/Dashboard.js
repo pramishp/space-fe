@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
-import { Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import AuthContext from './Context/AuthContext'
 import AddProject from './Components/AddProject'
-import WorkspaceContext from './Context/WorkspaceContext'
+
 import WorkspaceWrapper from '../WorkspaceWrapper'
+import PresentationWrapper from '../PresentationWrapper.js'
 const Dashboard = () => {
   const { authTokens, logoutUser } = useContext(AuthContext)
-  const { setWorkspaceId } = useContext(WorkspaceContext)
+
   const [workspacePin, setWorkspacePin] = useState('')
   const [presentationLink, setPresentationLink] = useState('')
   const [projects, setProjects] = useState([])
@@ -23,6 +24,7 @@ const Dashboard = () => {
       },
     })
     let data = await response.json()
+    console.log(response.status)
     if (response.status === 200) {
       setProjects(data)
     } else if (response.statusText === 'Unauthorized') {
@@ -35,66 +37,76 @@ const Dashboard = () => {
   // TODO: list of users who are authenticated for a project.
   // TODO: create a url which the user will navigate to.
   const handleClick = (projectId) => {
-    setWorkspaceId(projectId)
-    navigate(`/workspace:${projectId}`)
+      console.log(projectId)
+    navigate(`/dashboard/workspace:${projectId}`)
   }
   // receive the data here and then send it to the presentation wrapper
   // navigate to another link.
   // get the workspace id then navigate to it.
   const handleWPSubmit = async (event) => {
     event.preventDefault()
-    const response = await fetch(`http://127.0.0.1:8000/app/wid-by-presentationlink/${workspacePin}`, {
-    method: 'GET',
-    headers: {
-    'Content-Type': 'application/json',
-    Authorization: 'Bearer' +String(authTokens.access)
-    }
-    })
+    const response = await fetch(
+      `http://127.0.0.1:8000/app/pid-by-workspace-pin/?workspace_pin=${workspacePin}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + String(authTokens.access),
+        },
+      }
+    )
     const data = await response.json()
     if (response.status === 200) {
-    console.log(data)
-    navigate('/workspace:${data}')
+      console.log(data.project_id)
+      navigate(`/dashboard/workspace:${data.project_id}`)
     } else if (response.statusText === 'Unauthorized') {
-    logoutUser()
+      logoutUser()
     }
   }
   // receive the data here and then send it to the workspace wrapper
   const handlePLSubmit = async (event) => {
     event.preventDefault()
-    const response = await  fetch(`http://127.0.0.1:8000/app/wid-by-presentationlink/${presentationLink}`, {
-          method: 'GET',
-          headers: {
-              'Content-Type':'application/json',
-              Authorization: 'Bearer '+String(authTokens.access)
-          },
-      })
-      const data = await response.json()
-      if (response.status === 200) {
-      console.log(data)
-          navigate(`/presentation:${data}`)
-      } else if (response.statusText === 'Unauthorized') {
-      logoutUser()
+    const response = await fetch(
+      `http://127.0.0.1:8000/app/pid-by-presentation-link/?presentation_link=${presentationLink}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + String(authTokens.access),
+        },
       }
+    )
+    const data = await response.json()
+    if (response.status === 200) {
+      console.log(data)
+      navigate(`dashboard/presentation:${data}`)
+    } else if (response.statusText === 'Unauthorized') {
+      logoutUser()
+    }
   }
   // put two forms here to join a workspace.
   //  TODO:add routes for presentation
+// TODO: here the new workspace wrapper is not created for another user because it is being created here.
+        // we need to change this so that all the routes to workspace wrapper are avaible to every user.
   return (
     <>
       <p>Welcome to the Dashboard</p>
       <ul>
         {projects.map((project) => {
           return (
-            <div>
-              <li key={project.id}>
+            <div key={project.id}>
+              <li>
                 {project.name} - {project.title}
-                <Route
-                  path='/workspace:project.id'
-                  element={<WorkspaceWrapper project_id={project.id} />}
-                ></Route>
-                <Route
-                  path='/presentation:project.id'
-                  elment={<PresentationWrapper project_id={project.id} />}
-                ></Route>
+                <Routes>
+                  <Route
+                    path={`/workspace:${project.id}`}
+                    element={<WorkspaceWrapper project_id={project.id} />}
+                  ></Route>
+                  <Route
+                    path={`/presentation:${project.id}`}
+                    element={<PresentationWrapper project_id={project.id} />}
+                  ></Route>
+                </Routes>
               </li>
               <button onClick={() => handleClick(project.id)}>Enter</button>
             </div>

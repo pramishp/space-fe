@@ -74,6 +74,7 @@ function Workspace({roomId, user, isXR}) {
     }, []);
 
     // mesh
+    // NOTE: YJS
     app.onMeshInserted = ({uuid, val, instanceId}) => {
         const mesh = val.objects[Object.keys(val.objects)[0]]
         mesh.instanceId = instanceId; //TODO: better way to send around instance-id

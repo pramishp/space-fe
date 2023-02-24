@@ -6,41 +6,46 @@ import Dashboard from './space/Workspace/Dashboard'
 import LoginPage from './space/Workspace/Pages/LoginPage'
 import Navbar from './space/Workspace/Components/Navbar'
 import Register from './space/Workspace/Pages/Register'
-import WorkspaceWrapper from './space/WorkspaceWrapper'
+
 import { useEffect, useState } from 'react'
-import { WorkspaceProvider } from './space/Workspace/Context/WorkspaceContext'
 
-import Workspace from "./space/Workspace/Workspace";
-import {useEffect, useState} from "react";
+import Workspace from './space/Workspace/Workspace'
+import WorkspaceWrapper from './space/WorkspaceWrapper'
+import PresentationWrapper from './space/PresentationWrapper'
 
+// NOTE: need to add logic for / link.
+    //  if logged in take to dashboard. if not logged in the login page.
 // how to create a link for each workspace.
+
 export const Navigator = () => {
-    return (
-        <div className='App'>
-            <Router>
-                <AuthProvider>
-                    <Navbar />
-                    <Routes>
-                        <Route path="/" element={<App/>}/>
-                        <Route path='/register' element={<Register/>} />
-                        <Route path='/login' element={<LoginPage/>} />
-                        <Route
-                        path='/dashboard'
-                        element = {
-                            <PrivateRoute redirectTo='/login'>
-                                <Dashboard />
-                            </PrivateRoute>
-                        }
-                        />
-                    </Routes>
-                </AuthProvider>
-            </Router>
-        </div>
-    )
+  return (
+    <div className='App'>
+      <Router>
+        <AuthProvider>
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<App />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route
+              path='/dashboard'
+              element={
+                <PrivateRoute redirectTo='/login'>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route path='/workspace/:id' element={<WorkspaceWrapper />} />
+            <Route path='/presentation/:id' element={<PresentationWrapper />} />
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </div>
+  )
 }
 
-function App(){
-    const [isXR, setXR] = useState(false);
+function App() {
+  const [isXR, setXR] = useState(false)
 
   useEffect(() => {
     checkXR()
@@ -54,11 +59,10 @@ function App(){
     }
   }
 
-    const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v1.5"
+  const user = { id: 'aadsd345-khajs43' }
+  const roomId = '1234-v1.5'
 
-    return <Workspace roomId={roomId} user={user}/>
-
+  return <></>
 }
 
 export default App
