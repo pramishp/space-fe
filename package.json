@@ -27,7 +27,7 @@
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
     "three": "^0.148.0",
-    "three-mesh-ui": "^6.5.2",
+    "three-mesh-ui": "^6.5.3",
     "web-vitals": "^2.1.4",
     "y-presence": "^0.2.3",
     "y-websocket": "^1.4.5",

@@ -14,7 +14,8 @@ function Workspace({roomId, user, isXR}) {
 
     const app = {}
 
-    app.pause = () => {}
+    app.pause = () => {
+    }
 
     app.removeUser = (userId) => {
         // console.log('remove user :', userId.instanceId)
@@ -36,6 +37,8 @@ function Workspace({roomId, user, isXR}) {
         onInsertGroup,
         onAddChildren,
         onRemoveChildren,
+        onAnimationAdd,
+        onAnimationDelete,
         onUpdate,
         onUndo,
         onRedo,
@@ -58,10 +61,10 @@ function Workspace({roomId, user, isXR}) {
     }, [isXR, otherUsers]);
 
 
-    function handleKeyDown(event){
-        if ((event.ctrlKey||event.metaKey) && event.shiftKey && (event.key === 'z'|| event.key === 'Z' || event.key === 'KeyZ')) {
+    function handleKeyDown(event) {
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && (event.key === 'z' || event.key === 'Z' || event.key === 'KeyZ')) {
             onRedo();
-        } else if ((event.ctrlKey||event.metaKey) && event.key === 'z') {
+        } else if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
             onUndo();
         }
     }
@@ -75,21 +78,18 @@ function Workspace({roomId, user, isXR}) {
 
     // mesh
     // NOTE: YJS
-    app.onMeshInserted = ({uuid, val, instanceId}) => {
+    app.onMeshInserted = ({uuid, val}) => {
         const mesh = val.objects[Object.keys(val.objects)[0]]
-        mesh.instanceId = instanceId; //TODO: better way to send around instance-id
         const geometry = val.geometries[Object.keys(val.geometries)[0]]
         const material = val.materials[Object.keys(val.materials)[0]]
         onInsertMesh({uuid, mesh, geometry, material})
     }
 
-    app.insertMesh = ({ uuid, val, instanceId, isFromUndoManager }) =>{
-
-        if (editorRef && editorRef.current){
+    app.insertMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
+        if (editorRef && editorRef.current) {
             const editor = editorRef.current;
-            if (instanceId !== app.user.instanceId || isFromUndoManager){
-                console.log('insertMesh', val)
-                editor.insertMesh({uuid, val, instanceId}, false)
+            if (!isMyEvent || isFromUndoManager) {
+                editor.insertMesh({uuid, val}, false)
             }
         }
     }
@@ -126,48 +126,80 @@ function Workspace({roomId, user, isXR}) {
 
     // delete
 
-    app.deleteMesh = ({uuid, instanceId, isFromUndoManager})=>{
-        if (editorRef && editorRef.current){
+    app.deleteMesh = ({uuid, isFromUndoManager, isMyEvent}) => {
+        if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             // console.log('delete Mesh is called')
-            if (instanceId !== app.user.instanceId || isFromUndoManager){
+            if (!isMyEvent || isFromUndoManager) {
                 editor.deleteMesh({uuid, instanceId}, false)
             }
 
         }
     }
 
-    app.onDeleteMesh = ({uuid, instanceId})=>{
+    app.onDeleteMesh = ({uuid}) => {
 
     }
 
     // updateMesh props
 
-    app.updateMesh = ({ uuid, key, val, instanceId })=>{
+    app.updateMesh = ({uuid, key, val}) => {
 
     }
 
-    app.onUpdateMesh = ({uuid, key, val,  instanceId})=>{
+    app.onUpdateMesh = ({uuid, key, val}) => {
         onUpdate({uuid, key, val, type: TYPES.MESH})
     }
 
-    app.updateMaterial = ({ uuid, key, val, object_uuid })=>{
-        if (editorRef && editorRef.current){
+    app.updateMaterial = ({uuid, key, val, object_uuid}) => {
+        if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             editor.updateMaterial({uuid, key, val, object_uuid})
-
         }
     }
 
-    app.onUpdateMaterial = ({uuid, key, val, instanceId})=>{
+    app.onUpdateMaterial = ({uuid, key, val}) => {
         onUpdate({uuid, key, val, type: TYPES.MATERIAL})
 
     }
 
-     app.onReplaceGeometry = ({uuid, key, val, instanceId})=>{
+    app.onReplaceGeometry = ({uuid, key, val}) => {
 
     }
 
+    /*
+    * Animation
+    * */
+
+    /* A callback function triggered by Editor that takes an object with a `uuid`:(animation uuid)
+     and a `val`:(animation object) property and returns nothing */
+    app.onAddAnimation = ({uuid, val}) => {
+        onAnimationAdd(({uuid, val}))
+    }
+
+    app.addAnimation = ({uuid, val, isMyEvent, isFromUndoManager})=>{
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            if (!isMyEvent || isFromUndoManager) {
+                editor.addAnimation({uuid, val}, false)
+            }
+
+        }
+    }
+
+    app.onDeleteAnimation = ({uuid})=>{
+        onAnimationDelete({uuid})
+    }
+
+    app.deleteAnimation = ({uuid, isMyEvent, isFromUndoManager})=>{
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            if (!isMyEvent || isFromUndoManager) {
+                editor.deleteAnimation({uuid}, false)
+            }
+
+        }
+    }
 
     /**
      * `animationOrderChanged` is a callback function triggered by Editor that takes an
@@ -175,30 +207,30 @@ function Workspace({roomId, user, isXR}) {
      * nothing
      */
 
-    app.onAnimationOrderChanged = ({uuid, to})=>{
+    app.onAnimationOrderChanged = ({uuid, to}) => {
         console.log(uuid, " applied animation order changed to ", to)
     }
 
-    //TODO: Why console.log(initData) here is called 8 times ?
-    const slideData = {};
-
-    if (loading){
+    if (loading) {
         return <div>Loading</div>
     }
 
     const initData = getInitData();
+    //TODO: Why console.log(initData) here is called 8 times ?
+
+
     return (
         <>
-        <Menu />
-        <div className="App" style={{height: window.innerHeight}}>
-            {/*<Canvas>*/}
+            <Menu/>
+            <div className="App" style={{height: window.innerHeight}}>
+                {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
-            {/*    /!*<AnimationApp/>*!/*/}
-            {/*</Canvas>*/}
-            <Editor ref={editorRef} instanceId={instanceId} app={app} initData={initData} slideData={slideData} isXR={isXR} otherUsers={otherUsers}/>
-            {/*<MyComponent/>*/}
-            {/*<XRApp/>*/}
-        </div>
+                {/*    /!*<AnimationApp/>*!/*/}
+                {/*</Canvas>*/}
+                <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers}/>
+                {/*<MyComponent/>*/}
+                {/*<XRApp/>*/}
+            </div>
         </>
     );
 }
