@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+//TODO: notify the user in the frontend that the registration has been successful
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');

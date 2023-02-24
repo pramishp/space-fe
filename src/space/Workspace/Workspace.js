@@ -80,6 +80,7 @@ function Workspace({roomId, user, isXR}) {
     }, []);
 
     // mesh
+    // NOTE: YJS
     app.onMeshInserted = ({uuid, val}) => {
         const objType = val.objects[Object.keys(val.objects)[0]].type;
         const type = objType.indexOf("Light") !== -1 ? "Light" : objType;
