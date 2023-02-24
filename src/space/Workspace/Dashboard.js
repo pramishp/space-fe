@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AuthContext from './Context/AuthContext'
 import AddProject from './Components/AddProject'
 
@@ -38,7 +38,7 @@ const Dashboard = () => {
   // TODO: create a url which the user will navigate to.
   const handleClick = (projectId) => {
       console.log(projectId)
-    navigate(`/dashboard/workspace:${projectId}`)
+    navigate(`/workspace/${projectId}`)
   }
   // receive the data here and then send it to the presentation wrapper
   // navigate to another link.
@@ -58,7 +58,7 @@ const Dashboard = () => {
     const data = await response.json()
     if (response.status === 200) {
       console.log(data.project_id)
-      navigate(`/dashboard/workspace:${data.project_id}`)
+      navigate(`/workspace/${data.project_id}`)
     } else if (response.statusText === 'Unauthorized') {
       logoutUser()
     }
@@ -79,7 +79,7 @@ const Dashboard = () => {
     const data = await response.json()
     if (response.status === 200) {
       console.log(data)
-      navigate(`dashboard/presentation:${data}`)
+      navigate(`/presentation/${data}`)
     } else if (response.statusText === 'Unauthorized') {
       logoutUser()
     }
@@ -97,16 +97,7 @@ const Dashboard = () => {
             <div key={project.id}>
               <li>
                 {project.name} - {project.title}
-                <Routes>
-                  <Route
-                    path={`/workspace:${project.id}`}
-                    element={<WorkspaceWrapper project_id={project.id} />}
-                  ></Route>
-                  <Route
-                    path={`/presentation:${project.id}`}
-                    element={<PresentationWrapper project_id={project.id} />}
-                  ></Route>
-                </Routes>
+
               </li>
               <button onClick={() => handleClick(project.id)}>Enter</button>
             </div>
