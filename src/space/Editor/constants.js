@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export const EDITOR_OPS = {
-    INSERT_MESH: "INSERT_MESH",
+    INSERT_OBJECT: "INSERT_MESH",
     DELETE_MESH: "DELETE_MESH",
     GROUP_MESH: "GROUP_MESH",
     INSERT_LIGHT: "INSERT_LIGHT",
@@ -13,23 +13,29 @@ export const EDITOR_OPS = {
 
 function three2spaceJSON(jsonData) {
 
+
     const json = {...jsonData}
-    let geometry = json.geometries[0];
-    geometry = {...geometry}
-    let material = json.materials[0];
-    material = {...material}
+
     let object = json.object;
     object = {...object}
+    const geometries = {};
+    const materials = {};
+    json.geometries.forEach(geom=>{
+        geometries[geom.uuid] = geom
+    })
+    json.materials.forEach(material=>{
+        materials[material.uuid] = material
+    })
 
     return {
-        geometries: {[geometry.uuid]: geometry},
-        materials: {[material.uuid]: material},
+        geometries,
+        materials,
         objects: {[object.uuid]: object}
 
     }
 }
 
-function mesh2json(mesh) {
+export function mesh2json(mesh) {
     const json = mesh.toJSON();
     // Make a deep copy of the JSON object
     const copyJson = JSON.parse(JSON.stringify(json));
