@@ -6,6 +6,7 @@ import Menu from './Menu';
 
 import {useMultiplayerState} from "../hooks/useMultiplayerState";
 import {TYPES} from "../Editor/constants";
+import {IMPORT_MESH_TYPES} from "../../common/consts";
 
 
 function Workspace({roomId, user, isXR}) {
@@ -33,8 +34,10 @@ function Workspace({roomId, user, isXR}) {
         onMount,
         onChangePage,
         onInsertMesh,
+        onInsertObject,
         onDelete,
         onInsertGroup,
+        onInsertImportedMesh,
         onAddChildren,
         onRemoveChildren,
         onAnimationAdd,
@@ -79,10 +82,37 @@ function Workspace({roomId, user, isXR}) {
     // mesh
     // NOTE: YJS
     app.onMeshInserted = ({uuid, val}) => {
-        const mesh = val.objects[Object.keys(val.objects)[0]]
-        const geometry = val.geometries[Object.keys(val.geometries)[0]]
-        const material = val.materials[Object.keys(val.materials)[0]]
-        onInsertMesh({uuid, mesh, geometry, material})
+        const objType = val.objects[Object.keys(val.objects)[0]].type;
+        const type = objType.indexOf("Light") !== -1 ? "Light" : objType;
+        switch (type) {
+            case IMPORT_MESH_TYPES.GLTF_GROUP:
+                const group = val.objects[Object.keys(val.objects)[0]]
+                onInsertImportedMesh({
+                    uuid, mesh: group,
+                    geometries: val.geometries,
+                    materials: val.materials
+                })
+                break
+            case "Mesh":
+                const mesh = val.objects[Object.keys(val.objects)[0]]
+                const geometry = val.geometries[Object.keys(val.geometries)[0]]
+                const material = val.materials[Object.keys(val.materials)[0]]
+                onInsertMesh({uuid, mesh, geometry, material})
+                break
+            case "Light":
+                const light = val.objects[Object.keys(val.objects)[0]]
+                onInsertObject({uuid, mesh: light})
+                break
+
+            case "Group":
+                onInsertGroup({uuid, mesh, geometry, material})
+                break
+
+            default:
+                console.error("No case handled for ", val.type)
+                break
+        }
+
     }
 
     app.insertMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
@@ -90,6 +120,17 @@ function Workspace({roomId, user, isXR}) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
                 editor.insertMesh({uuid, val}, false)
+            }
+        }
+    }
+
+    app.insertImportedMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
+
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            if (!isMyEvent || isFromUndoManager) {
+                // editor.insertMesh({uuid, val}, false)
+                //TODO: call editor to insert imported mesh
             }
         }
     }
@@ -142,12 +183,15 @@ function Workspace({roomId, user, isXR}) {
     }
 
     // updateMesh props
-
-    app.updateMesh = ({uuid, key, val}) => {
-
+    app.updateObject = ({uuid, key, val}) => {
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            editor.updateObject({uuid, key, val})
+        }
     }
 
-    app.onUpdateMesh = ({uuid, key, val}) => {
+    app.onUpdateObject = ({uuid, key, val}) => {
+
         onUpdate({uuid, key, val, type: TYPES.MESH})
     }
 
@@ -177,7 +221,7 @@ function Workspace({roomId, user, isXR}) {
         onAnimationAdd(({uuid, val}))
     }
 
-    app.addAnimation = ({uuid, val, isMyEvent, isFromUndoManager})=>{
+    app.addAnimation = ({uuid, val, isMyEvent, isFromUndoManager}) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
@@ -187,11 +231,11 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
-    app.onDeleteAnimation = ({uuid})=>{
+    app.onDeleteAnimation = ({uuid}) => {
         onAnimationDelete({uuid})
     }
 
-    app.deleteAnimation = ({uuid, isMyEvent, isFromUndoManager})=>{
+    app.deleteAnimation = ({uuid, isMyEvent, isFromUndoManager}) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {

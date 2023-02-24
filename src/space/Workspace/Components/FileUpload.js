@@ -9,9 +9,9 @@ function FileUpload() {
   const [fileUrls, setFileUrls] = useState([])
 
   const handleFileChange = (event) => {
-    const files = event.target.files
-    setSelectedFiles(files)
-  }
+    const files = event.target.files;
+    setSelectedFiles(files);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault()

@@ -7,6 +7,7 @@ import {generateUniqueId, objectToYMap} from "../../utils";
 import SingletonSocketProvider from "./Provider";
 import {UndoManager} from "yjs";
 import {TYPES} from "../Editor/constants";
+import {IMPORT_MESH_TYPES} from "../../common/consts";
 
 const _ = require('lodash');
 
@@ -102,6 +103,41 @@ export function useMultiplayerState(roomId, appInit) {
         });
     },);
 
+    const onInsertImportedMesh = useCallback(({mesh, geometries, materials}) => {
+        undoManager.stopCapturing();
+        // create the group in the first transaction
+        doc.transact(() => {
+            // convert JS object to Yjs Map
+            const shapesMap = objectToYMap(mesh);
+            Object.values(geometries).forEach(geometry=>{
+                const geometryMap = objectToYMap(geometry);
+                yGeometry.set(geometry.uuid, geometryMap);
+            })
+            Object.values(materials).forEach(material=>{
+                const materialMap = objectToYMap(material);
+                yMaterial.set(material.uuid, materialMap);
+            })
+            //insert into yJs
+            yMeshes.set(mesh.uuid, shapesMap);
+
+        });
+    },);
+
+    const onInsertObject = useCallback(({mesh}) => {
+        undoManager.stopCapturing();
+
+        doc.transact(() => {
+
+            // convert JS object to Yjs Map
+            const shapesMap = objectToYMap(mesh);
+
+            //insert into yJs
+            yMeshes.set(mesh.uuid, shapesMap);
+
+        });
+    },);
+
+
     const onInsertGroup = useCallback(({group}) => {
         undoManager.stopCapturing();
         const group_uuid = "group_" + generateUniqueId();
@@ -112,6 +148,7 @@ export function useMultiplayerState(roomId, appInit) {
             yMeshes.set(group_uuid, shapesMap);
         });
     },);
+
 
     const onAddChildren = useCallback(({group_id, children_id}) => {
         undoManager.stopCapturing();
@@ -247,88 +284,81 @@ export function useMultiplayerState(roomId, appInit) {
                 const genericProps = {isFromUndoManager, isMyEvent}
                 event.changes.keys.forEach((val, key) => {
                     switch (val.action) {
-                        case "update": {
-                            const fullData = event.target.toJSON();
-                            if (key === "position") {
-                                app.updateMesh({
-                                    uuid: fullData.uuid,
+                        case "update":
+                            const targetData = event.target.toJSON();
+                            if (level === 2) {
+                                app.updateObject({
+                                    uuid: targetData.uuid,
                                     key: key,
-                                    val: fullData[key],
+                                    val: targetData[key],
                                     ...genericProps
-                                });
+                                })
+                            } else {
+                                console.warn("update is not handled for level ", level)
+
                             }
                             break;
-                        }
                         case "add":
-                            if (level === 1) {
+
+                            if (level === 1){
                                 const mesh = yMeshes.get(key);
                                 const meshJson = mesh.toJSON();
-                                // const yMeshObjects = yMeshes.toJSON();
-
-                                // let children_ids = [];
+                                // lights, undo,
                                 const fullData = {
                                     objects: {
                                         [meshJson.uuid]: meshJson,
                                     },
                                 };
-                                if (isFromUndoManager) {
-                                    //
+                                app.insertMesh({uuid: key, val: fullData, ...genericProps})
+                            } else if (level === 3){
+                                const mesh = yMeshes.get(key);
+                                const meshJson = mesh.toJSON();
+                                if (meshJson.type === IMPORT_MESH_TYPES.GLTF_GROUP){
+                                    const materials = {};
+                                    const geometries = {};
+                                    // get materials and geometries of children
+                                    meshJson.children.forEach(child=>{
+                                        const materialUUID = child.material;
+                                        const geometryUUID = child.geometry;
+                                        materials[materialUUID] = yMaterial.get(materialUUID).toJSON();
+                                        geometries[geometryUUID] = yGeometry.get(geometryUUID).toJSON();
+                                    })
+
+                                    const fullData = {
+                                        objects: {
+                                            [meshJson.uuid]: meshJson,
+                                        },
+                                        materials: materials,
+                                        geometries: geometries,
+                                    };
+                                    app.insertImportedMesh({uuid: key, val: fullData, ...genericProps});
+
+                                } else {
+                                    const material = yMaterial.get(mesh.get("material"));
+                                    const geometry = yGeometry.get(mesh.get("geometry"));
+
+                                    const materialJson = material.toJSON();
+                                    const geometryJson = geometry.toJSON();
+
+                                    const fullData = {
+                                        objects: {
+                                            [meshJson.uuid]: meshJson,
+                                        },
+                                        materials: {
+                                            [materialJson.uuid]: materialJson,
+                                        },
+                                        geometries: {
+                                            [geometryJson.uuid]: geometryJson,
+                                        },
+                                    };
+                                    // this is where the insertMesh function defined in the renderer gets used
                                     app.insertMesh({uuid: key, val: fullData, ...genericProps});
-                                } else {
-                                    // we must also send the group data through here.
-                                    app.insertGroup({
-                                        uuid: key,
-                                        val: fullData,
-                                        ...genericProps
-                                    });
                                 }
 
-                            } else if (level === 3) {
-                                // maybe the recursive function needs to be added here.
-                                // maybe we can see if the group exists here.
-                                if (key === "parent") {
-                                    const mesh = event.target.toJSON();
-                                    app.addGroupItem({
-                                        parent_id: mesh.parent,
-                                        child_id: mesh.uuid,
-                                    });
-                                } else {
-                                    const mesh = yMeshes.get(key);
-                                    const meshJson = mesh.toJSON();
-                                    if (meshJson.type === "Group") {
-                                        const fullData = {
-                                            objects: {
-                                                [meshJson.uuid]: meshJson,
-                                            },
-                                        };
-
-                                        app.insertMesh({uuid: key, val: fullData, ...genericProps});
-                                    } else if (meshJson.type === "Mesh") {
-                                        const material = yMaterial.get(mesh.get("material"));
-                                        const geometry = yGeometry.get(mesh.get("geometry"));
-
-                                        const materialJson = material.toJSON();
-                                        const geometryJson = geometry.toJSON();
-
-                                        const fullData = {
-                                            objects: {
-                                                [meshJson.uuid]: meshJson,
-                                            },
-                                            materials: {
-                                                [materialJson.uuid]: materialJson,
-                                            },
-                                            geometries: {
-                                                [geometryJson.uuid]: geometryJson,
-                                            },
-                                        };
-                                        // this is where the insertMesh function defined in the renderer gets used
-                                        app.insertMesh({uuid: key, val: fullData, ...genericProps});
-                                    }
-                                }
-                                // it is a mesh
-                            } else if (level === 2) {
-                                // it is property of a mesh
-                                const parentId = Array.from(parents[1][0]._map.keys())[1];
+                            } else if (level === 2){
+                                // object property add
+                                const mesh = event.target.toJSON();
+                                app.updateObject({uuid: mesh.uuid, key: key, val: mesh[key]})
                             }
                             break;
                         case "delete":
@@ -462,6 +492,8 @@ export function useMultiplayerState(roomId, appInit) {
     return {
         onMount,
         onInsertMesh,
+        onInsertObject,
+        onInsertImportedMesh,
         onDelete,
         onUpdate,
         onInsertGroup,
