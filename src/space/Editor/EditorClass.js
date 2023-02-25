@@ -329,7 +329,6 @@ export default class Editor extends React.Component {
     onAnimationListClicked = ({ uuid, val }) => {
         // obtained uuid is of the animation that is clicked
 
-
         // generate unique uuid
         const id_ = generateUniqueId();
         const { selectedItems } = this.state;
@@ -441,9 +440,9 @@ export default class Editor extends React.Component {
 
 
     render() {
-        const { selectedItems, graph, refGraph, animations, rerender } = this.state;
-        const { isXR, otherUsers } = this.props;
-        console.log('render', this.state.graph)
+
+        const {selectedItems, graph, refGraph, animations, rerender} = this.state;
+        const {isXR, otherUsers} = this.props;
         return (
             <div>
                 <div>

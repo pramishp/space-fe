@@ -11,6 +11,13 @@ export const EDITOR_OPS = {
     DELETE_ANIMATION: "DELETE_ANIMATION"
 }
 
+// Define a custom toJSON() method for the Box mesh
+THREE.Mesh.prototype.toJSON = function () {
+    var data = THREE.Object3D.prototype.toJSON.call(this);
+    data.object.position = this.position.toArray();
+    return data;
+};
+
 function three2spaceJSON(jsonData) {
 
 
@@ -40,7 +47,6 @@ export function mesh2json(mesh) {
     // Make a deep copy of the JSON object
     const copyJson = JSON.parse(JSON.stringify(json));
     copyJson.object.layers = 0;
-
     const spaceJson = three2spaceJSON(copyJson);
     return {uuid: json.object.uuid, val: spaceJson}
 }
@@ -58,6 +64,7 @@ export const BASIC_LIGHTS = {
     directional: {
         get: function () {
             const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+            light.position.y = 3;
             const uuid = light.uuid;
             const val = light.toJSON();
             return {uuid, val}
@@ -82,7 +89,6 @@ export const BASIC_OBJECTS = {
             mesh.position.set(-1, 0, 0);
             return mesh2json(mesh)
         }
-
     },
     sphere: {
         get: function () {
