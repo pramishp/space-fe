@@ -77,20 +77,20 @@ export default class Editor extends React.Component {
     }
 
     componentDidMount() {
-        if (this.transformRef.current && this.transformRef.current._listeners.mouseUp.length === 1) {
+        if (this.transformRef && this.transformRef.current && this.transformRef.current._listeners && this.transformRef.current._listeners.mouseUp.length === 1) {
             this.transformRef.current.addEventListener('mouseUp', (e) => this.onTransformReleased(e, this))
         }
     }
 
 
     componentDidUpdate(nextProps, nextState, nextContext) {
-        if (this.transformRef.current && this.transformRef.current._listeners.mouseUp.length === 1) {
+        if (this.transformRef && this.transformRef.current && this.transformRef.current._listeners && this.transformRef.current._listeners.mouseUp.length === 1) {
             this.transformRef.current.addEventListener('mouseUp', (e) => this.onTransformReleased(e, this))
         }
     }
 
     componentWillUnmount() {
-        if (this.transformRef.current) {
+        if (this.transformRef && this.transformRef.current && this.transformRef.current._listeners) {
             delete this.transformRef.current._listeners['mouseUp'][-1]
         }
     }
@@ -303,6 +303,7 @@ export default class Editor extends React.Component {
     }
 
     // upload model
+    // NOTE: thrrejs gtlf loader
     onModelUpload = (e) => {
         const { app } = this.props;
         const file = e.target.files[0];
