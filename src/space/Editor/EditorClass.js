@@ -419,7 +419,6 @@ export default class Editor extends React.Component {
     render() {
         const {selectedItems, graph, refGraph, animations, rerender} = this.state;
         const {isXR, otherUsers} = this.props;
-        console.log('render', this.state.graph)
         return (
             <div>
                 <div>
