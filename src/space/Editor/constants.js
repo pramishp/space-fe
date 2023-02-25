@@ -83,7 +83,7 @@ export const BASIC_LIGHTS = {
 export const BASIC_OBJECTS = {
     box: {
         get: function () {
-            const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
             const material = new THREE.MeshBasicMaterial({color:'red'});
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.set(-1, 0, 0);
