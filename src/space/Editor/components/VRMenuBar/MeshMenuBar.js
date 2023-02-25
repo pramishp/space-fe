@@ -28,7 +28,6 @@ function MeshMenuBar({ isXR, onMeshSelected, onLightSelected, onGroupSelected })
 
     const handleButtonSelect = (event, menuItem) => {
         const selectedId = event.intersection.object.name;
-        console.log("Selected Id : ", selectedId);
         onMeshSelected(selectedId);
     }
 

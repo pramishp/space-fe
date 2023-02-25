@@ -28,6 +28,8 @@ import MeshMenuBar from "./components/VRMenuBar/MeshMenuBar";
 import LightMenuBar from "./components/VRMenuBar/LightMenuBar";
 
 import VRItem from "./components/VRItem";
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory';
+
 
 
 export default class Editor extends React.Component {
@@ -48,7 +50,10 @@ export default class Editor extends React.Component {
             animations: props.initData.animations,
         }
         this.transformRef = React.createRef();
+
     }
+
+
 
     rerender = () => {
         this.setState(state => ({ rerender: !state.rerender }))
@@ -77,6 +82,7 @@ export default class Editor extends React.Component {
         }
     }
 
+
     componentDidUpdate(nextProps, nextState, nextContext) {
         if (this.transformRef.current && this.transformRef.current._listeners.mouseUp.length === 1) {
             this.transformRef.current.addEventListener('mouseUp', (e) => this.onTransformReleased(e, this))
@@ -100,6 +106,7 @@ export default class Editor extends React.Component {
 
     // event handler when click is not over any meshes
     onPointerMissed = (e) => {
+        console.log("POinter missed");
         this.onDeselect()
     }
 
@@ -239,6 +246,8 @@ export default class Editor extends React.Component {
 
     // onSelect
     onSelect = ({ uuid, object }) => {
+        console.log("From on select function", uuid);
+        console.log("object : ", object);
         const mesh = object;
         const { selectedItems } = this.state;
         const { transformRef } = this;
@@ -248,9 +257,7 @@ export default class Editor extends React.Component {
                 // also set rotation
             }
             this.setState(prevState => ({ selectedItems: [uuid] }))
-
         }
-
     }
 
     onDeselect = () => {
@@ -368,7 +375,6 @@ export default class Editor extends React.Component {
     }
 
     updateObject = ({ uuid, key, val }) => {
-        console.log("update object : ", key, val);
         const { refGraph } = this.state;
         if (!(refGraph[uuid] && refGraph[uuid].current)) {
             console.error(`Object of uuid - ${uuid} not found to update the mesh`)
@@ -426,8 +432,6 @@ export default class Editor extends React.Component {
         const position = targetPosition.toArray();
         const quaternion = targetRotation.toArray();
 
-        console.log("word positio : ", position, quaternion)
-
         this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid: selectedItem, key: "position", val: position } })
         this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid: selectedItem, key: "quaternion", val: quaternion } })
 
@@ -469,7 +473,10 @@ export default class Editor extends React.Component {
                             near: 0.01, far: 1000,
                             position: [0, 5, 10],
                         }}
-                        onPointerMissed={this.onPointerMissed}>
+
+                        // onPointerMissed={this.onPointerMissed}
+                        onPointerMissed={(event) => {console.log("Pointer missed")}}
+                    >
                         <XR>
                             {/* FOr the XR controllers ray visibility */}
                             <Controllers
@@ -517,7 +524,7 @@ export default class Editor extends React.Component {
                                     return (
                                         <VRItem uuid={uuid} onSelect={this.onSelect}
                                             onObjectPropsChanged={this.onObjectPropsChanged} onVRTransformReleased={this.onVRTransformReleased}>
-                                            {item}
+                                            {item} selectedItems={selectedItems}
                                         </VRItem>
                                     )
                                 })
