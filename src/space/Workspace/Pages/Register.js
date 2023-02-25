@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+//TODO: notify the user in the frontend that the registration has been successful
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -21,7 +22,6 @@ function Register() {
         console.log(error.response.data);
       });
   }
-
   return (
     <form onSubmit={handleSubmit}>
       <input type="text" placeholder="Username" value={username} onChange={event => setUsername(event.target.value)} />

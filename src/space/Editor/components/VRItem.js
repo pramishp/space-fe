@@ -27,7 +27,7 @@ function VRItem(props) {
     const [endDistance, setEndDistance] = useState(null);
 
     const handleSelect = (event) => {
-        console.log(event);
+        // console.log(event);
         // props.onSelect()
         // 
     }
@@ -57,6 +57,7 @@ function VRItem(props) {
     }
 
     console.log("props children : ", props.children);
+
 
     return (
         <>

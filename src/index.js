@@ -4,12 +4,13 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App, {Navigator} from "./App";
 
+// WARNING: Memory Leak Detected.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/*<Workspace />*/}
-      <App/>
-      {/*<Navigator/>*/}
+    <App />
+      {/* <Navigator/> */}
   </React.StrictMode>
 );
 

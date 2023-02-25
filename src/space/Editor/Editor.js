@@ -63,7 +63,7 @@ export default function Editor({initData, app, isXR, slideData}) {
             return
         }
         switch (type) {
-            case EDITOR_OPS.INSERT_MESH:
+            case EDITOR_OPS.INSERT_OBJECT:
                 app.onMeshInserted({uuid: uuid, val})
                 break
             default:
@@ -83,7 +83,7 @@ export default function Editor({initData, app, isXR, slideData}) {
         }
 
         // notify app
-        notifyApp({type: EDITOR_OPS.INSERT_MESH, data: {val, userId, uuid}, app})
+        notifyApp({type: EDITOR_OPS.INSERT_OBJECT, data: {val, userId, uuid}, app})
     }
 
     // insertLight in the editor
