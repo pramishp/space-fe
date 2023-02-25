@@ -63,7 +63,7 @@ function App() {
     const user = {id: "aadsd345-khajs43"}
     const roomId = "1234-v2.01"
 
-  return <></>
+  return <><Workspace roomId={roomId} user={user}/></>
 }
 
 export default App
