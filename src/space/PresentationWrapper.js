@@ -1,14 +1,18 @@
-import { useContext, useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import {useContext, useEffect, useState} from "react"
+import {useParams} from "react-router-dom"
 import AuthContext from "./Workspace/Context/AuthContext"
 import Workspace from "./Workspace/Workspace"
+import Presentation from "./Presentation";
+import {usePresentationData} from "./hooks/usePresentationData";
+import {Canvas} from "@react-three/fiber";
 
 // go to this link after the fetch of workspaceId from the presentation link is completed
 const PresentationWrapper = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     console.log('id inside presentationwrapper', id)
-    const { user, authTokens } = useContext(AuthContext)
-    const [workspaceId, setWorkspaceId] = useState('')
+    const {user, authTokens} = useContext(AuthContext)
+    const [workspaceId, setWorkspaceId] = useState(null)
+
     useEffect(() => {
         const fetchWorkspaceId = async () => {
             try {
@@ -29,9 +33,27 @@ const PresentationWrapper = () => {
         fetchWorkspaceId()
     }, [])
     //TODO: send data to the presentation component
+    const {
+        loading,
+        getData,
+        room,
+        doc
+    } = usePresentationData(workspaceId);
+    if (!workspaceId && loading) {
+        return <div>Loading...</div>
+    }
+    const presentationData = getData();
+
     return (
-        <div>
-            <Workspace roomId={workspaceId} user={user} />
+        <div style={{height: window.innerHeight}}>
+            <Canvas legacy={false}
+                    camera={{
+                        fov: 50, aspect: 1,
+                        near: 0.01, far: 1000,
+                        position: [0, 5, 10],
+                    }}>
+                <Presentation data={presentationData}/>
+            </Canvas>
         </div>
 
     )

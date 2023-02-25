@@ -320,7 +320,6 @@ export default class Editor extends React.Component {
     onAnimationListClicked = ({uuid, val}) => {
         // obtained uuid is of the animation that is clicked
 
-
         // generate unique uuid
         const id_ = generateUniqueId();
         const {selectedItems} = this.state;
