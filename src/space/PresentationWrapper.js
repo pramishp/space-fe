@@ -10,28 +10,28 @@ import {Canvas} from "@react-three/fiber";
 const PresentationWrapper = () => {
     const {id} = useParams();
     console.log('id inside presentationwrapper', id)
-    // const {user, authTokens} = useContext(AuthContext)
-    const [workspaceId, setWorkspaceId] = useState('1234-v2.01')
+    const {user, authTokens} = useContext(AuthContext)
+    const [workspaceId, setWorkspaceId] = useState(null)
 
-    // useEffect(() => {
-    //     const fetchWorkspaceId = async () => {
-    //         try {
-    //             const response = await fetch(
-    //                 `http://127.0.0.1:8000/app/workspace-id/?project_id=${id}`,
-    //                 {
-    //                     headers: {
-    //                         Authorization: 'Bearer ' + String(authTokens.access),
-    //                     },
-    //                 }
-    //             )
-    //             const data = await response.json()
-    //             setWorkspaceId(data.key)
-    //         } catch (error) {
-    //             console.log(error)
-    //         }
-    //     }
-    //     fetchWorkspaceId()
-    // }, [])
+    useEffect(() => {
+        const fetchWorkspaceId = async () => {
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:8000/app/workspace-id/?project_id=${id}`,
+                    {
+                        headers: {
+                            Authorization: 'Bearer ' + String(authTokens.access),
+                        },
+                    }
+                )
+                const data = await response.json()
+                setWorkspaceId(data.key)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchWorkspaceId()
+    }, [])
     //TODO: send data to the presentation component
     const {
         loading,
@@ -39,7 +39,7 @@ const PresentationWrapper = () => {
         room,
         doc
     } = usePresentationData(workspaceId);
-    if (loading) {
+    if (!workspaceId && loading) {
         return <div>Loading...</div>
     }
     const presentationData = getData();
