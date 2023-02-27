@@ -12,7 +12,7 @@ root.render(
     {/*<Workspace />*/}
     <App />
     {/*  <PresentationWrapper/>*/}
-    {/*   <Navigator/>*/}
+    <Navigator/>
   </React.StrictMode>
 );
 
