@@ -2,7 +2,7 @@ import * as React from "react";
 import * as THREE from 'three';
 
 import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
-import {BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, mesh2json, TYPES} from "./constants";
+import {BASIC_LIGHTS, BASIC_OBJECTS, EDITOR_OPS, FILE_TYPES, gltf2json, mesh2json, TYPES} from "./constants";
 
 import MenuBar from "./components/MenuBar";
 import {Canvas, useFrame} from "@react-three/fiber";
@@ -13,7 +13,7 @@ import {Selection} from "./Selection";
 import Controls from "./Controls";
 import Ground from "./components/Ground";
 
-import {loadGltf} from "../../common/loaders/FileLoaders";
+import {loadGltf, loadGltfFromUrl} from "../../common/loaders/FileLoaders";
 import {ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES} from "../../common/consts";
 
 import Helpers from "./Helpers";
@@ -46,7 +46,22 @@ export default class Editor extends React.Component {
             animations: props.initData.animations,
         }
         this.transformRef = React.createRef();
+        this.loadInitialObjectFiles(this.props);
     }
+
+    loadInitialObjectFiles = (props) => {
+        const {initData} = props;
+        if (!initData.objects) {
+            return
+        }
+        Object.values(initData.objects).forEach(item => {
+            if (item.isFile) {
+                const {uuid} = item;
+                this.insertMeshFile({uuid, val: item}, false)
+            }
+        })
+    }
+
 
     rerender = () => {
         this.setState(state => ({rerender: !state.rerender}))
@@ -62,7 +77,7 @@ export default class Editor extends React.Component {
                 refGraph: this.jsxData.refs,
                 animations: nextProps.initData.animations
             })
-
+            this.loadInitialObjectFiles(nextProps);
             return shouldUpdate
         }
         return true
@@ -85,6 +100,19 @@ export default class Editor extends React.Component {
         if (this.transformRef.current) {
             delete this.transformRef.current._listeners['mouseUp'][-1]
         }
+
+        //dispose primitive objects
+        const {graph, refGraph} = this.state;
+        Object.entries(graph).forEach(([uuid, val]) => {
+            if (val.type === "primitive"){
+                const uuid = val.props.object.uuid;
+                if (refGraph[uuid] && refGraph[uuid].current){
+                    console.log('disposing mesh with id: ', uuid)
+                    // refGraph[uuid].current.dispose();
+                    //TODO: dispose primitive objects
+                }
+            }
+        })
     }
 
     // set jsx and refs as states variables
@@ -104,6 +132,7 @@ export default class Editor extends React.Component {
     // editor operational methods
 
     notifyApp = ({type, data}, notify = true) => {
+
         const {app} = this.props;
         const {val, uuid, key} = data;
 
@@ -117,7 +146,11 @@ export default class Editor extends React.Component {
 
         switch (type) {
             case EDITOR_OPS.INSERT_OBJECT:
-                app.onMeshInserted({uuid: uuid, val})
+                app.onMeshInserted({uuid, val})
+                break
+
+            case EDITOR_OPS.INSERT_OBJECT_FILE:
+                app.onMeshFileInserted({uuid, val: data})
                 break
 
             case EDITOR_OPS.DELETE_MESH:
@@ -148,8 +181,8 @@ export default class Editor extends React.Component {
     // insertMesh in the editor
 
     insertMesh = ({uuid, val}, notify = true) => {
-        const {app} = this.props;
         const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks);
+        // console.log('gltf jsx', localJsxs)
 
         this.setState(prevState => ({
             graph: {...prevState.graph, ...localJsxs},
@@ -162,7 +195,62 @@ export default class Editor extends React.Component {
         //TODO: select local just inserted mesh
 
         // notify app
-        this.notifyApp({type: EDITOR_OPS.INSERT_OBJECT, data: {val, uuid}, app}, notify)
+        this.notifyApp({type: EDITOR_OPS.INSERT_OBJECT, data: {val, uuid}}, notify)
+    }
+
+    insertMeshFile = ({uuid, val}, notify = true) => {
+        const keys = ['position', 'quaternion', 'scale']
+
+        let ref = React.createRef();
+        const {url, type} = val;
+        switch (type) {
+            case FILE_TYPES.GLTF:
+                //load file from url and insert primitive in scene
+            function onLoad(gltf) {
+
+                const {scene, animations} = gltf;
+                scene.uuid = uuid;
+
+                scene.traverse((object) => {
+                    object.uuid = uuid; // Set a custom UUID for each object
+                });
+
+                const props = {};
+                // if key exists, add those props to primitive
+                keys.forEach(key => {
+                    if (val[key]) {
+                        props[key] = val[key]
+                        // scene[key].set(val)
+                    } else {
+                        // set default props of gltf to val
+                        val[key] = scene[key].toArray();
+                    }
+                })
+
+                Object.entries(this.clickCallbacks).forEach(([id, callback]) => {
+                    props[id] = (e) => callback(e, uuid)
+                })
+
+                const object = (<primitive ref={ref} object={scene} {...props} />)
+                this.setState(prevState => ({
+                    graph: {...prevState.graph, [uuid]: object},
+                    refGraph: {...prevState.refGraph, [uuid]: ref}
+                }))
+            }
+
+            function onError(e) {
+                console.error("Error occured while loading gltf: ", e)
+            }
+
+                loadGltfFromUrl(url, onLoad.bind(this), onError)
+                break
+            default:
+                console.log('File type is not supported. ', type)
+        }
+
+
+        // notify app
+        this.notifyApp({type: EDITOR_OPS.INSERT_OBJECT_FILE, data: val}, notify)
     }
 
     deleteMesh = ({uuid}, notify = true) => {
@@ -203,7 +291,6 @@ export default class Editor extends React.Component {
                 //TODO: notify workspace using app.onSpatialPropsChanged({position, rotation})
             }
         }
-
     }
 
     updateMaterial = ({uuid, key, val, object_uuid}) => {
@@ -295,23 +382,12 @@ export default class Editor extends React.Component {
 
     // upload model
     onModelUpload = (e) => {
-        const {app} = this.props;
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file)
-        reader.onload = (e) => {
-            loadGltf(e.target.result,
-                (gltf) => {
-                    // TODO: handle camera, scenes, animations
-                    const {uuid, val} = mesh2json(gltf.scene);
-                    // val.type = IMPORT_MESH_TYPES.GLTF_GROUP;
-                    val.objects[uuid] = {...val.objects[uuid], type: IMPORT_MESH_TYPES.GLTF_GROUP}
-                    this.insertMesh({uuid, val})
-                },
-                (error) => {
-                    console.log(error)
-                })
-        };
+        // const {app} = this.props;
+        // const file = e.target.files[0];
+        const uuid = THREE.MathUtils.generateUUID();
+        const url = "http://localhost:8000/Parrot.glb"
+        this.insertMeshFile({uuid, val: {type: FILE_TYPES.GLTF, url, uuid}})
+
     }
 
     // onAnimation clicked
@@ -353,7 +429,6 @@ export default class Editor extends React.Component {
 
     onObjectPropsChanged = ({uuid, key, val}) => {
         this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid, key, val}})
-
     }
 
     onMaterialPropsChanged = ({uuid, object_uuid, key, val}) => {
@@ -403,6 +478,7 @@ export default class Editor extends React.Component {
         if (!target.object) {
             console.error('no object selected to transform')
         }
+
         const selectedItem = target.object.uuid;
         const targetPosition = target.worldPosition;
         const targetRotation = target.worldQuaternion;
@@ -459,7 +535,7 @@ export default class Editor extends React.Component {
                             {/* Initial Setting for grid, light and background color */}
                             <color attach="background" args={["#111"]}/>
                             <ambientLight intensity={2}/>
-                            <pointLight position={[20, 10, -10]} intensity={2}/>
+                            {/*<pointLight position={[20, 10, -10]} intensity={2}/>*/}
                             {/* <primitive object={new THREE.AxesHelper(10, 10)} />
                             <primitive object={new THREE.GridHelper(6, 5)} /> */}
 
@@ -501,6 +577,7 @@ export default class Editor extends React.Component {
                                 })
 
                             }
+
                             <Helpers refs={refGraph} selectedItems={selectedItems} onSelect={this.onSelect}/>
 
 

@@ -103,22 +103,14 @@ export function useMultiplayerState(roomId, appInit) {
         });
     },);
 
-    const onInsertImportedMesh = useCallback(({mesh, geometries, materials}) => {
+    const onMeshFileInserted = useCallback(({uuid, val}) => {
         undoManager.stopCapturing();
         // create the group in the first transaction
         doc.transact(() => {
             // convert JS object to Yjs Map
-            const shapesMap = objectToYMap(mesh);
-            Object.values(geometries).forEach(geometry=>{
-                const geometryMap = objectToYMap(geometry);
-                yGeometry.set(geometry.uuid, geometryMap);
-            })
-            Object.values(materials).forEach(material=>{
-                const materialMap = objectToYMap(material);
-                yMaterial.set(material.uuid, materialMap);
-            })
+            const shapesMap = objectToYMap({...val, isFile:true});
             //insert into yJs
-            yMeshes.set(mesh.uuid, shapesMap);
+            yMeshes.set(uuid, shapesMap);
 
         });
     },);
@@ -188,6 +180,7 @@ export function useMultiplayerState(roomId, appInit) {
                     yMaterial.get(uuid).set(key, val)
                     break
                 case TYPES.MESH:
+                    console.log('update', uuid)
                     yMeshes.get(uuid).set(key, val);
                     break
                 default:
@@ -309,29 +302,18 @@ export function useMultiplayerState(roomId, appInit) {
                                         [meshJson.uuid]: meshJson,
                                     },
                                 };
-                                app.insertMesh({uuid: key, val: fullData, ...genericProps})
+
+                                if (meshJson.isFile){
+                                    app.insertMeshFile({uuid: key, val: meshJson, ...genericProps});
+                                } else {
+                                    app.insertMesh({uuid: key, val: fullData, ...genericProps})
+                                }
                             } else if (level === 3){
                                 const mesh = yMeshes.get(key);
                                 const meshJson = mesh.toJSON();
-                                if (meshJson.type === IMPORT_MESH_TYPES.GLTF_GROUP){
-                                    const materials = {};
-                                    const geometries = {};
-                                    // get materials and geometries of children
-                                    meshJson.children.forEach(child=>{
-                                        const materialUUID = child.material;
-                                        const geometryUUID = child.geometry;
-                                        materials[materialUUID] = yMaterial.get(materialUUID).toJSON();
-                                        geometries[geometryUUID] = yGeometry.get(geometryUUID).toJSON();
-                                    })
+                                if (meshJson.isFile){
 
-                                    const fullData = {
-                                        objects: {
-                                            [meshJson.uuid]: meshJson,
-                                        },
-                                        materials: materials,
-                                        geometries: geometries,
-                                    };
-                                    app.insertImportedMesh({uuid: key, val: fullData, ...genericProps});
+                                    app.insertMeshFile({uuid: key, val: meshJson, ...genericProps});
 
                                 } else {
                                     const material = yMaterial.get(mesh.get("material"));
@@ -358,7 +340,7 @@ export function useMultiplayerState(roomId, appInit) {
                             } else if (level === 2){
                                 // object property add
                                 const mesh = event.target.toJSON();
-                                app.updateObject({uuid: mesh.uuid, key: key, val: mesh[key]})
+                                app.updateObject({uuid: mesh.uuid, key: key, val: mesh[key], ...genericProps})
                             }
                             break;
                         case "delete":
@@ -493,7 +475,7 @@ export function useMultiplayerState(roomId, appInit) {
         onMount,
         onInsertMesh,
         onInsertObject,
-        onInsertImportedMesh,
+        onMeshFileInserted,
         onDelete,
         onUpdate,
         onInsertGroup,
