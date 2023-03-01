@@ -1,49 +1,81 @@
-import React, { useContext, useState } from 'react'
-import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
 import AuthContext from '../Context/AuthContext'
 
 function FileUpload() {
-  const { user } = useContext(AuthContext)
-  const [selectedFiles, setSelectedFiles] = useState([])
-
-  const [fileUrls, setFileUrls] = useState([])
+  const { authTokens } = useContext(AuthContext)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [files, setFiles] = useState([])
 
   const handleFileChange = (event) => {
-    const files = event.target.files;
-    setSelectedFiles(files);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault()
+    setSelectedFile(event.target.files[0])
+  }
+  const uploadFile = async () => {
     const formData = new FormData()
-    formData.append('userName', user.username)
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append('files', selectedFiles[i])
+    formData.append('file', selectedFile)
+    try {
+      const response = await fetch('http://127.0.0.1:8000/app/file-upload/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Authorization: 'Bearer ' + String(authTokens.access),
+        },
+      })
+      const data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.log(error)
     }
-    axios
-      .post('http://localhost:8000/app/upload/', formData, {
-        headers: { 'content-type': 'multipart/form-data' },
+  }
+  const getFiles = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/app/file-list/', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + String(authTokens.access),
+        },
       })
-      .then((response) => {
-        setFileUrls(response.data.fileUrls)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+      const data = await response.json()
+      console.log('data of file list', data)
+      setFiles(data)
+    } catch (error) {
+      console.log('error', error)
+    }
   }
 
+  useEffect(() => {
+    getFiles()
+  }, [])
+  const handleFormSubmit = async (event) => {
+    event.preventDefault()
+    await uploadFile()
+    getFiles()
+  }
+  console.log(files.length)
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input type='file' multiple onChange={handleFileChange} />
-      <button type='submit'>Upload</button>
-      {fileUrls.map((url, index) => (
-        <div key={index}>
-          <a href={url} target='_blank' rel='noreferrer'>
-            {url}
-          </a>
-        </div>
-      ))}
-    </form>
+    <div>
+      <div>
+        <form onSubmit={handleFormSubmit}>
+          <input type='file' onChange={handleFileChange} />
+          <button type='submit'>Upload</button>
+        </form>
+      </div>
+      <div>
+        {files.length > 0 ? (
+          <ul>
+            {files.map((file) => {
+              return (
+                <li key={file.id}>
+                  <a href={file.url}>{file.original_filename}</a>
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <></>
+        )}
+      </div>
+    </div>
   )
 }
 
