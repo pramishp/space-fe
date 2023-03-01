@@ -7,6 +7,7 @@ import Menu from './Menu';
 import {useMultiplayerState} from "../hooks/useMultiplayerState";
 import {TYPES} from "../Editor/constants";
 import {IMPORT_MESH_TYPES} from "../../common/consts";
+import TestCanvas from "../Editor/Editor";
 
 
 function Workspace({roomId, user, isXR}) {
@@ -37,7 +38,7 @@ function Workspace({roomId, user, isXR}) {
         onInsertObject,
         onDelete,
         onInsertGroup,
-        onInsertImportedMesh,
+        onMeshFileInserted,
         onAddChildren,
         onRemoveChildren,
         onAnimationAdd,
@@ -85,14 +86,6 @@ function Workspace({roomId, user, isXR}) {
         const objType = val.objects[Object.keys(val.objects)[0]].type;
         const type = objType.indexOf("Light") !== -1 ? "Light" : objType;
         switch (type) {
-            case IMPORT_MESH_TYPES.GLTF_GROUP:
-                const group = val.objects[Object.keys(val.objects)[0]]
-                onInsertImportedMesh({
-                    uuid, mesh: group,
-                    geometries: val.geometries,
-                    materials: val.materials
-                })
-                break
             case "Mesh":
                 const mesh = val.objects[Object.keys(val.objects)[0]]
                 const geometry = val.geometries[Object.keys(val.geometries)[0]]
@@ -124,13 +117,19 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
-    app.insertImportedMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
+    app.onMeshFileInserted = ({uuid, val})=>{
+
+        onMeshFileInserted({uuid, val})
+    }
+
+
+    app.insertMeshFile = ({uuid, val, isFromUndoManager, isMyEvent}) => {
 
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
-                // editor.insertMesh({uuid, val}, false)
-                //TODO: call editor to insert imported mesh
+                // console.log('mesh file to be inserted', val)
+                editor.insertMeshFile({uuid, val}, false)
             }
         }
     }
@@ -183,10 +182,12 @@ function Workspace({roomId, user, isXR}) {
     }
 
     // updateMesh props
-    app.updateObject = ({uuid, key, val}) => {
+    app.updateObject = ({uuid, key, val, isFromUndoManager, isMyEvent, }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
-            editor.updateObject({uuid, key, val})
+            if (!isMyEvent || isFromUndoManager){
+                editor.updateObject({uuid, key, val})
+            }
         }
     }
 
@@ -271,6 +272,7 @@ function Workspace({roomId, user, isXR}) {
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
                 {/*    /!*<AnimationApp/>*!/*/}
                 {/*</Canvas>*/}
+                {/*<TestCanvas/>*/}
                 <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers}/>
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}

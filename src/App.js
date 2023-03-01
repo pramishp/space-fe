@@ -48,7 +48,7 @@ export const Navigator = () => {
 function App() {
   const [isXR, setXR] = useState(false)
 
-      useEffect(() => {
+  useEffect(() => {
         checkXR()
       })
 
@@ -61,7 +61,7 @@ function App() {
   }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v2.01"
+    const roomId = "1234-v2.03"
 
   return (<></>)
 }

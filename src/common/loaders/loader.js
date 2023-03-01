@@ -228,10 +228,18 @@ export function toJSX(val, clickCallbacks) {
     //     const {jsx, ref} = gltf2JSX(data, clickCallbacks)
     //     return {jsxs: jsx, refs: ref}
     // }
+    if(val.isFile){
+        return {jsxs , refs}
+    }
+
     if (!data.objects) {
         return {jsxs, refs}
     }
+
     Object.values(data.objects).forEach(item => {
+        if (item.isFile){
+            return {refs, jsxs}
+        }
         let object, geometry, material;
         var ref = React.createRef();
         refs[item.uuid] = ref;
@@ -323,16 +331,16 @@ export function toJSX(val, clickCallbacks) {
                     const {jsxs} = toJSX(fullData, clickCallbacks)
                     refs = [...refs, ...Object.values(jsxs)]
                 })
-                object = <group key={item.uuid} ref={ref} {...callbackProps}  {...item}>
+                object = <group key={item.uuid} ref={ref} {...callbackProps} {...item}>
                     {
-                        refs.map(i=>i)
+                        refs.map(i => i)
                     }
                 </group>
                 // console.log('imported mesh jsx', object)
                 break
 
             default:
-                console.error('no case found to parse ', val.type)
+                console.error('no case found to parse ', val)
         }
         jsxs[item.uuid] = object;
 
@@ -366,7 +374,22 @@ function getGeometry(geometries, id) {
         case 'PlaneGeometry':
             return <planeGeometry key={geomData.uuid} {...geomData}/>
         case 'BufferGeometry':
-            return <bufferGeometry key={geomData.uuid} {...geomData}/>
+            const {data} = geomData;
+            console.log('geomData', geomData)
+            return (
+                <bufferGeometry key={geomData.uuid} attach={"geometry"}>
+                    {Object.entries(data.attributes).map(([key, val])=>{
+                        let {array, itemSize} = val;
+                        array = new Float32Array(array);
+                        return <bufferAttribute
+                            attach={`attributes-${key}`}
+                            array={array}
+                            count={array.length / itemSize}
+                            itemSize={itemSize}
+                        />
+                    })}
+                </bufferGeometry>
+            )
         default:
             console.error('geometry not defined')
     }

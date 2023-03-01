@@ -1,7 +1,16 @@
 import * as THREE from "three";
-
+// Define a custom toJSON() method for the Box mesh
+THREE.Mesh.prototype.toJSONWithPosition = function () {
+    var data = THREE.Object3D.prototype.toJSON.call(this);
+    data.object.position = this.position.toArray();
+    return data;
+};
+export const FILE_TYPES = {
+    GLTF: "gLTF"
+}
 export const EDITOR_OPS = {
     INSERT_OBJECT: "INSERT_MESH",
+    INSERT_OBJECT_FILE: "INSERT_OBJECT_FILE",
     DELETE_MESH: "DELETE_MESH",
     GROUP_MESH: "GROUP_MESH",
     INSERT_LIGHT: "INSERT_LIGHT",
@@ -10,13 +19,6 @@ export const EDITOR_OPS = {
     ADD_ANIMATION: "ADD_ANIMATION",
     DELETE_ANIMATION: "DELETE_ANIMATION"
 }
-
-// Define a custom toJSON() method for the Box mesh
-THREE.Mesh.prototype.toJSON = function () {
-    var data = THREE.Object3D.prototype.toJSON.call(this);
-    data.object.position = this.position.toArray();
-    return data;
-};
 
 function three2spaceJSON(jsonData) {
 
@@ -27,12 +29,24 @@ function three2spaceJSON(jsonData) {
     object = {...object}
     const geometries = {};
     const materials = {};
-    json.geometries.forEach(geom=>{
-        geometries[geom.uuid] = geom
-    })
-    json.materials.forEach(material=>{
-        materials[material.uuid] = material
-    })
+    const children = {};
+    if (json.geometries){
+        json.geometries.forEach(geom=>{
+            geometries[geom.uuid] = geom
+        })
+    }
+   if (json.materials){
+       json.materials.forEach(material=>{
+           materials[material.uuid] = material
+       })
+   }
+   // if (object.children){
+   //     object.children.forEach(child=>{
+   //         children[child.uuid] = child
+   //     })
+   // }
+   // object.children = children;
+    //TODO: convert children to space format for children, also in loader.js to support this change
 
     return {
         geometries,
@@ -42,8 +56,19 @@ function three2spaceJSON(jsonData) {
     }
 }
 
+export function gltf2json(gltf){
+    const json = gltf.scene.toJSON();
+    // Make a deep copy of the JSON object
+    const copyJson = JSON.parse(JSON.stringify(json));
+    copyJson.object.layers = 0;
+    const spaceJson = three2spaceJSON(copyJson);
+    return {uuid: json.object.uuid, val: spaceJson}
+
+}
+
 export function mesh2json(mesh) {
-    const json = mesh.toJSON();
+
+    const json = mesh.toJSONWithPosition();
     // Make a deep copy of the JSON object
     const copyJson = JSON.parse(JSON.stringify(json));
     copyJson.object.layers = 0;

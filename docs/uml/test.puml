@@ -1,0 +1,62 @@
+@startuml
+title ATM Machine Sequence Diagram
+
+actor User
+participant "ATM Machine" as ATM
+participant Bank
+
+User -> ATM: Inserts card
+ATM -> Bank: Verifies card
+Bank --> ATM: Card verified
+ATM -> User: Prompt for PIN
+User -> ATM: Enters PIN
+ATM -> Bank: Verifies PIN
+alt PIN correct
+    Bank --> ATM: PIN verified
+    ATM -> User: Displays account options
+    User -> ATM: Selects account type
+    ATM -> Bank: Retrieves account information
+    Bank --> ATM: Sends account information
+    ATM -> User: Displays account balance
+    User -> ATM: Requests cash withdrawal
+    ATM -> Bank: Verifies available funds
+    Bank --> ATM: Funds verified
+    ATM -> Bank: Dispenses cash
+    Bank --> ATM: Cash dispensed
+    ATM -> User: Dispenses cash
+    User -> ATM: Takes cash
+    ATM -> Bank: Ejects card
+    Bank --> ATM: Card ejected
+    ATM -> User: Ejects card
+else PIN incorrect
+    Bank --> ATM: PIN incorrect
+    ATM -> User: Displays error message
+    User -> ATM: Tries PIN again
+    ATM -> Bank: Verifies PIN
+    alt PIN correct
+        Bank --> ATM: PIN verified
+        ATM -> User: Displays account options
+        User -> ATM: Selects account type
+        ATM -> Bank: Retrieves account information
+        Bank --> ATM: Sends account information
+        ATM -> User: Displays account balance
+        User -> ATM: Requests cash withdrawal
+        ATM -> Bank: Verifies available funds
+        Bank --> ATM: Funds verified
+        ATM -> Bank: Dispenses cash
+        Bank --> ATM: Cash dispensed
+        ATM -> User: Dispenses cash
+        User -> ATM: Takes cash
+        ATM -> Bank: Ejects card
+        Bank --> ATM: Card ejected
+        ATM -> User: Ejects card
+    else PIN incorrect
+        Bank --> ATM: PIN incorrect
+        ATM -> User: Displays error message
+        User -> ATM: Cancels transaction
+        ATM -> Bank: Ejects card
+        Bank --> ATM: Card ejected
+        ATM -> User: Ejects card
+    end
+end
+@enduml
