@@ -551,8 +551,7 @@ export default class Editor extends React.Component {
                             position: [0, 5, 10],
                         }}
 
-                        // onPointerMissed={this.onPointerMissed}
-                        onPointerMissed={(event) => {console.log("Pointer missed")}}
+                        onPointerMissed={this.onPointerMissed}
                     >
                         <XR>
                             {/* FOr the XR controllers ray visibility */}
