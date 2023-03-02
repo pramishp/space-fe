@@ -23,7 +23,7 @@ const calculateScale = (startDistance, endDistance, currentScaleVector) => {
 
 function VRItem(props) {
     let selectedItems = props.selectedItems;
-    console.log("selected Items outside: ", selectedItems, typeof selectedItems);
+    // console.log("selected Items outside: ", selectedItems, typeof selectedItems);
     // console.log("uuid : ", props.uuid);
 
 

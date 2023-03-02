@@ -191,9 +191,9 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
-    app.onUpdateObject = ({uuid, key, val}) => {
+    app.onUpdateObject = ({uuid, key, val, extra}) => {
 
-        onUpdate({uuid, key, val, type: TYPES.MESH})
+        onUpdate({uuid, key, val, type: TYPES.MESH, extra})
     }
 
     app.updateMaterial = ({uuid, key, val, object_uuid}) => {

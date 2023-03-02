@@ -180,7 +180,6 @@ export function useMultiplayerState(roomId, appInit) {
                     yMaterial.get(uuid).set(key, val)
                     break
                 case TYPES.MESH:
-                    console.log('update', uuid)
                     yMeshes.get(uuid).set(key, val);
                     break
                 default:
