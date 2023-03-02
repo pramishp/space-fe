@@ -22,7 +22,7 @@ export function loadGltfFromUrl(url, onLoad, onError) {
     // // Instantiate a loader
     const loader = new GLTFLoader()
     loader.load(url, onLoad, (progress)=>{
-            console.log('gltf loading progress', progress.loaded/progress.total)
+            // console.log('gltf loading progress', progress.loaded/progress.total)
         },
         // called when loading has errors
         function (error) {

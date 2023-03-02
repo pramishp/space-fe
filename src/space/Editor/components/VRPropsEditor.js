@@ -3,7 +3,7 @@ import {Canvas, extend, useFrame} from '@react-three/fiber'
 
 import {Billboard, Text} from '@react-three/drei'
 import * as THREE from 'three'
-import {Button} from "./uis/Button";
+import {Button} from "./VRUIs/Button";
 import {Flex, Box} from "@react-three/flex";
 
 

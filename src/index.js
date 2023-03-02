@@ -4,6 +4,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App, {Navigator} from "./App";
 import PresentationWrapper from "./space/PresentationWrapper";
+import TestCanvasUI from "./space/Editor/components/xruitest";
 
 // WARNING: Memory Leak Detected.
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,7 +14,8 @@ root.render(
     {/*<Workspace />*/}
     <App />
     {/*  <PresentationWrapper/>*/}
-    <Navigator/>
+    {/*<Navigator/>*/}
+    {/*  <TestCanvasUI/>*/}
   </React.StrictMode>
 );
 

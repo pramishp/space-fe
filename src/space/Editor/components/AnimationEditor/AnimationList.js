@@ -1,7 +1,7 @@
 import {animations} from "./AnimationData";
 import {Billboard, Text} from "@react-three/drei";
 import {Flex, Box} from '@react-three/flex';
-import {Button} from "../uis/Button";
+import {Button} from "../VRUIs/Button";
 import {useFrame} from "@react-three/fiber";
 import {AnimationClip} from "three";
 import * as THREE from "three";

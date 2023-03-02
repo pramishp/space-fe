@@ -5,7 +5,7 @@ import Editor from "../Editor/EditorClass";
 import Menu from './Menu';
 
 import {useMultiplayerState} from "../hooks/useMultiplayerState";
-import {TYPES} from "../Editor/constants";
+import {FILE_TYPES, TYPES} from "../Editor/constants";
 import {IMPORT_MESH_TYPES} from "../../common/consts";
 import TestCanvas from "../Editor/Editor";
 
@@ -191,9 +191,9 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
-    app.onUpdateObject = ({uuid, key, val}) => {
+    app.onUpdateObject = ({uuid, key, val, extra}) => {
 
-        onUpdate({uuid, key, val, type: TYPES.MESH})
+        onUpdate({uuid, key, val, type: TYPES.MESH, extra})
     }
 
     app.updateMaterial = ({uuid, key, val, object_uuid}) => {
