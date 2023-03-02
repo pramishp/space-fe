@@ -10,7 +10,7 @@ import MenuBar from "./components/MenuBar";
 import {Canvas, useFrame} from "@react-three/fiber";
 import {XR, VRButton, Controllers} from '@react-three/xr';
 import {gltf2JSX, sampleJson, toJSX} from "../../common/loaders/loader";
-import {OrbitControls, TransformControls, GizmoHelper, GizmoViewport, useHelper} from "@react-three/drei";
+import {OrbitControls, TransformControls, GizmoHelper, GizmoViewport} from "@react-three/drei";
 import {Selection} from "./Selection";
 import Controls from "./Controls";
 import Ground from "./components/Ground";
@@ -30,9 +30,8 @@ import MeshMenuBar from "./components/VRMenuBar/MeshMenuBar";
 import LightMenuBar from "./components/VRMenuBar/LightMenuBar";
 
 import VRItem from "./components/VRItem";
-import {XRControllerModelFactory} from 'three/examples/jsm/webxr/XRControllerModelFactory';
 import {Quaternion} from "three";
-
+import SideMenu from "./SideMenu";
 
 export default class Editor extends React.Component {
 
@@ -467,7 +466,7 @@ export default class Editor extends React.Component {
             console.error(`Object of uuid - ${uuid} not found to update the mesh`)
         }
         const object = refGraph[uuid].current;
-        console.log('update', key, val)
+        // console.log('update', key, val)
         switch (key) {
             case "position":
                 object.position.fromArray(val);
@@ -518,22 +517,25 @@ export default class Editor extends React.Component {
         // const inverseQuaternion = target.worldQuaternionInv.toArray();
 
         // ['translate', 'rotate', 'scale']
-        switch (mode){
+        switch (mode) {
             case "translate":
-                this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "position", val: position}})
+                this.notifyApp({
+                    type: EDITOR_OPS.UPDATE_MESH,
+                    data: {uuid: selectedItem, key: "position", val: position}
+                })
                 break
             case "rotate":
-                this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "quaternion", val: quaternion}})
+                this.notifyApp({
+                    type: EDITOR_OPS.UPDATE_MESH,
+                    data: {uuid: selectedItem, key: "quaternion", val: quaternion}
+                })
                 // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "rotation", val: rotation}})
                 break
             case "scale":
                 break
             default:
                 console.error(`No ${mode} case handled in onTransformReleased`)
-
         }
-
-
     }
 
     onVRTransformReleased({uuid, worldPosition, worldQuaternion}) {
@@ -587,6 +589,7 @@ export default class Editor extends React.Component {
                             onPointerMissed={this.onPointerMissed}
                     >
                         <XR>
+                            <SideMenu/>
                             {/* FOr the XR controllers ray visibility */}
                             <Controllers
                                 /** Optional material props to pass to controllers' ray indicators */
@@ -595,8 +598,7 @@ export default class Editor extends React.Component {
                                 hideRaysOnBlur={false}
                             />
                             {/* Initial Setting for grid, light and background color */}
-
-                            <color attach="background" args={["#111"]}/>
+                            <color attach="background" args={["#f59f9f"]}/>
                             <ambientLight intensity={2}/>
                             {/*<pointLight position={[20, 10, -10]} intensity={2}/>*/}
 
@@ -606,6 +608,12 @@ export default class Editor extends React.Component {
                             {/* <VRMenuBar onLightSelected={this.onAddLightSelected}
                                 onMeshSelected={this.onAddMeshSelected}
                                 onGroupSelected={this.onAddGroupSelected} /> */}
+                            {true && <PropsEditor rerender={rerender} isXR={true} selectedItems={selectedItems}
+                                                  refs={refGraph}
+                                                  animations={animations}
+                                                  onAnimationDelete={this.onDeleteAnimationClicked}
+                                                  onMaterialPropsChanged={this.onMaterialPropsChanged}
+                                                  onObjectPropsChanged={this.onObjectPropsChanged}/>}
 
                             <MeshMenuBar onLightSelected={this.onAddLightSelected}
                                          onMeshSelected={this.onAddMeshSelected}

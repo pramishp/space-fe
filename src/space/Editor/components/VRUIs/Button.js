@@ -21,14 +21,18 @@ export function Button(props) {
     const [color, setColor] = React.useState(0x123456)
 
     const onSelect = ()=>{
-        setColor((Math.random() * 0xffffff) | 0);
-        onClick();
+        // setColor((Math.random() * 0xffffff) | 0);
+        if (onClick){
+            onClick();
+        }
 
     }
 
     const onItemHovered = ()=>{
         setHover(true)
-        onHover();
+        if (onHover){
+            onHover();
+        }
     }
 
     const onBlur = ()=>{

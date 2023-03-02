@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import SphereGeometryEditor from "./SphereGeometryPropsEditor";
 import {TYPES} from "../../constants";
+import VRUIContainer from "../VRUIs/VRUIContainer";
+import {Heading6} from "../VRUIs/Headings";
+import {NumberInput} from "../VRUIs/NumberInput";
 
-const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged}) => {
+const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR}) => {
     const size = mesh.scale.x;
     const color = mesh.material.color;
 
@@ -13,6 +16,17 @@ const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged}) => {
     const handleSizeChange = e => {
         onObjectPropsChanged({object_uuid: mesh.uuid, uuid:mesh.uuid, key: "scale", val:e.target.value})
     };
+
+    if (isXR){
+        return (
+            <VRUIContainer position={[1,4,0]}>
+                <>
+                    <Heading6>Size:</Heading6>
+                    <NumberInput value={size} onChange={handleSizeChange}/>
+                </>
+            </VRUIContainer>
+        )
+    }
 
     return (
         <div>
@@ -34,6 +48,7 @@ const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged}) => {
                     onChange={handleSizeChange}
                 />
             </div>
+
             {mesh.geometry.type==="SphereGeometry" && <SphereGeometryEditor mesh={mesh}/>}
         </div>
     );
