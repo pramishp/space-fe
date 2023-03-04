@@ -1,7 +1,10 @@
+import {ANIMATION_TYPES} from "../../constants";
+
 export const animations = {
     'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d': {
         name: 'position',
         duration: 3,
+        type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
                 name: '.position',
@@ -19,6 +22,7 @@ export const animations = {
     'd77c5fc4-f70b-4ec3-ace7-3dd187185451': {
         name: 'scale',
         duration: 3,
+        type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
                 name: '.scale',
@@ -37,6 +41,7 @@ export const animations = {
     "fc0a8baa-2226-49b9-989b-3ddfc3051a84": {
         name: 'rotation',
         duration: 3,
+        type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
                 name: '.quaternion',
@@ -49,6 +54,11 @@ export const animations = {
         uuid: 'fc0a8baa-2226-49b9-989b-3ddfc3051a84',
         clampWhenFinished: true,
         blendMode: 2500
+    },
+    "765258bb-cb65-4107-9f3c-b3ac3a36d8b6":{
+        uuid: "765258bb-cb65-4107-9f3c-b3ac3a36d8b6",
+
     }
+
 
 }

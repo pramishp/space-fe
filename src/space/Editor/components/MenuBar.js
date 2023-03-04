@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected}) {
 
     const meshOptions = [
-        { name: 'Sphere', id: 'sphere' },
-        { name: 'Box', id: 'box' },
-        { name: 'Cylinder', id: 'cylinder' },
-        { name: 'Plane', id: 'plane' },
+        {name: 'Sphere', id: 'sphere'},
+        {name: 'Box', id: 'box'},
+        {name: 'Cylinder', id: 'cylinder'},
+        {name: 'Plane', id: 'plane'},
+        {name: 'Ellipse', id: 'ellipse'}
     ];
 
     const lightOptions = [
-            { name: 'Ambient', id: 'ambient' },
-            { name: 'Directional', id: 'directional' },
-            { name: 'Point', id: 'point' },
-        ];
+        {name: 'Ambient', id: 'ambient'},
+        {name: 'Directional', id: 'directional'},
+        {name: 'Point', id: 'point'},
+    ];
     const groupOptions = [
-            { name: 'Group', id: 'group' },
+        {name: 'Group', id: 'group'},
 
-        ];
+    ];
 
     const handleMeshSelected = (event) => {
         const selectedId = event.target.value;

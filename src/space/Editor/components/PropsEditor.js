@@ -5,6 +5,8 @@ import MeshEditor from "./PropsEditor/MeshPropsEditor";
 import {Heading6} from "./VRUIs/Headings";
 import {Button} from "./VRUIs/Button";
 import VRUIContainer from "./VRUIs/VRUIContainer";
+import {SHAPE_TYPES} from "../constants";
+import LineEditor from "./PropsEditor/LineEditor";
 
 const _ = require("lodash")
 
@@ -67,6 +69,7 @@ function AnimationEditor({animations, selectedItems, onAnimationDelete, isXR}) {
 
 function PropsEditor(props) {
     const {isXR, selectedItems, refs} = props;
+    // console.log('isXR', isXR)
     const Empty = isXR ? <></> : <div style={{'margin': '40px'}}/>
     if (selectedItems.length === 0) {
         return Empty
@@ -85,6 +88,7 @@ function PropsEditor(props) {
             {object.type.indexOf("Light") !== -1 && <LightEditor light={object} {...props} />}
             {/*{object.type.indexOf("Group") !== -1 && <GroupEditor group={object} {...props} />}*/}
             {object.type.indexOf("Mesh") !== -1 && <MeshEditor mesh={object} {...props} />}
+            {object.type.indexOf("Line") !== -1 && <LineEditor mesh={object} {...props} />}
             <AnimationEditor {...props}/>
         </>
     )

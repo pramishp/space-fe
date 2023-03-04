@@ -9,19 +9,19 @@ const LightEditor = ({light, onObjectPropsChanged, isXR}) => {
     const {color, intensity, distance, decay} = light;
 
     const handleColorChange = e => {
-        onObjectPropsChanged({uuid: light.uuid, key: "color", val: e.target.value})
+        onObjectPropsChanged({uuid: light.uuid, key: "color", val: parseFloat(e.target.value)})
     };
 
     const handleIntensityChange = e => {
-        onObjectPropsChanged({uuid: light.uuid, key: "intensity", val: e.target.value})
+        onObjectPropsChanged({uuid: light.uuid, key: "intensity", val: parseFloat(e.target.value)})
     };
 
     const handleDistanceChange = e => {
-        onObjectPropsChanged({uuid: light.uuid, key: "distance", val: e.target.value})
+        onObjectPropsChanged({uuid: light.uuid, key: "distance", val: parseFloat(e.target.value)})
     };
 
     const handleDecayChange = e => {
-        onObjectPropsChanged({uuid: light.uuid, key: "decay", val: e.target.value})
+        onObjectPropsChanged({uuid: light.uuid, key: "decay", val: parseFloat(e.target.value)})
     };
 
 

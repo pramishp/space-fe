@@ -2,19 +2,31 @@ import {animations} from "./AnimationData";
 import {Billboard, Text} from "@react-three/drei";
 import {Flex, Box} from '@react-three/flex';
 import {Button} from "../VRUIs/Button";
-import {useFrame} from "@react-three/fiber";
+import {useFrame, useThree} from "@react-three/fiber";
 import {AnimationClip} from "three";
 import * as THREE from "three";
 import {useEffect} from "react";
+import {ANIMATION_TYPES} from "../../constants";
 
 export default function AnimationList({isXR, onClick, refs, selectedItems}) {
 
     let mixer, action;
 
+    const {scene} = useThree();
+
     const onItemClicked = ({uuid, val}) => {
-        if (onClick) {
-            onClick({uuid, val});
+        switch (val.type){
+            case ANIMATION_TYPES.KEYFRAME:
+                if (onClick) {
+                    onClick({uuid, val});
+                }
+                break
+
+            default:
+                console.log(`No case handled for ${val.type} animation`)
+
         }
+
 
     }
 

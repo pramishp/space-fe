@@ -86,6 +86,7 @@ function Workspace({roomId, user, isXR}) {
         const objType = val.objects[Object.keys(val.objects)[0]].type;
         const type = objType.indexOf("Light") !== -1 ? "Light" : objType;
         switch (type) {
+            case "Line":
             case "Mesh":
                 const mesh = val.objects[Object.keys(val.objects)[0]]
                 const geometry = val.geometries[Object.keys(val.geometries)[0]]
@@ -191,9 +192,8 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
-    app.onUpdateObject = ({uuid, key, val, extra}) => {
-
-        onUpdate({uuid, key, val, type: TYPES.MESH, extra})
+    app.onUpdateObject = ({uuid, key, val}) => {
+        onUpdate({uuid, key, val, type: TYPES.MESH})
     }
 
     app.updateMaterial = ({uuid, key, val, object_uuid}) => {
@@ -266,7 +266,7 @@ function Workspace({roomId, user, isXR}) {
 
     return (
         <>
-            <Menu/>
+            <Menu />
             <div className="App" style={{height: window.innerHeight}}>
                 {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}

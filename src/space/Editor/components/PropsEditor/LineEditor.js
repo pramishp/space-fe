@@ -5,17 +5,22 @@ import VRUIContainer from "../VRUIs/VRUIContainer";
 import {Heading6} from "../VRUIs/Headings";
 import {NumberInput} from "../VRUIs/NumberInput";
 
-const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR}) => {
+const LineEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR}) => {
     const size = mesh.scale.x;
     const color = mesh.material.color;
+    const lineWidth = mesh.material.linewidth;
 
     const handleColorChange = e => {
         onMaterialPropsChanged({object_uuid: mesh.uuid, uuid:mesh.material.uuid, key: "color", val: e.target.value})
     };
 
-    const handleSizeChange = e => {
-        const value = parseFloat(e.target.value);
-        onObjectPropsChanged({object_uuid: mesh.uuid, uuid:mesh.uuid, key: "scale", val:[value, value, value]})
+    // const handleSizeChange = e => {
+    //     const value = parseFloat(e.target.value);
+    //     onObjectPropsChanged({object_uuid: mesh.uuid, uuid:mesh.uuid, key: "scale", val: [value, value, value]})
+    // };
+
+    const handleLineWidthChange = e => {
+        onMaterialPropsChanged({object_uuid: mesh.uuid, uuid:mesh.material.uuid, key: "linewidth", val:parseInt(e.target.value)})
     };
 
     if (isXR){
@@ -25,6 +30,10 @@ const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR})
                 {/*    <Heading6>Size:</Heading6>*/}
                 {/*    <NumberInput value={size} onChange={handleSizeChange}/>*/}
                 {/*</>*/}
+                <>
+                    <Heading6>LineWidth:</Heading6>
+                    <NumberInput value={lineWidth} onChange={handleLineWidthChange}/>
+                </>
             </VRUIContainer>
         )
     }
@@ -49,10 +58,18 @@ const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR})
             {/*        onChange={handleSizeChange}*/}
             {/*    />*/}
             {/*</div>*/}
+            <div>
+                    <label htmlFor="linewidth">LineWidth:</label>
+                    <input
+                        type="number"
+                        id="linewidth"
+                        value={lineWidth}
+                        onChange={handleLineWidthChange}
+                    />
+                </div>
 
-            {mesh.geometry.type==="SphereGeometry" && <SphereGeometryEditor mesh={mesh}/>}
         </div>
     );
 };
 
-export default MeshEditor;
+export default LineEditor;

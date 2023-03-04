@@ -7,8 +7,9 @@ import * as THREE from 'three';
 import * as React from 'react';
 import {AnimationClip, DirectionalLightHelper} from "three";
 import {ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES} from "../consts";
-import {useHelper} from "@react-three/drei";
-import {GLTFParser} from "three/examples/jsm/loaders/GLTFLoader";
+import {Line} from "@react-three/drei";
+
+const _ = require('lodash')
 
 export const sampleJson = {
 
@@ -228,8 +229,8 @@ export function toJSX(val, clickCallbacks) {
     //     const {jsx, ref} = gltf2JSX(data, clickCallbacks)
     //     return {jsxs: jsx, refs: ref}
     // }
-    if(val.isFile){
-        return {jsxs , refs}
+    if (val.isFile) {
+        return {jsxs, refs}
     }
 
     if (!data.objects) {
@@ -237,7 +238,7 @@ export function toJSX(val, clickCallbacks) {
     }
 
     Object.values(data.objects).forEach(item => {
-        if (item.isFile){
+        if (item.isFile) {
             return {refs, jsxs}
         }
         let object, geometry, material;
@@ -339,6 +340,44 @@ export function toJSX(val, clickCallbacks) {
                 // console.log('imported mesh jsx', object)
                 break
 
+            case 'Line':
+
+                geometry = _.find(data.geometries, {uuid: item.geometry})
+                geometry = getGeometry(data.geometries, item.geometry)
+                material = getMaterial(data.materials, item.material)
+
+                object = (
+                    <line key={item.uuid}
+                          ref={ref}
+                          {...item}>
+                        {geometry}
+                        {material}
+                    </line>
+                )
+                break;
+
+            case 'LineLoop':
+                geometry = getGeometry(data.geometries, item.geometry)
+                material = getMaterial(data.materials, item.material)
+                object = (
+                    <lineLoop key={item.uuid} ref={ref} {...item} {...callbackProps}>
+                        {geometry}
+                        {material}
+                    </lineLoop>
+                )
+                break;
+
+            case 'LineSegments':
+                geometry = getGeometry(data.geometries, item.geometry)
+                material = getMaterial(data.materials, item.material)
+                object = (
+                    <lineSegments key={item.uuid} ref={ref} {...item} {...callbackProps}>
+                        {geometry}
+                        {material}
+                    </lineSegments>
+                )
+                break;
+
             default:
                 console.error('no case found to parse ', val)
         }
@@ -375,10 +414,10 @@ function getGeometry(geometries, id) {
             return <planeGeometry key={geomData.uuid} {...geomData}/>
         case 'BufferGeometry':
             const {data} = geomData;
-            console.log('geomData', geomData)
+            // console.log('geomData', geomData)
             return (
                 <bufferGeometry key={geomData.uuid} attach={"geometry"}>
-                    {Object.entries(data.attributes).map(([key, val])=>{
+                    {Object.entries(data.attributes).map(([key, val]) => {
                         let {array, itemSize} = val;
                         array = new Float32Array(array);
                         return <bufferAttribute
@@ -444,6 +483,8 @@ function getMaterialJSX(materialData) {
             return <meshBasicMaterial key={materialData.uuid} {...materialData}/>
         case "MeshStandardMaterial":
             return <meshStandardMaterial key={materialData.uuid} {...materialData}/>
+        case "LineBasicMaterial":
+            return <lineBasicMaterial key={materialData.uuid} {...materialData}/>
         default:
             console.error('Material not defined')
     }
