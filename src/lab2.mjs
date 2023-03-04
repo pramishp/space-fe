@@ -1,15 +1,20 @@
 import * as THREE from 'three'
 
-// Define a custom toJSON() method for the Box mesh
-THREE.Mesh.prototype.toJSON = function () {
-    var data = THREE.Object3D.prototype.toJSON.call(this);
-    data.position = this.position.toArray();
-    return data;
-};
+const curve = new THREE.EllipseCurve(
+    0,  0,            // ax, aY
+    10, 10,           // xRadius, yRadius
+    0,  2 * Math.PI,  // aStartAngle, aEndAngle
+    false,            // aClockwise
+    0                 // aRotation
+);
 
-const geometry = new THREE.PlaneGeometry( 0.1, 0.1, 0.1 );
-const material = new THREE.MeshBasicMaterial();
-const mesh = new THREE.Mesh( geometry, material );
-mesh.position.set(1,1,1)
+const points = curve.getPoints( 5 );
+const geometry = new THREE.BufferGeometry().setFromPoints( points );
 
-console.log(mesh.toJSON())
+const material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 5} );
+
+// Create the final object to add to the scene
+const ellipse = new THREE.Line( geometry, material );
+ellipse.material.linewidth = 100
+
+console.log(ellipse.scale.fromArray([2,2,2]))
