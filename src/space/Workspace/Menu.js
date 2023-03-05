@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Sidebar from './Components/Sidebar.js'
 import SearchModel from './Components/SearchModel.js'
 import FileUpload from './Components/FileUpload.js'
-function Menu() {
+function Menu({onModelUpload}) {
   const [modelView, setModelView] = useState(false)
   const [uploadView, setUploadView] = useState(false)
 
@@ -15,6 +15,10 @@ function Menu() {
     setModelView((prevState) => !prevState)
     uploadView && setUploadView((prevState) => !prevState)
   }
+  const handleModelUpload = (url) => {
+    console.log(url)
+    onModelUpload(url)
+  }
 
   return (
     <div className='flex flex-row'>
@@ -22,8 +26,8 @@ function Menu() {
         handleModelsClick={handleModelsClick}
         handleUploadClick={handleUploadClick}
       />
-      {modelView && <SearchModel />}
-      {uploadView && <FileUpload />}
+      {modelView && <SearchModel onModelUpload={handleModelUpload}/>}
+      {uploadView && <FileUpload onModelUpload={onModelUpload}/>}
     </div>
   )
 }

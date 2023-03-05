@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import {CanvasUI} from "../../../packages/CanvasUI/examples/jsm/CanvasUI"
 import {useEffect, useMemo, useState} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import {Text, Box, OrbitControls} from "@react-three/drei";

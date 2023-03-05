@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected}) {
+function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBackgroundChanged}) {
 
     const meshOptions = [
         { name: 'Sphere', id: 'sphere' },
@@ -19,6 +19,13 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected}) {
 
         ];
 
+    const backgroundOptions = [
+        {name:'Stars', id:'stars'},
+        {name:'Sky', id:'sky'},
+        {name:'Color', id:'color'},
+        {name:'Environment', id:'environment'},
+    ];
+
     const handleMeshSelected = (event) => {
         const selectedId = event.target.value;
         onMeshSelected(selectedId);
@@ -33,6 +40,12 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected}) {
         const selectedId = event.target.value;
         onGroupSelected(selectedId);
     };
+    const handleBackgroundSelected = (event) => {
+        const selectedId = event.target.value;
+        console.log('selectedId', selectedId)
+        onBackgroundChanged(selectedId)
+
+    }
 
 
     return (
@@ -63,6 +76,14 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected}) {
             <h5>Light</h5>
             <select onChange={handleLightSelected}>
                 {lightOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                        {option.name}
+                    </option>
+                ))}
+            </select>
+            <h5>background</h5>
+            <select onChange={handleBackgroundSelected}>
+                {backgroundOptions.map((option) => (
                     <option key={option.id} value={option.id}>
                         {option.name}
                     </option>
