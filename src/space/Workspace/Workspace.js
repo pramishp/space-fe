@@ -44,6 +44,7 @@ function Workspace({roomId, user, isXR}) {
         onAnimationAdd,
         onAnimationDelete,
         onUpdate,
+        onBackgroundChange,
         onUndo,
         onRedo,
         loading,
@@ -107,6 +108,21 @@ function Workspace({roomId, user, isXR}) {
                 break
         }
 
+    }
+    // might not need switch here
+    app.onBackgroundAdded = ({ op_type , val }) => {
+        console.log('here')
+        switch (op_type) {
+            case "star":
+                onBackgroundChange({op_type, val})
+                break
+            case "sky":
+                break
+            case "color":
+                break
+            case "environment":
+                break
+        }
     }
 
     app.insertMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
@@ -274,14 +290,24 @@ function Workspace({roomId, user, isXR}) {
     if (loading) {
         return <div>Loading</div>
     }
+    app.onBackgroundChanged = ({op_type}) => {
+        console.log(op_type)
+    }
 
+    app.onModelUpload = (url) => {
+        console.log(url)
+        editorRef.current.onModelUpload(url)
+    }
+    const onModelUpload = (url) => {
+        app.onModelUpload(url)
+    }
     const initData = getInitData();
     //TODO: Why console.log(initData) here is called 8 times ?
 
 
     return (
         <>
-            <Menu />
+            <Menu onModelUpload={onModelUpload}/>
             <div className="App" style={{height: window.innerHeight}}>
                 {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
