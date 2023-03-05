@@ -1,11 +1,16 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-function SearchModel() {
+function SearchModel({onModelUpload}) {
   console.log('models')
   const [objects, setObjects] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
 
+  const handleClick = (url) => {
+    console.log('handle click is called')
+    console.log(url)
+    onModelUpload(url)
+  }
 
   useEffect(() => {
     axios
@@ -29,7 +34,7 @@ function SearchModel() {
         <div className='bg-white p-4'>
           <h2 className='text-gray-900 text-lg font-medium mb-2'>{object.name}</h2>
           <img className='w-full object-cover h-40 mb-2' src={object.images} alt='No image found' />
-          <a className='text-gray-600 text-sm' href={object.model}>OPEN</a>
+          <button className='text-gray-600 text-sm' onClick={()=>handleClick(object.model)}>OPEN</button>
         </div>
       </li>
     ))}
