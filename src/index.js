@@ -13,7 +13,7 @@ root.render(
   <React.StrictMode>
     {/*<Workspace />*/}
     <App />
-    {/*  <PresentationWrapper/>*/}
+      {/*<PresentationWrapper/>*/}
     {/*<Navigator/>*/}
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>

@@ -2,7 +2,8 @@ import * as _ from "lodash";
 import * as THREE from "three";
 import {AnimationClip} from "three";
 import {getIndexAndSubIndex} from "../utils";
-import {ANIMATION_TYPES} from "../common/consts";
+import {ANIMATION_LIFE_TYPES} from "../common/consts";
+import {ANIMATION_TYPES} from "./Editor/constants";
 
 
 export default class AnimationSequence {
@@ -39,7 +40,7 @@ export default class AnimationSequence {
     init() {
         // this.slideAnimations is set by getSequence
         this.mixers = this.getMixers(this.slideAnimations, this.meshRefs);
-        this.parsedAnimations = this.parseAnimations(this.slideAnimations, this.animationsJson);
+        this.parsedAnimations = this.parseAnimations(this.slideAnimations, this.animationsJson, this.meshRefs);
         // listeners contain all the on animation end callbacks, they have to be unsubscribed
         const {clipActions, listeners} = this.getClipActions(this.slideAnimations, this.mixers,
             this.sequence, this.parsedAnimations, this.animationsJson)
@@ -118,6 +119,9 @@ export default class AnimationSequence {
             const clip = parsedAnimations[uuid]
             // each slide animation is a clip action
             clipActions[uuid] = mixer.clipAction(clip);
+
+            // set timescale
+            clipActions[uuid].timeScale = 0.1;
             // listeners are mixer based i.e. one listener for one animated mesh
             if (listeners[val.object_uuid] === undefined) {
                 listeners[val.object_uuid] = (e) => {
@@ -134,7 +138,7 @@ export default class AnimationSequence {
                     // attach onAnimationEnd only if it is the longest animation of that index
                     // if there is an animation with type INFINITY, ignore it
                     const sortedSlideAnimations = animationSeq[i].filter(function (i) {
-                        return (i.type !== ANIMATION_TYPES.INFINITY)
+                        return (i.type !== ANIMATION_LIFE_TYPES.INFINITY)
                     }).map(item => animationsJson[item.animation_uuid]).sort(function (a, b) {
                         return b.duration - a.duration;
                     })
@@ -160,10 +164,50 @@ export default class AnimationSequence {
 
     }
 
-    parseAnimations(slideAnimations, animationsJson) {
+    parseAnimations(slideAnimations, animationsJson, meshRefs) {
         const parsedAnimations = {}
         Object.entries(slideAnimations).forEach(([uuid, val]) => {
-            parsedAnimations[uuid] = AnimationClip.parse(animationsJson[val.animation_uuid])
+            if (val.animationType === ANIMATION_TYPES.KEYFRAME){
+                parsedAnimations[uuid] = AnimationClip.parse(animationsJson[val.animation_uuid])
+            } else if (val.animationType === ANIMATION_TYPES.PATH){
+                // get coordinates of the path and make keyframe animation out of it
+                const path_uuid = animationsJson[val.animation_uuid].path_uuid;
+                const pathRef = meshRefs[path_uuid];
+                if (!pathRef.current){
+                    console.error(`PathRef with uuid ${path_uuid} is null`)
+                }
+                const path = pathRef.current;
+                const pathWorldCoordinates = path.geometry.clone().applyMatrix4(path.matrixWorld);
+
+                const positionsAttribute = pathWorldCoordinates.getAttribute('position');
+                const numKeyframes = positionsAttribute.count;
+                const keyframeTimes = new Array(numKeyframes);
+
+                for (let i = 0; i < numKeyframes; i++) {
+                    keyframeTimes[i] = i / (numKeyframes - 1);
+                }
+
+                const positionArray = new Array(numKeyframes * 3);
+
+                for (let i = 0; i < numKeyframes; i++) {
+                    const index = i * 3;
+                    const x = positionsAttribute.getX(i);
+                    const y = positionsAttribute.getY(i);
+                    const z = positionsAttribute.getZ(i);
+                    positionArray[index] = x;
+                    positionArray[index + 1] = y;
+                    positionArray[index + 2] = z;
+                }
+
+                const trackName = '.position'; // name of the property to animate
+                const track = new THREE.VectorKeyframeTrack(trackName, keyframeTimes , positionArray); // create a track
+                const clip = new THREE.AnimationClip('positionChange', -1 , [track]);
+                // clip.timeScale = -2.0;
+                // console.log('keyframe animation', clip)
+                parsedAnimations[uuid] = clip
+            } else {
+
+            }
         })
         return parsedAnimations;
     }
@@ -192,10 +236,10 @@ export default class AnimationSequence {
             action.type = animation.type;
             action.trigger = animation.trigger;
 
-            if (animation.type === ANIMATION_TYPES.LOOP_ONCE) {
+            if (animation.type === ANIMATION_LIFE_TYPES.LOOP_ONCE) {
                 action.loop = THREE.LoopOnce;
             }
-            if (animation.type === ANIMATION_TYPES.INFINITY) {
+            if (animation.type === ANIMATION_LIFE_TYPES.INFINITY) {
                 action.loop = THREE.LoopRepeat;
             }
             action.reset();
@@ -206,7 +250,7 @@ export default class AnimationSequence {
         // play it and immediately call the next animation
         let hasLoopOnce = false;
         animations_seq[index].forEach(animation => {
-            if (animation.type !== ANIMATION_TYPES.INFINITY) {
+            if (animation.type !== ANIMATION_LIFE_TYPES.INFINITY) {
                 hasLoopOnce = true;
             }
         })

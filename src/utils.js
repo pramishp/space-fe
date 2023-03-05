@@ -1,14 +1,13 @@
 import * as Y from "yjs";
 import * as _ from "lodash";
+import * as THREE from "three";
 
 function getRandom(max, min = 0) {
     return Math.ceil(Math.random() * (max - min) + min);
 }
 
 function generateUniqueId() {
-    let array = new Uint32Array(1);
-    window.crypto.getRandomValues(array);
-    return array[0].toString(36);
+    return THREE.MathUtils.generateUUID();
 }
 
 function deepSearch(obj, key, keys_list = []) {

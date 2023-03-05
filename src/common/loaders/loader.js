@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import * as React from 'react';
 import {AnimationClip, DirectionalLightHelper} from "three";
-import {ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES} from "../consts";
+import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../consts";
 import {Line} from "@react-three/drei";
 
 const _ = require('lodash')
@@ -148,7 +148,7 @@ export const sampleJson = {
             animations: {
                 'uuid-9834ukajshdf': {
                     uuid: 'uuid-9834ukajshdf',
-                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    type: ANIMATION_LIFE_TYPES.LOOP_ONCE,
                     trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
                     object_uuid: 'cube1',
                     animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position
@@ -156,7 +156,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh345': {
                     uuid: 'uuid-345kjh345',
-                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    type: ANIMATION_LIFE_TYPES.LOOP_ONCE,
                     trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
                     object_uuid: 'cube2',
                     animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scale
@@ -164,7 +164,7 @@ export const sampleJson = {
                 },
                 'uuid-892374-ert': {
                     uuid: 'uuid-892374-ert',
-                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    type: ANIMATION_LIFE_TYPES.LOOP_ONCE,
                     object_uuid: 'cube1',
                     trigger: ANIMATION_TRIGGERS.ON_KEY_PRESSED,
                     animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84", //rotation
@@ -172,7 +172,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh346': {
                     uuid: 'uuid-345kjh346',
-                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    type: ANIMATION_LIFE_TYPES.LOOP_ONCE,
                     trigger: ANIMATION_TRIGGERS.ON_KEY_PRESSED,
                     object_uuid: 'cube1',
                     animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scaling
@@ -180,7 +180,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh348': {
                     uuid: 'uuid-345kjh348',
-                    type: ANIMATION_TYPES.INFINITY,
+                    type: ANIMATION_LIFE_TYPES.INFINITY,
                     trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
                     object_uuid: 'cube2',
                     animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position
@@ -188,7 +188,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh347': {
                     uuid: 'uuid-345kjh347',
-                    type: ANIMATION_TYPES.INFINITY,
+                    type: ANIMATION_LIFE_TYPES.INFINITY,
                     trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
                     object_uuid: 'cube1',
                     animation_uuid: "fc0a8baa-2226-49b9-989b-3ddfc3051a84", // rotation
@@ -196,7 +196,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh349': {
                     uuid: 'uuid-345kjh349',
-                    type: ANIMATION_TYPES.INFINITY,
+                    type: ANIMATION_LIFE_TYPES.INFINITY,
                     trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
                     object_uuid: 'cube2',
                     animation_uuid: "d77c5fc4-f70b-4ec3-ace7-3dd187185451", // scaling
@@ -204,7 +204,7 @@ export const sampleJson = {
                 },
                 'uuid-345kjh350': {
                     uuid: 'uuid-345kjh350',
-                    type: ANIMATION_TYPES.LOOP_ONCE,
+                    type: ANIMATION_LIFE_TYPES.LOOP_ONCE,
                     trigger: ANIMATION_TRIGGERS.ON_ANIMATION_END,
                     object_uuid: 'cube1',
                     animation_uuid: "d7fbf2ba-b04c-4f59-acbd-6c5563d8b53d", // position

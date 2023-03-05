@@ -15,8 +15,10 @@ export const FILE_TYPES = {
 export const SHAPE_TYPES = {
     "ELLIPSE": "ellipse"
 }
+
 export const ANIMATION_TYPES = {
-    KEYFRAME: "KEYFRAME"
+    KEYFRAME: "KEYFRAME",
+    PATH: "PATH"
 }
 
 export const EDITOR_OPS = {
@@ -28,7 +30,8 @@ export const EDITOR_OPS = {
     UPDATE_MESH: "UPDATE_MESH",
     UPDATE_MATERIAL: "UPDATE_MATERIAL",
     ADD_ANIMATION: "ADD_ANIMATION",
-    DELETE_ANIMATION: "DELETE_ANIMATION"
+    DELETE_ANIMATION: "DELETE_ANIMATION",
+    UPDATE_ANIMATION: "UPDATE_ANIMATION"
 }
 
 function three2spaceJSON(jsonData) {

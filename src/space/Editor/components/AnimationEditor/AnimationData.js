@@ -57,6 +57,9 @@ export const animations = {
     },
     "765258bb-cb65-4107-9f3c-b3ac3a36d8b6":{
         uuid: "765258bb-cb65-4107-9f3c-b3ac3a36d8b6",
+        type: ANIMATION_TYPES.PATH,
+        name: "Path"
+
 
     }
 
