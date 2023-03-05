@@ -157,7 +157,7 @@ export default class Editor extends React.Component {
 
     // event handler when click is not over any meshes
     onPointerMissed = (e) => {
-        console.log("Pointer missed");
+
         this.onDeselect()
     }
 
@@ -226,7 +226,7 @@ export default class Editor extends React.Component {
             refGraph: { ...prevState.refGraph, ...localRefs }
         }))
         // // if same user insert a mesh, select inserted mesh
-        // if (instanceId === app.user.instanceId) {
+        // if (notify) {
         //     this.setState(prevState => ({selectedItems: [uuid]}))
         // }
         //TODO: select local just inserted mesh
@@ -350,7 +350,13 @@ export default class Editor extends React.Component {
         const meshRef = refGraph[object_uuid];
         if (meshRef && meshRef.current) {
             const mesh = meshRef.current;
-            mesh.material[key].set(val);
+            switch (key) {
+                case "linewidth":
+                    mesh.material[key] = val;
+                    break
+                default:
+                    mesh.material[key].set(val);
+            }
             this.rerender();
         }
 
@@ -404,9 +410,10 @@ export default class Editor extends React.Component {
         if (!Object.keys(BASIC_OBJECTS).includes(id)) {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
-        const { uuid, val } = BASIC_OBJECTS[id].get();
-        // console.log('on add mesh',val)
-        this.insertMesh({ uuid, val });
+
+        const {uuid, val} = BASIC_OBJECTS[id].get();
+        this.insertMesh({uuid, val});
+
 
     }
 
@@ -486,12 +493,16 @@ export default class Editor extends React.Component {
         app.onAnimationOrderChanged({ uuid, to })
     }
 
-    onObjectPropsChanged = ({ uuid, key, val }) => {
-        this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid, key, val } })
+
+    onObjectPropsChanged = ({uuid, key, val}) => {
+        this.updateObject({uuid, key, val})
+        this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid, key, val}})
     }
 
-    onMaterialPropsChanged = ({ uuid, object_uuid, key, val }) => {
-        this.notifyApp({ type: EDITOR_OPS.UPDATE_MATERIAL, data: { uuid, key, object_uuid, val } })
+    onMaterialPropsChanged = ({uuid, object_uuid, key, val}) => {
+        this.updateMaterial({uuid, object_uuid, key, val});
+        this.notifyApp({type: EDITOR_OPS.UPDATE_MATERIAL, data: {uuid, key, object_uuid, val}})
+
     }
 
     onDeleteAnimationClicked = ({ uuid }) => {
@@ -504,7 +515,6 @@ export default class Editor extends React.Component {
             console.error(`Object of uuid - ${uuid} not found to update the mesh`)
         }
         const object = refGraph[uuid].current;
-        // console.log('update', key, val)
         switch (key) {
             case "position":
                 object.position.fromArray(val);
@@ -519,7 +529,7 @@ export default class Editor extends React.Component {
                 object.rotation.fromArray(val);
                 break
             case "scale":
-                object.scale.set(val, val, val);
+                object.scale.fromArray(val);
                 this.rerender()
                 break
             case "geometry":
@@ -547,11 +557,13 @@ export default class Editor extends React.Component {
 
         const selectedItem = target.object.uuid;
         const targetPosition = target.worldPosition;
+        const targetScale = target.worldScale;
         const targetRotation = target.object.rotation;
         const targetQuaternion = target.object.quaternion;
         const position = targetPosition.toArray();
         const quaternion = targetQuaternion.toArray();
         const rotation = targetRotation.toArray();
+        const scale = targetScale.toArray();
         // const inverseQuaternion = target.worldQuaternionInv.toArray();
 
         // ['translate', 'rotate', 'scale']
@@ -570,6 +582,10 @@ export default class Editor extends React.Component {
                 // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "rotation", val: rotation}})
                 break
             case "scale":
+                this.notifyApp({
+                    type: EDITOR_OPS.UPDATE_MESH,
+                    data: {uuid: selectedItem, key: "scale", val: scale}
+                })
                 break
             default:
                 console.error(`No ${mode} case handled in onTransformReleased`)
@@ -613,11 +629,12 @@ export default class Editor extends React.Component {
 
                 </div>
 
-                <PropsEditor rerender={rerender} isXR={isXR} selectedItems={selectedItems} refs={refGraph}
-                    animations={animations}
-                    onAnimationDelete={this.onDeleteAnimationClicked}
-                    onMaterialPropsChanged={this.onMaterialPropsChanged}
-                    onObjectPropsChanged={this.onObjectPropsChanged} />
+
+                <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
+                             animations={animations}
+                             onAnimationDelete={this.onDeleteAnimationClicked}
+                             onMaterialPropsChanged={this.onMaterialPropsChanged}
+                             onObjectPropsChanged={this.onObjectPropsChanged}/>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
                 <VRButton />
@@ -659,12 +676,13 @@ export default class Editor extends React.Component {
                             {/* <VRMenuBar onLightSelected={this.onAddLightSelected}
                                 onMeshSelected={this.onAddMeshSelected}
                                 onGroupSelected={this.onAddGroupSelected} /> */}
-                            {true && <PropsEditor rerender={rerender} isXR={true} selectedItems={selectedItems}
-                                refs={refGraph}
-                                animations={animations}
-                                onAnimationDelete={this.onDeleteAnimationClicked}
-                                onMaterialPropsChanged={this.onMaterialPropsChanged}
-                                onObjectPropsChanged={this.onObjectPropsChanged} />}
+
+                            {/*{true && <PropsEditor rerender={rerender} isXR={true} selectedItems={selectedItems}*/}
+                            {/*                      refs={refGraph}*/}
+                            {/*                      animations={animations}*/}
+                            {/*                      onAnimationDelete={this.onDeleteAnimationClicked}*/}
+                            {/*                      onMaterialPropsChanged={this.onMaterialPropsChanged}*/}
+                            {/*                      onObjectPropsChanged={this.onObjectPropsChanged}/>}*/}
 
                             <MeshMenuBar onLightSelected={this.onAddLightSelected}
                                 onMeshSelected={this.onAddMeshSelected}
@@ -674,8 +692,7 @@ export default class Editor extends React.Component {
                                 onMeshSelected={this.onAddMeshSelected}
                                 onGroupSelected={this.onAddGroupSelected} />
 
-
-                            <DisplayUsers otherUsers={otherUsers} />
+                            <DisplayUsers otherUsers={otherUsers}/>
 
                             <AnimationList isXR={isXR} refs={refGraph}
                                 selectedItems={selectedItems}
@@ -687,9 +704,11 @@ export default class Editor extends React.Component {
                             {/*    <Selection setEnd={setEnd} setSelection={setSelection}*/}
                             {/*               setStart={setStart} setSelecting={setSelecting}/>*/}
                             {/*}*/}
+
                             <TransformControls ref={this.transformRef} visible={selectedItems.length > 0}
-                                mode={this.transformModes[transformMode]}
-                                onObjectChange={(e) => this.onPositionChange(e)} />
+                                               mode={this.transformModes[transformMode]}
+                                               onObjectChange={(e) => this.onPositionChange(e)}
+                            />
                             {
                                 Object.entries(graph).map(([uuid, item]) => {
                                     return (
@@ -700,11 +719,11 @@ export default class Editor extends React.Component {
                                         </VRItem>
                                     )
                                 })
-
                             }
 
-                            <Helpers refs={refGraph} selectedItems={selectedItems} onSelect={this.onSelect} />
 
+                            <Helpers refs={refGraph} graph={graph} selectedItems={selectedItems}
+                                     onSelect={this.onSelect} clickCallbacks={this.clickCallbacks}/>
                             {/*<>*/}
                             {/*    <ambientLight ref={directionalLightRef} args={[0x505050]}/>*/}
                             {/*</>*/}
