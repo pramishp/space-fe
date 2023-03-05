@@ -57,7 +57,6 @@ const Dashboard = () => {
     )
     const data = await response.json()
     if (response.status === 200) {
-      console.log(data.project_id)
       navigate(`/workspace/${data.project_id}`)
     } else if (response.statusText === 'Unauthorized') {
       logoutUser()
@@ -79,7 +78,7 @@ const Dashboard = () => {
     const data = await response.json()
     if (response.status === 200) {
       console.log(data)
-      navigate(`/presentation/${data}`)
+      navigate(`/presentation/${data.project_id}/2d`)
     } else if (response.statusText === 'Unauthorized') {
       logoutUser()
     }

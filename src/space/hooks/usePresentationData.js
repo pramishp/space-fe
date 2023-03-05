@@ -21,6 +21,7 @@ export function usePresentationData(roomId) {
     const yAnimation = doc.getMap("animations");
 
     useEffect(() => {
+        console.log('getting called')
         if (provider) {
             provider.on('sync', function (isSynced) {
                 if (doc && isSynced && loading) {
@@ -31,9 +32,10 @@ export function usePresentationData(roomId) {
         return () => {
 
         }
-    });
+    }, [roomId]);
 
     const getData = useCallback(() => {
+        console.log('getting called')
         if (doc) {
             // formatting data for support in presentation layer
             const presentationData = doc.toJSON();
