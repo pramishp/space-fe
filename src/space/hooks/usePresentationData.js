@@ -1,6 +1,7 @@
 import {useCallback, useState, useMemo, useEffect} from "react";
 import {Room} from "@y-presence/client";
 import SingletonSocketProvider from "./Provider";
+import {ANIMATION_TYPES} from "../Editor/constants";
 
 export function usePresentationData(roomId) {
     const [loading, setLoading] = useState(true);
@@ -48,7 +49,14 @@ export function usePresentationData(roomId) {
             Object.entries(presentationData.animations).forEach(([uuid, i]) => {
                 i.animation_uuid = uuid;
                 presentationData.slides[slideKey].animations[uuid] = i
-                animations[uuid] = i.keyframe_animation;
+
+                if (i.animationType === ANIMATION_TYPES.KEYFRAME){
+                    animations[uuid] = i.keyframe_animation;
+                } else if (i.animationType === ANIMATION_TYPES.PATH){
+                    animations[uuid] = i.path_animation;
+                } else {
+                    console.error(`No ${i.animationType} case is handled`)
+                }
                 // animation_uuid
             })
             presentationData.animations = animations;

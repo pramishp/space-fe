@@ -7,19 +7,38 @@ import {Button} from "./VRUIs/Button";
 import VRUIContainer from "./VRUIs/VRUIContainer";
 import {SHAPE_TYPES} from "../constants";
 import LineEditor from "./PropsEditor/LineEditor";
+import {Box} from "@react-three/flex";
+import {NumberInput} from "./VRUIs/NumberInput";
 
 const _ = require("lodash")
 
-function AnimationEditItem({item, onDelete, isXR}) {
+function AnimationEditItem({item, onDelete, isXR, onTimeScaleChanged}) {
+    const {timeScale} = item;
+    const onValueChange = (e)=>{
+        const value = parseFloat(e.target.value);
+        if (onTimeScaleChanged){
+            onTimeScaleChanged({uuid: item.uuid, timeScale: value})
+        }
+    }
     if (isXR) {
         return (
             <>
+                <Box>
+                    <>
+                        <Heading6>Time Scale: </Heading6>
+                        <NumberInput value={timeScale} onChange={onValueChange}/>
+                    </>
+                </Box>
+
+                <Box>
                     <Button title={`${item.name} | Delete`} onClick={() => {
                         onDelete(item)
                     }}/>
+                </Box>
             </>
         )
     }
+
     return (
         <div>
             <h6>{item.name}</h6>
@@ -27,11 +46,22 @@ function AnimationEditItem({item, onDelete, isXR}) {
                 onDelete(item)
             }}>Delete
             </button>
+
+            <div>
+                <label htmlFor="timeScale">TimeScale: </label>
+                <input
+                    type="number"
+                    id="timescale"
+                    value={1}
+                    onChange={onValueChange}
+                />
+            </div>
+
         </div>
     )
 }
 
-function AnimationEditor({animations, selectedItems, onAnimationDelete, isXR}) {
+function AnimationEditor({animations, selectedItems, onAnimationDelete, onAnimationTimeScaleChanged, isXR}) {
     const Empty = isXR ? <></> : <div/>
     if (selectedItems.length === 0) {
         return Empty
@@ -61,7 +91,9 @@ function AnimationEditor({animations, selectedItems, onAnimationDelete, isXR}) {
             {heading}
             {animationList.map((item) => {
                 return <AnimationEditItem isXR={isXR} item={item}
-                                          onDelete={() => onAnimationDelete({uuid: item.uuid})}/>
+                                          onDelete={() => onAnimationDelete({uuid: item.uuid})}
+                                          onTimeScaleChanged={onAnimationTimeScaleChanged}
+                />
             })}
         </>
     )

@@ -248,6 +248,21 @@ function Workspace({roomId, user, isXR}) {
         }
     }
 
+    app.onUpdateAnimation = ({uuid, key, val}) => {
+        //TODO: call multiplayer
+    }
+
+    app.updateAnimation = ({uuid, key, val, isMyEvent, isFromUndoManager})=>{
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            if (!isMyEvent || isFromUndoManager) {
+                // editor.editAnimation({uuid, key, val}, false)
+                //TODO: call editAnimation
+            }
+
+        }
+    }
+
     app.onDeleteAnimation = ({uuid}) => {
         onAnimationDelete({uuid})
     }

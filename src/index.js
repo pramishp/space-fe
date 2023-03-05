@@ -12,8 +12,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/*<Workspace />*/}
-    {/*  <PresentationWrapper/>*/}
-    <Navigator/>
+    <App />
+      {/*<PresentationWrapper/>*/}
+    {/*<Navigator/>*/}
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>
 );

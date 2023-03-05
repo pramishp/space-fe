@@ -8,7 +8,7 @@ import * as THREE from "three";
 import {useEffect} from "react";
 import {ANIMATION_TYPES} from "../../constants";
 
-export default function AnimationList({isXR, onClick, refs, selectedItems}) {
+export default function AnimationList({isXR, onClick, refs, selectedItems, enterAnimationMode}) {
 
     let mixer, action;
 
@@ -21,6 +21,11 @@ export default function AnimationList({isXR, onClick, refs, selectedItems}) {
                     onClick({uuid, val});
                 }
                 break
+            case ANIMATION_TYPES.PATH:
+                if(enterAnimationMode){
+                    enterAnimationMode()
+                }
+                break
 
             default:
                 console.log(`No case handled for ${val.type} animation`)
@@ -31,6 +36,9 @@ export default function AnimationList({isXR, onClick, refs, selectedItems}) {
     }
 
     const onItemHovered = ({uuid, val}) => {
+        if (val.type !== ANIMATION_TYPES.KEYFRAME){
+            return
+        }
         if (selectedItems.length === 1 && refs[selectedItems[0]].current) {
             if (mixer) {
                 mixer.stopAllAction();

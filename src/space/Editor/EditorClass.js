@@ -2,9 +2,18 @@ import * as React from "react";
 import * as THREE from 'three';
 
 
-import { useState, useEffect, useRef, createRef, useCallback, useMemo } from "react";
-import { BASIC_LIGHTS, BASIC_OBJECTS, BACKGROUND_TYPES, EDITOR_OPS, FILE_TYPES, gltf2json, mesh2json, TYPES } from "./constants";
-
+import {useState, useEffect, useRef, createRef, useCallback, useMemo} from "react";
+import {
+    ANIMATION_TYPES,
+    BASIC_LIGHTS,
+    BASIC_OBJECTS,
+    EDITOR_OPS,
+    FILE_TYPES,
+    BACKGROUND_TYPES,
+    gltf2json,
+    mesh2json,
+    TYPES
+} from "./constants";
 
 import MenuBar from "./components/MenuBar";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -15,8 +24,9 @@ import { Selection } from "./Selection";
 import Controls from "./Controls";
 import Ground from "./components/Ground";
 
-import { loadGltf, loadGltfFromUrl } from "../../common/loaders/FileLoaders";
-import { ANIMATION_TRIGGERS, ANIMATION_TYPES, IMPORT_MESH_TYPES } from "../../common/consts";
+import {loadGltf, loadGltfFromUrl} from "../../common/loaders/FileLoaders";
+import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../../common/consts";
+
 
 import Helpers from "./Helpers";
 import PropsEditor from "./components/PropsEditor";
@@ -50,6 +60,13 @@ export default class Editor extends React.Component {
             onContextMenu: this.onMeshContextMenu
         };
         this.jsxData = toJSX(props.initData, this.clickCallbacks);
+
+        /*
+        * editorModes
+        * 0: edit
+        * 1: animation
+        * in the animation mode, the transform control is disabled
+        * */
         this.state = {
             rerender: false,
             selectedItems: [],
@@ -57,6 +74,8 @@ export default class Editor extends React.Component {
             refGraph: this.jsxData.refs,
             animations: props.initData.animations,
             transformMode: 0,
+            editorMode: 0,
+            itemToBeAnimated: null,
             isBackgroundStar: false,
             isBackgroundSky: false,
             isBackgroundColor: false,
@@ -84,7 +103,6 @@ export default class Editor extends React.Component {
             }
         })
     }
-
 
     rerender = () => {
         this.setState(state => ({ rerender: !state.rerender }))
@@ -203,6 +221,10 @@ export default class Editor extends React.Component {
 
             case EDITOR_OPS.DELETE_ANIMATION:
                 app.onDeleteAnimation({ uuid })
+                break
+
+            case EDITOR_OPS.UPDATE_ANIMATION:
+                app.updateAnimation({uuid, key, val})
                 break
 
             case EDITOR_OPS.ADD_BACKGROUND:
@@ -383,8 +405,19 @@ export default class Editor extends React.Component {
     // onSelect
     onSelect = ({ uuid, object }) => {
         const mesh = object;
-        const { selectedItems } = this.state;
-        const { transformRef } = this;
+        const {selectedItems, editorMode, itemToBeAnimated} = this.state;
+        const {transformRef} = this;
+        if (editorMode === 1) {
+            // this is animation mode
+
+            // set animation path
+            this.setPathAnimation({uuid: itemToBeAnimated, path_uuid: uuid})
+
+            //go back to editor mode
+            this.enterEditorMode();
+            return
+        }
+
         if ((selectedItems.length === 1 && uuid !== selectedItems[0]) || selectedItems.length === 0) {
             if (transformRef.current && mesh) {
                 transformRef.current.attach(mesh);
@@ -470,17 +503,56 @@ export default class Editor extends React.Component {
             //TODO: determine order, triggers
             const data = {
                 uuid: id_,
-                type: ANIMATION_TYPES.INFINITY,
+                type: ANIMATION_LIFE_TYPES.INFINITY,
                 trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
                 object_uuid: mesh_uuid,
                 order: 0,
                 name: val.name,
+                animationType: ANIMATION_TYPES.KEYFRAME,
                 keyframe_animation: val
             }
             this.addAnimation({ uuid: id_, val: data })
         }
     }
 
+
+    setPathAnimation({uuid, path_uuid}) {
+
+        const {refGraph} = this.state;
+        const meshRef = refGraph[uuid];
+        const pathRef = refGraph[path_uuid];
+
+        if (!meshRef.current || !pathRef.current){
+            console.error('No such mesh or path reference found to set animation path')
+        }
+        const mesh = meshRef.current;
+        const path = pathRef.current;
+
+        const animationUUID = generateUniqueId();
+        const val = {
+            animationType: ANIMATION_TYPES.PATH,
+            uuid: animationUUID,
+            trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
+            type: ANIMATION_LIFE_TYPES.INFINITY,
+            order: 0,
+            name: 'Path',
+            object_uuid: uuid,
+            path_animation: {
+                path_uuid: path_uuid
+            }
+
+        }
+
+        this.addAnimation({uuid: animationUUID, val})
+
+    }
+
+    //TODO: updateAnimation method
+
+    onAnimationTimeScaleChange = ({uuid, timeScale})=>{
+        //TODO: apply animation scale change locally
+        this.notifyApp({type: EDITOR_OPS.UPDATE_ANIMATION, data: {uuid, key: "timeScale", val: timeScale}})
+    }
 
     /**
      * `onAnimationTimelineDragNDrop` is a function that takes an
@@ -505,8 +577,8 @@ export default class Editor extends React.Component {
 
     }
 
-    onDeleteAnimationClicked = ({ uuid }) => {
-        this.deleteAnimation({ uuid })
+    onDeleteAnimationClicked = ({uuid}) => {
+        this.deleteAnimation({uuid})
     }
 
     updateObject = ({ uuid, key, val }) => {
@@ -604,15 +676,25 @@ export default class Editor extends React.Component {
         this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid: selectedItem, key: "quaternion", val: quaternion } })
 
     }
-    /* onBackgroundChanged() {
-
+    onBackgroundChanged() {
         this.notifyApp({ type: EDITOR_OPS.ADD_BACKGROUND , data: { op_type: "" } })
     }
-*/
+
+    enterAnimationMode() {
+        const {selectedItems} = this.state;
+        if (selectedItems.length > 0){
+            this.setState(state => ({editorMode: 1, itemToBeAnimated: this.state.selectedItems[0]}))
+        }
+    }
+
+    enterEditorMode() {
+        this.setState({editorMode: 0, itemToBeAnimated: null})
+    }
+
 
     render() {
 
-        const { selectedItems, graph, refGraph, animations, rerender, transformMode } = this.state;
+        const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode } = this.state;
         const { isXR, otherUsers } = this.props;
         return (
             <div>
@@ -626,7 +708,6 @@ export default class Editor extends React.Component {
 
                         <input type="file" onChange={this.onModelUpload} />
                     </div>
-
                 </div>
 
 
@@ -695,9 +776,10 @@ export default class Editor extends React.Component {
                             <DisplayUsers otherUsers={otherUsers}/>
 
                             <AnimationList isXR={isXR} refs={refGraph}
-                                selectedItems={selectedItems}
-                                onClick={this.onAnimationListClicked} />
-                            <Ground />
+                                           selectedItems={selectedItems}
+                                           enterAnimationMode={this.enterAnimationMode.bind(this)}
+                                           onClick={this.onAnimationListClicked}/>
+                            <Ground/>
 
                             {/*{*/}
                             {/*    !isXR &&*/}
@@ -706,6 +788,7 @@ export default class Editor extends React.Component {
                             {/*}*/}
 
                             <TransformControls ref={this.transformRef} visible={selectedItems.length > 0}
+                                               enabled={editorMode === 0}
                                                mode={this.transformModes[transformMode]}
                                                onObjectChange={(e) => this.onPositionChange(e)}
                             />
