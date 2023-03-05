@@ -8,45 +8,53 @@ import {Canvas} from "@react-three/fiber";
 
 // go to this link after the fetch of workspaceId from the presentation link is completed
 const PresentationWrapper = () => {
-    // const {id} = useParams();
-    // console.log('id inside presentationwrapper', id)
-    // const {user, authTokens} = useContext(AuthContext)
-    // const [workspaceId, setWorkspaceId] = useState(null)
-    //
-    // useEffect(() => {
-    //     const fetchWorkspaceId = async () => {
-    //         try {
-    //             const response = await fetch(
-    //                 `http://127.0.0.1:8000/app/workspace-id/?project_id=${id}`,
-    //                 {
-    //                     headers: {
-    //                         Authorization: 'Bearer ' + String(authTokens.access),
-    //                     },
-    //                 }
-    //             )
-    //             const data = await response.json()
-    //             setWorkspaceId(data.key)
-    //         } catch (error) {
-    //             console.log(error)
-    //         }
-    //     }
-    //     fetchWorkspaceId()
-    // }, [])
+    const {id, type} = useParams();
+    console.log('id inside presentationwrapper', id)
+    console.log('type inside presentation wrapper', type)
+    const {user, authTokens} = useContext(AuthContext)
+    const [workspaceId, setWorkspaceId] = useState(null)
+    
+    useEffect(() => {
+        const fetchWorkspaceId = async () => {
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:8000/app/workspace-id/?project_id=${id}`,
+                    {
+                        headers: {
+                            Authorization: 'Bearer ' + String(authTokens.access),
+                        },
+                    }
+                )
+                const data = await response.json()
+                console.log(data)
+                setWorkspaceId(data.key)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchWorkspaceId()
 
-    const workspaceId = '1234-v2.13';
+
+    }, [id])
+
+    //const workspaceId = '1234-v2.13';
     const {
         loading,
         getData,
         room,
         doc
     } = usePresentationData(workspaceId);
-    if (!workspaceId && loading) {
+    if (!workspaceId || loading) {
+        console.log(workspaceId)
+        console.log(loading)
         return <div>Loading...</div>
     }
     const presentationData = getData();
+    console.log(presentationData)
 
-    return (
-        <div style={{height: window.innerHeight}}>
+    const Presentation2d = () => {
+        return (
+            <div style={{height: window.innerHeight}}>
             <Canvas legacy={false}
                     camera={{
                         fov: 50, aspect: 1,
@@ -56,8 +64,9 @@ const PresentationWrapper = () => {
                 <Presentation data={presentationData}/>
             </Canvas>
         </div>
-
-    )
+        )
+    }
+    return type === '2d' ? <Presentation2d /> : null;
 }
 
 export default PresentationWrapper
