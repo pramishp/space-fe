@@ -10,7 +10,7 @@ THREE.Mesh.prototype.toJSONWithPosition = function () {
 THREE.Line.prototype.toJSONWithPosition = THREE.Mesh.prototype.toJSONWithPosition;
 
 export const FILE_TYPES = {
-  GLTF: 'gLTF',
+    GLTF: 'gLTF',
 }
 
 export const SHAPE_TYPES = {
@@ -33,34 +33,34 @@ export const EDITOR_OPS = {
     ADD_ANIMATION: "ADD_ANIMATION",
     DELETE_ANIMATION: "DELETE_ANIMATION",
     UPDATE_ANIMATION: "UPDATE_ANIMATION",
-  ADD_BACKGROUND: 'ADD_BACKGROUND',
+    ADD_BACKGROUND: 'ADD_BACKGROUND',
 }
 
 function three2spaceJSON(jsonData) {
-  const json = { ...jsonData }
+    const json = {...jsonData}
 
-  let object = json.object
-  object = { ...object }
-  const geometries = {}
-  const materials = {}
-  const children = {}
-  if (json.geometries) {
-    json.geometries.forEach((geom) => {
-      geometries[geom.uuid] = geom
-    })
-  }
-  if (json.materials) {
-    json.materials.forEach((material) => {
-      materials[material.uuid] = material
-    })
-  }
-  // if (object.children){
-  //     object.children.forEach(child=>{
-  //         children[child.uuid] = child
-  //     })
-  // }
-  // object.children = children;
-  //TODO: convert children to space format for children, also in loader.js to support this change
+    let object = json.object
+    object = {...object}
+    const geometries = {}
+    const materials = {}
+    const children = {}
+    if (json.geometries) {
+        json.geometries.forEach((geom) => {
+            geometries[geom.uuid] = geom
+        })
+    }
+    if (json.materials) {
+        json.materials.forEach((material) => {
+            materials[material.uuid] = material
+        })
+    }
+    // if (object.children){
+    //     object.children.forEach(child=>{
+    //         children[child.uuid] = child
+    //     })
+    // }
+    // object.children = children;
+    //TODO: convert children to space format for children, also in loader.js to support this change
 
     return {
         geometries,
@@ -81,12 +81,12 @@ export function gltf2json(gltf) {
 }
 
 export function mesh2json(mesh) {
-  const json = mesh.toJSONWithPosition()
-  // Make a deep copy of the JSON object
-  const copyJson = JSON.parse(JSON.stringify(json))
-  copyJson.object.layers = 0
-  const spaceJson = three2spaceJSON(copyJson)
-  return { uuid: json.object.uuid, val: spaceJson }
+    const json = mesh.toJSONWithPosition()
+    // Make a deep copy of the JSON object
+    const copyJson = JSON.parse(JSON.stringify(json))
+    copyJson.object.layers = 0
+    const spaceJson = three2spaceJSON(copyJson)
+    return {uuid: json.object.uuid, val: spaceJson}
 }
 
 export const BASIC_LIGHTS = {
@@ -121,27 +121,28 @@ export const BASIC_LIGHTS = {
 export const BASIC_OBJECTS = {
     box: {
         get: function () {
-            const geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+            const geometry = new THREE.BoxGeometry(0.005, 0.005, 0.005);
             const material = new THREE.MeshBasicMaterial({color: 'red'});
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(-1, 0, 0);
+            mesh.position.set(0, 0, -2);
             return mesh2json(mesh)
         }
     },
     sphere: {
         get: function () {
-            const geometry = new THREE.SphereGeometry(0.2);
-            const material = new THREE.MeshBasicMaterial({color: 'green'});
+            const geometry = new THREE.SphereGeometry(0.1);
+            const material = new THREE.MeshBasicMaterial({color: 'yellow'});
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(1, 0, 0)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh);
         }
     },
     cylinder: {
         get: function () {
-            const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5)
+            const geometry = new THREE.CylinderGeometry(0.25, 0.25, 0.25)
             const material = new THREE.MeshBasicMaterial()
             const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh)
         },
     },
@@ -150,6 +151,7 @@ export const BASIC_OBJECTS = {
             const geometry = new THREE.PlaneGeometry(1, 1, 1)
             const material = new THREE.MeshBasicMaterial()
             const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh)
         },
     },
@@ -166,10 +168,11 @@ export const BASIC_OBJECTS = {
             const points = curve.getPoints(50);
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-            const material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 10, dashed: true});
+            const material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 2, dashed: false});
             // Create the final object to add to the scene
             const ellipse = new THREE.Line(geometry, material);
             ellipse.userData = {'type': SHAPE_TYPES.ELLIPSE}
+            ellipse.position.set(0, 0, -2)
             return mesh2json(ellipse)
         }
     }
@@ -189,14 +192,14 @@ export const BACKGROUND_TYPES = {
       speed: 1,
       fade: true,
     },
-  },
-  sky: {},
-  color: {},
-  environment: {},
+    sky: {},
+    color: {},
+    environment: {},
 }
 
 export const TYPES = {
-  MESH: 'Mesh',
-  GEOMETRY: 'Gemometry',
-  MATERIAL: 'Material',
+    MESH: 'Mesh',
+    GEOMETRY: 'Gemometry',
+    MATERIAL: 'Material',
+    ANIMATION: "Animation"
 }

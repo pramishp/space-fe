@@ -1,4 +1,22 @@
 import React, {useState} from 'react';
+import {Interactive} from "@react-three/xr";
+import {Box, Text} from "@react-three/drei";
+import {Button} from "./VRUIs/Button";
+import VRUIContainer from "./VRUIs/VRUIContainer";
+import {Heading6} from "./VRUIs/Headings";
+
+
+function VRMenuItem({menuItem, handleButtonSelect, isXR}) {
+    //onCli(ck, onHover, title, isXR
+    return (
+        <Button
+            isXR={isXR}
+            title={menuItem.name}
+            onClick={() => handleButtonSelect(menuItem)}
+        />
+    )
+
+}
 
 function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBackgroundSelected}) {
 
@@ -21,10 +39,10 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
     ];
 
     const backgroundOptions = [
-        {name:'Stars', id:'stars'},
-        {name:'Sky', id:'sky'},
-        {name:'Color', id:'color'},
-        {name:'Environment', id:'environment'},
+        {name: 'Stars', id: 'stars'},
+        {name: 'Sky', id: 'sky'},
+        {name: 'Color', id: 'color'},
+        {name: 'Environment', id: 'environment'},
     ];
 
     const handleMeshSelected = (event) => {
@@ -46,6 +64,37 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
         console.log('selectedId', selectedId)
         onBackgroundSelected(selectedId)
 
+    }
+
+    const handleButtonSelect = (menuItem) => {
+        const selectedId = menuItem.id;
+        onMeshSelected(selectedId);
+    }
+
+    if (isXR) {
+        const meshOptionsJSX = meshOptions.map((menuItem, index) => {
+
+                return <VRMenuItem isXR={isXR} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
+            }
+        )
+
+        const lightOptionsJSX = lightOptions.map((menuItem, index) => {
+
+                    return <VRMenuItem isXR={isXR} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
+                }
+            )
+
+        return (
+            <>
+                <VRUIContainer position={[-4, 1, 0]} title={"Objects"}>
+                    {meshOptionsJSX}
+                </VRUIContainer>
+                <VRUIContainer position={[-4, 1, -1]} title={"Lights"}>
+                    {lightOptionsJSX}
+                </VRUIContainer>
+
+            </>
+        )
     }
 
 

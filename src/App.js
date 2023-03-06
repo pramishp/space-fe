@@ -61,7 +61,7 @@ function App() {
   }
 
     const user = {id: "aadsd345-khajs43"}
-    const roomId = "1234-v2.13"
+    const roomId = "1234-v2.14"
 
   return (<><Workspace roomId={roomId} user={user} isXR={isXR}/></>)
 }
