@@ -11,7 +11,7 @@ export default function Ground() {
 
     return (
         <>
-            <Grid cellColor="white" args={[10, 10]} fadeDistance={50} sectionSize={2} cellThickness={0.5} sectionThickness={1.5} infiniteGrid={true} />
+            <Grid position={[0,-0.5,0]} cellColor="white" args={[10, 10]} fadeDistance={50} sectionSize={2} cellThickness={0.5} sectionThickness={1.5} infiniteGrid={true} />
         </>
     );
 }

@@ -739,7 +739,7 @@ export default class Editor extends React.Component {
                                 <GizmoViewport axisColors={['red', 'green', 'blue']} labelColor="black" />
                             </GizmoHelper>
                             {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
-                            <SideMenu />
+                            {/*<SideMenu />*/}
                             {/* FOr the XR controllers ray visibility */}
                             <Controllers
                                 /** Optional material props to pass to controllers' ray indicators */

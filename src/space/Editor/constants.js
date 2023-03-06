@@ -121,27 +121,28 @@ export const BASIC_LIGHTS = {
 export const BASIC_OBJECTS = {
     box: {
         get: function () {
-            const geometry = new THREE.BoxGeometry(0.01, 0.01, 0.01);
+            const geometry = new THREE.BoxGeometry(0.005, 0.005, 0.005);
             const material = new THREE.MeshBasicMaterial({color: 'red'});
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(-1, 0, 0);
+            mesh.position.set(0, 0, -2);
             return mesh2json(mesh)
         }
     },
     sphere: {
         get: function () {
-            const geometry = new THREE.SphereGeometry(0.2);
-            const material = new THREE.MeshBasicMaterial({color: 'green'});
+            const geometry = new THREE.SphereGeometry(0.1);
+            const material = new THREE.MeshBasicMaterial({color: 'yellow'});
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(1, 0, 0)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh);
         }
     },
     cylinder: {
         get: function () {
-            const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5)
+            const geometry = new THREE.CylinderGeometry(0.25, 0.25, 0.25)
             const material = new THREE.MeshBasicMaterial()
             const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh)
         },
     },
@@ -150,6 +151,7 @@ export const BASIC_OBJECTS = {
             const geometry = new THREE.PlaneGeometry(1, 1, 1)
             const material = new THREE.MeshBasicMaterial()
             const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.set(0, 0, -2)
             return mesh2json(mesh)
         },
     },
@@ -166,10 +168,11 @@ export const BASIC_OBJECTS = {
             const points = curve.getPoints(50);
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-            const material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 10, dashed: true});
+            const material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 2, dashed: false});
             // Create the final object to add to the scene
             const ellipse = new THREE.Line(geometry, material);
             ellipse.userData = {'type': SHAPE_TYPES.ELLIPSE}
+            ellipse.position.set(0, 0, -2)
             return mesh2json(ellipse)
         }
     }

@@ -3,15 +3,16 @@ import {Interactive} from "@react-three/xr";
 import {Box, Text} from "@react-three/drei";
 import {Button} from "./VRUIs/Button";
 import VRUIContainer from "./VRUIs/VRUIContainer";
+import {Heading6} from "./VRUIs/Headings";
 
 
-function VRMenuItem({menuItem, handleButtonSelect, position}) {
+function VRMenuItem({menuItem, handleButtonSelect, isXR}) {
     //onCli(ck, onHover, title, isXR
     return (
         <Button
+            isXR={isXR}
             title={menuItem.name}
             onClick={() => handleButtonSelect(menuItem)}
-            position={position}
         />
     )
 
@@ -71,19 +72,29 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
     }
 
     if (isXR) {
-        const options = meshOptions.map((menuItem, index) => {
-                // change the position based on the index of the button
+        const meshOptionsJSX = meshOptions.map((menuItem, index) => {
 
-                const planePosition = {x: 0, y: 0, z: 0}
-                const position = [planePosition.x, 1 - index * 0.08, planePosition.z]
-
-                return <VRMenuItem position={position} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
+                return <VRMenuItem isXR={isXR} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
             }
         )
 
-        return <VRUIContainer position={[-1, 0, 1]}>
-            {options}
-        </VRUIContainer>
+        const lightOptionsJSX = lightOptions.map((menuItem, index) => {
+
+                    return <VRMenuItem isXR={isXR} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
+                }
+            )
+
+        return (
+            <>
+                <VRUIContainer position={[-4, 1, 0]} title={"Objects"}>
+                    {meshOptionsJSX}
+                </VRUIContainer>
+                <VRUIContainer position={[-4, 1, -1]} title={"Lights"}>
+                    {lightOptionsJSX}
+                </VRUIContainer>
+
+            </>
+        )
     }
 
 

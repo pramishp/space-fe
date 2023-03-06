@@ -47,7 +47,7 @@ export function Button(props) {
         >
             <Box
                 {...props}
-                args={[0.4, 0.1, 0.1]}
+                args={[0.4, 0.1, 0.01]}
                 scale={hover ? 1.5 : 1}
                 onClick={!isXR && onSelect?onSelect:()=>{}}
                 onPointerOver={!isXR && onItemHovered?onItemHovered:()=>{}}
