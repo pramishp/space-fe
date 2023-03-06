@@ -43,6 +43,7 @@ import VRItem from "./components/VRItem";
 import { Quaternion, Scene, ShaderMaterial } from "three";
 import SideMenu from "./SideMenu";
 import { Stars } from "@react-three/drei";
+import { valuesIn } from "lodash";
 
 export default class Editor extends React.Component {
 
@@ -696,7 +697,7 @@ export default class Editor extends React.Component {
 
     render() {
 
-        const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode } = this.state;
+        const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode, backgroundGraph } = this.state;
         const { isXR, otherUsers } = this.props;
         return (
             <div>
@@ -750,7 +751,8 @@ export default class Editor extends React.Component {
                                     <primitive attach="background" object={this.backgroundTexture}/>
                                 )} */}
                             <ambientLight intensity={2} />
-                            {/* {this.state.isBackgroundStar && <><color attach="background" args={["#000000"]} /><Stars {...this.state.backgroundProps} /></>} */}
+                            {/* <color attach="background" args={["#000000"]}/> */}
+                            {/* {<><color attach="background" args={["#000000"]} /><Stars /></>} */}
                             {/*<pointLight position={[20, 10, -10]} intensity={2}/>*/}
 
                             {/* <primitive object={new THREE.AxesHelper(10, 10)} />
@@ -805,6 +807,15 @@ export default class Editor extends React.Component {
                                     )
                                 })
                             }
+                            {
+                                backgroundGraph && Object.entries(backgroundGraph).map(([uuid, val]) => {
+                                    console.log(uuid, val)
+                                    return (
+                                        val
+                                    )
+                                })
+                            }
+                            
 
                             
 
