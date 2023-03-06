@@ -249,15 +249,14 @@ function Workspace({roomId, user, isXR}) {
     }
 
     app.onUpdateAnimation = ({uuid, key, val}) => {
-        //TODO: call multiplayer
+        onUpdate({uuid, key, val, type: TYPES.ANIMATION})
     }
 
     app.updateAnimation = ({uuid, key, val, isMyEvent, isFromUndoManager})=>{
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
-                // editor.editAnimation({uuid, key, val}, false)
-                //TODO: call editAnimation
+                editor.updateAnimation({uuid, val, key}, false)
             }
 
         }

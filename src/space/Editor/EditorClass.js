@@ -224,7 +224,7 @@ export default class Editor extends React.Component {
                 break
 
             case EDITOR_OPS.UPDATE_ANIMATION:
-                app.updateAnimation({uuid, key, val})
+                app.onUpdateAnimation({uuid, key, val})
                 break
 
             case EDITOR_OPS.ADD_BACKGROUND:
@@ -348,12 +348,6 @@ export default class Editor extends React.Component {
         this.notifyApp({ type: EDITOR_OPS.DELETE_MESH, data: { uuid }, app }, notify)
     }
 
-    // insertLight in the editor
-    insertLight = ({ uuid, val }, notify = true) => {
-
-
-    }
-
     onPositionChange = (e) => {
         //TODO: listen to release then only sync the changes
         const { selectedItems, refGraph } = this.state;
@@ -390,6 +384,13 @@ export default class Editor extends React.Component {
         }))
         this.notifyApp({ type: EDITOR_OPS.ADD_ANIMATION, data: { val, uuid } }, notify)
 
+    }
+
+    updateAnimation = ({uuid, key, val}, notify=true)=>{
+        this.setState((state) => ({
+            animations: { ...state.animations, [uuid]: {...state.animations[uuid], [key]: val} },
+        }))
+        this.notifyApp({ type: EDITOR_OPS.UPDATE_ANIMATION, data: { key, val, uuid } }, notify)
     }
 
     deleteAnimation = ({ uuid }, notify = true) => {
@@ -549,9 +550,9 @@ export default class Editor extends React.Component {
 
     //TODO: updateAnimation method
 
+
     onAnimationTimeScaleChange = ({uuid, timeScale})=>{
-        //TODO: apply animation scale change locally
-        this.notifyApp({type: EDITOR_OPS.UPDATE_ANIMATION, data: {uuid, key: "timeScale", val: timeScale}})
+        this.updateAnimation({uuid, key: "timeScale", val: timeScale})
     }
 
     /**
@@ -704,6 +705,7 @@ export default class Editor extends React.Component {
                             onMeshSelected={this.onAddMeshSelected}
                             onGroupSelected={this.onAddGroupSelected}
                             onBackgroundChanged={this.onAddBackgroundSelected}
+                                 isXR={false}
                         />
 
                         <input type="file" onChange={this.onModelUpload} />
@@ -713,6 +715,7 @@ export default class Editor extends React.Component {
 
                 <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
                              animations={animations}
+                             updateAnimation={this.updateAnimation}
                              onAnimationDelete={this.onDeleteAnimationClicked}
                              onMaterialPropsChanged={this.onMaterialPropsChanged}
                              onObjectPropsChanged={this.onObjectPropsChanged}/>
@@ -724,12 +727,17 @@ export default class Editor extends React.Component {
                         camera={{
                             fov: 50, aspect: 1,
                             near: 0.01, far: 1000,
-                            position: [0, 5, 10],
+                            position: [0, 5, 5],
                         }}
-
                         onPointerMissed={this.onPointerMissed}
                     >
                         <XR>
+                            <GizmoHelper
+                                alignment="bottom-right" // widget alignment within scene
+                                margin={[100, 100]} // widget margins (X, Y)
+                            >
+                                <GizmoViewport axisColors={['red', 'green', 'blue']} labelColor="black" />
+                            </GizmoHelper>
                             {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
                             <SideMenu />
                             {/* FOr the XR controllers ray visibility */}
@@ -765,13 +773,16 @@ export default class Editor extends React.Component {
                             {/*                      onMaterialPropsChanged={this.onMaterialPropsChanged}*/}
                             {/*                      onObjectPropsChanged={this.onObjectPropsChanged}/>}*/}
 
-                            <MeshMenuBar onLightSelected={this.onAddLightSelected}
-                                onMeshSelected={this.onAddMeshSelected}
-                                onGroupSelected={this.onAddGroupSelected} />
+                            {/*<LightMenuBar onLightSelected={this.onAddLightSelected}*/}
+                            {/*    onMeshSelected={this.onAddMeshSelected}*/}
+                            {/*    onGroupSelected={this.onAddGroupSelected} />*/}
 
-                            <LightMenuBar onLightSelected={this.onAddLightSelected}
-                                onMeshSelected={this.onAddMeshSelected}
-                                onGroupSelected={this.onAddGroupSelected} />
+                            <MenuBar onLightSelected={this.onAddLightSelected}
+                                     onMeshSelected={this.onAddMeshSelected}
+                                     onGroupSelected={this.onAddGroupSelected}
+                                     onBackgroundChanged={this.onAddBackgroundSelected}
+                                     isXR={true}
+                            />
 
                             <DisplayUsers otherUsers={otherUsers}/>
 
@@ -811,12 +822,6 @@ export default class Editor extends React.Component {
                             {/*    <ambientLight ref={directionalLightRef} args={[0x505050]}/>*/}
                             {/*</>*/}
                             <Controls makeDefault />
-                            <GizmoHelper
-                                alignment="bottom-right" // widget alignment within scene
-                                margin={[80, 80]} // widget margins (X, Y)
-                            >
-                                <GizmoViewport axisColors={['red', 'green', 'blue']} labelColor="black" />
-                            </GizmoHelper>
                         </XR>
                     </Canvas>
                 </div>

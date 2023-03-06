@@ -1,4 +1,21 @@
 import React, {useState} from 'react';
+import {Interactive} from "@react-three/xr";
+import {Box, Text} from "@react-three/drei";
+import {Button} from "./VRUIs/Button";
+import VRUIContainer from "./VRUIs/VRUIContainer";
+
+
+function VRMenuItem({menuItem, handleButtonSelect, position}) {
+    //onCli(ck, onHover, title, isXR
+    return (
+        <Button
+            title={menuItem.name}
+            onClick={() => handleButtonSelect(menuItem)}
+            position={position}
+        />
+    )
+
+}
 
 function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBackgroundChanged}) {
 
@@ -21,10 +38,10 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
     ];
 
     const backgroundOptions = [
-        {name:'Stars', id:'stars'},
-        {name:'Sky', id:'sky'},
-        {name:'Color', id:'color'},
-        {name:'Environment', id:'environment'},
+        {name: 'Stars', id: 'stars'},
+        {name: 'Sky', id: 'sky'},
+        {name: 'Color', id: 'color'},
+        {name: 'Environment', id: 'environment'},
     ];
 
     const handleMeshSelected = (event) => {
@@ -46,6 +63,27 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
         console.log('selectedId', selectedId)
         onBackgroundChanged(selectedId)
 
+    }
+
+    const handleButtonSelect = (menuItem) => {
+        const selectedId = menuItem.id;
+        onMeshSelected(selectedId);
+    }
+
+    if (isXR) {
+        const options = meshOptions.map((menuItem, index) => {
+                // change the position based on the index of the button
+
+                const planePosition = {x: 0, y: 0, z: 0}
+                const position = [planePosition.x, 1 - index * 0.08, planePosition.z]
+
+                return <VRMenuItem position={position} menuItem={menuItem} handleButtonSelect={handleButtonSelect}/>
+            }
+        )
+
+        return <VRUIContainer position={[-1, 0, 1]}>
+            {options}
+        </VRUIContainer>
     }
 
 

@@ -121,7 +121,7 @@ export default class AnimationSequence {
             clipActions[uuid] = mixer.clipAction(clip);
 
             // set timescale
-            clipActions[uuid].timeScale = 0.1;
+            clipActions[uuid].timeScale = parseFloat(val.timeScale);
             // listeners are mixer based i.e. one listener for one animated mesh
             if (listeners[val.object_uuid] === undefined) {
                 listeners[val.object_uuid] = (e) => {

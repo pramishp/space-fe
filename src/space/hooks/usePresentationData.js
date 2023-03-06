@@ -7,7 +7,6 @@ export function usePresentationData(roomId) {
     const [loading, setLoading] = useState(true);
 
     const {doc, provider, room} = useMemo(() => {
-
         // create provider
         const {provider, doc} = new SingletonSocketProvider().getProvider(roomId)
         const room = new Room(provider.awareness);
