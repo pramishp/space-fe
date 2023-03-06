@@ -37,7 +37,7 @@ export const Navigator = () => {
               }
             />
             <Route path='/workspace/:id' element={<WorkspaceWrapper />} />
-            <Route path='/presentation/:id' element={<PresentationWrapper />} />
+            <Route path='/presentation/:id/:type' element={<PresentationWrapper />} />
           </Routes>
         </AuthProvider>
       </Router>

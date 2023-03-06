@@ -18,7 +18,7 @@ import {
 import MenuBar from "./components/MenuBar";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { XR, VRButton, Controllers } from '@react-three/xr';
-import { gltf2JSX, sampleJson, toJSX } from "../../common/loaders/loader";
+import { gltf2JSX, sampleJson, toJSX, toSceneJSX } from "../../common/loaders/loader";
 import { OrbitControls, TransformControls, GizmoHelper, GizmoViewport, useTexture } from "@react-three/drei";
 import { Selection } from "./Selection";
 import Controls from "./Controls";
@@ -42,8 +42,8 @@ import LightMenuBar from "./components/VRMenuBar/LightMenuBar";
 import VRItem from "./components/VRItem";
 import { Quaternion, Scene, ShaderMaterial } from "three";
 import SideMenu from "./SideMenu";
-import { createBackgroundTexture } from "./CreateTexture";
 import { Stars } from "@react-three/drei";
+import { valuesIn } from "lodash";
 
 export default class Editor extends React.Component {
 
@@ -60,7 +60,7 @@ export default class Editor extends React.Component {
             onContextMenu: this.onMeshContextMenu
         };
         this.jsxData = toJSX(props.initData, this.clickCallbacks);
-
+        this.backgroundData = {jsxs:{}, refs:{}}
         /*
         * editorModes
         * 0: edit
@@ -72,22 +72,19 @@ export default class Editor extends React.Component {
             selectedItems: [],
             graph: this.jsxData.jsxs,
             refGraph: this.jsxData.refs,
+            backgroundGraph: this.backgroundData.jsxs,
+            refBackgroundGraph: this.backgroundData.refs,
             animations: props.initData.animations,
             transformMode: 0,
             editorMode: 0,
             itemToBeAnimated: null,
-            isBackgroundStar: false,
-            isBackgroundSky: false,
-            isBackgroundColor: false,
-            isBackgroundEnv: false,
-            backgroundProps: {},
         }
         this.transformRef = React.createRef();
 
         this.loadInitialObjectFiles(this.props);
         // this.backgroundTexture = null
         // this.testBackgroundTexture()
-        
+
 
     }
 
@@ -180,11 +177,10 @@ export default class Editor extends React.Component {
     }
 
     // editor operational methods
-
     notifyApp = ({ type, data }, notify = true) => {
 
         const { app } = this.props;
-        const { val, uuid, key, op_type, extra } = data;
+        const { val, uuid, key, op_type, prop_type, extra } = data;
 
         if (!app) {
             console.error("app is undefined/null ", app)
@@ -228,8 +224,10 @@ export default class Editor extends React.Component {
                 break
 
             case EDITOR_OPS.ADD_BACKGROUND:
-                app.onBackgroundAdded({ op_type, val })
-                console.log('add background')
+                // FIX: 3
+                app.onBackgroundAdded({ prop_type, op_type, val })
+                break;
+                // console.log('editor operations add background')
             //app.onBackgroundChanged({ op_type })
 
             default:
@@ -247,6 +245,7 @@ export default class Editor extends React.Component {
             graph: { ...prevState.graph, ...localJsxs },
             refGraph: { ...prevState.refGraph, ...localRefs }
         }))
+        console.log('localjsxs, localrefs', localJsxs, localRefs)
         // // if same user insert a mesh, select inserted mesh
         // if (notify) {
         //     this.setState(prevState => ({selectedItems: [uuid]}))
@@ -258,17 +257,22 @@ export default class Editor extends React.Component {
     }
     // add the local changes here.
     // in the ref to the scene add a star object then convert it to jsx.
-    insertBackground = ({ op_type, val }, notify = true) => {
+        // FIX: 2
+    insertBackground = ({ prop_type, op_type, val }, notify = true) => {
         switch (op_type) {
             case 'star':
                 console.log('op_type', op_type);
                 console.log('val', val);
+                const { jsxs: localJsxs, refs: localRefs } = toSceneJSX({prop_type, op_type, val})
+                console.log(localJsxs, localRefs)
+                // add to the object.
+                // perhaps we don't need the prev state
                 this.setState({
-                    isBackgroundStar: true,
-                    backgroundProps: {...val}
+                    backgroundGraph: {...localJsxs},
+                    backgroundRefGraph: {...localRefs}
                 })
         }
-        this.notifyApp({ type: EDITOR_OPS.ADD_BACKGROUND, data: { op_type, val } }, notify)
+        this.notifyApp({ type: EDITOR_OPS.ADD_BACKGROUND, data: { prop_type, op_type, val } }, notify)
     }
 
     insertMeshFile = ({ uuid, val }, notify = true) => {
@@ -472,11 +476,12 @@ export default class Editor extends React.Component {
     }
     // set a selected type then call something like insertBackground
     // here we need to set params as well. Or we can set the default params and then change it as done in the mesh implementations.
+    //FIX: 1
     onAddBackgroundSelected = (id) => {
         console.log('id', id)
-        const {op_type, val} = BACKGROUND_TYPES[id];
-        console.log(op_type, val)
-        this.insertBackground({ op_type, val });
+        const {prop_type, op_type, val} = BACKGROUND_TYPES[id];
+        console.log(prop_type, op_type, val)
+        this.insertBackground({ prop_type, op_type, val });
     }
 
     // upload model
@@ -677,9 +682,7 @@ export default class Editor extends React.Component {
         this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid: selectedItem, key: "quaternion", val: quaternion } })
 
     }
-    onBackgroundChanged() {
-        this.notifyApp({ type: EDITOR_OPS.ADD_BACKGROUND , data: { op_type: "" } })
-    }
+    
 
     enterAnimationMode() {
         const {selectedItems} = this.state;
@@ -695,7 +698,7 @@ export default class Editor extends React.Component {
 
     render() {
 
-        const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode } = this.state;
+        const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode, backgroundGraph } = this.state;
         const { isXR, otherUsers } = this.props;
         return (
             <div>
@@ -704,8 +707,7 @@ export default class Editor extends React.Component {
                         <MenuBar onLightSelected={this.onAddLightSelected}
                             onMeshSelected={this.onAddMeshSelected}
                             onGroupSelected={this.onAddGroupSelected}
-                            onBackgroundChanged={this.onAddBackgroundSelected}
-                                 isXR={false}
+                            onBackgroundSelected={this.onAddBackgroundSelected}
                         />
 
                         <input type="file" onChange={this.onModelUpload} />
@@ -756,7 +758,8 @@ export default class Editor extends React.Component {
                                     <primitive attach="background" object={this.backgroundTexture}/>
                                 )} */}
                             <ambientLight intensity={2} />
-                            {this.state.isBackgroundStar && <><color attach="background" args={["#000000"]} /><Stars {...this.state.backgroundProps} /></>}
+                            {/* <color attach="background" args={["#000000"]}/> */}
+                            {/* {<><color attach="background" args={["#000000"]} /><Stars /></>} */}
                             {/*<pointLight position={[20, 10, -10]} intensity={2}/>*/}
 
                             {/* <primitive object={new THREE.AxesHelper(10, 10)} />
@@ -803,7 +806,7 @@ export default class Editor extends React.Component {
                                                mode={this.transformModes[transformMode]}
                                                onObjectChange={(e) => this.onPositionChange(e)}
                             />
-                            {
+                            {                                
                                 Object.entries(graph).map(([uuid, item]) => {
                                     return (
                                         <VRItem uuid={uuid} onSelect={this.onSelect}
@@ -814,6 +817,17 @@ export default class Editor extends React.Component {
                                     )
                                 })
                             }
+                            {
+                                backgroundGraph && Object.entries(backgroundGraph).map(([uuid, val]) => {
+                                    console.log(uuid, val)
+                                    return (
+                                        val
+                                    )
+                                })
+                            }
+                            
+
+                            
 
 
                             <Helpers refs={refGraph} graph={graph} selectedItems={selectedItems}
