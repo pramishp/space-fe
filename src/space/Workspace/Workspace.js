@@ -44,7 +44,7 @@ function Workspace({roomId, user, isXR}) {
         onAnimationAdd,
         onAnimationDelete,
         onUpdate,
-        onBackgroundChange,
+        onScenePropChange,
         onUndo,
         onRedo,
         loading,
@@ -110,19 +110,31 @@ function Workspace({roomId, user, isXR}) {
 
     }
     // might not need switch here
-    app.onBackgroundAdded = ({ op_type , val }) => {
+    // FIX: 4
+    app.onBackgroundAdded = ({ prop_type, op_type , val }) => {
         console.log('here')
-        switch (op_type) {
-            case "star":
-                onBackgroundChange({op_type, val})
-                break
-            case "sky":
-                break
-            case "color":
-                break
-            case "environment":
-                break
-        }
+        if (prop_type === 'background') {
+            switch (op_type) {
+                case "star":
+                    onScenePropChange({ prop_type, op_type, val})
+                    break
+                case "sky":
+                    break
+                case "color":
+                    break
+                case "environment":
+                    break
+            }
+        } 
+    }
+
+    app.addBackground = ({prop_type, op_type, val}) => {
+        if (editorRef && editorRef.current) {
+            const editor = editorRef.current;
+            if (!isMyEvent || isFromUndoManager) {
+                editor.insertBackground({prop_type, op_type, val}, false)
+            }
+        } 
     }
 
     app.insertMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
@@ -290,7 +302,7 @@ function Workspace({roomId, user, isXR}) {
     if (loading) {
         return <div>Loading</div>
     }
-    app.onBackgroundChanged = ({op_type}) => {
+    app.onScenePropChanged = ({op_type}) => {
         console.log(op_type)
     }
 
