@@ -27,7 +27,7 @@ export function useMultiplayerState(roomId, appInit) {
     const yGeometry = doc.getMap("geometries");
     const yMaterial = doc.getMap("materials");
     const yAnimation = doc.getMap("animations");
-    const yBackground = doc.getMap("background");
+    const yScene = doc.getMap("scene");
     // const yScene = doc.getMap("scene")
     const { undoManager } = useMemo(() => {
         //TODO: undo manager for geometry, materials
@@ -179,8 +179,9 @@ export function useMultiplayerState(roomId, appInit) {
     });
 
     // maybe we can map the op_type with the associated parameters.
-    const onBackgroundChange = useCallback(({ op_type, val }) => {
-        console.log('onbackgroundchanged')
+    // FIX: 5
+    const onScenePropChange = useCallback(({ prop_type, op_type, val }) => {
+        console.log('onScenePropChanged')
         undoManager.stopCapturing();
         doc.transact(() => {
             // const params to Yjs map
@@ -189,7 +190,7 @@ export function useMultiplayerState(roomId, appInit) {
             console.log(backgroundMap);
             // insert into yjs
 
-            yBackground.set(op_type, backgroundMap);
+            yScene.set(prop_type, backgroundMap);
             //yScene.set(background, )
             //scene: {background:{ op_type: {} , val: {}}}
         });
@@ -457,8 +458,8 @@ export function useMultiplayerState(roomId, appInit) {
                 });
             });
         }
-        
-        function handleBackgroundChanges(events){
+
+        function handleSceneChanges(events){
             console.log('here')
             console.log('events',events)
             events.forEach((event) => {
@@ -474,11 +475,11 @@ export function useMultiplayerState(roomId, appInit) {
                     console.log(val, key)
                     switch (val.action) {
                         case 'add':
-                            const data = yBackground.get(key).toJSON();
+                            const data = yScene.get(key).toJSON();
                             console.log(data);
-                            app.addBackground({op_type: data.op_type, val: data.val})
+                            app.addBackground({prop_type: key, op_type: data.op_type, val: data.val})
                             break;
-                    
+
                         default:
                             break;
                     }
@@ -490,7 +491,7 @@ export function useMultiplayerState(roomId, appInit) {
             yMeshes.observeDeep(handleMeshChanges);
             yMaterial.observeDeep(handleMaterialChanges);
             yAnimation.observeDeep(handleAnimationChanges);
-            yBackground.observeDeep(handleBackgroundChanges);
+            yScene.observeDeep(handleSceneChanges);
             setLoading(false);
         }
 
@@ -523,7 +524,7 @@ export function useMultiplayerState(roomId, appInit) {
         onRemoveChildren,
         onAnimationAdd,
         onAnimationDelete,
-        onBackgroundChange,
+        onScenePropChange,
         onUndo,
         onRedo,
         loading,

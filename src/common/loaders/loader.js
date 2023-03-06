@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import * as React from 'react';
 import {AnimationClip, DirectionalLightHelper} from "three";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../consts";
-import {Line} from "@react-three/drei";
+import {Line, Stars} from "@react-three/drei";
 
 const _ = require('lodash')
 
@@ -218,7 +218,31 @@ export const sampleJson = {
     }
 
 }
-
+export function toSceneJSX({prop_type, op_type, val}) {
+    const data = {...val}
+    console.log('data',data)
+    const jsxs = {};
+    let refs = {};
+    let ref = React.createRef()
+    refs[prop_type] = ref
+    let object
+    if (prop_type === 'background') {
+        switch (op_type) {
+            case 'star':
+                object = (
+                    <Stars ref={ref} {...val} />
+                )
+                break;
+        
+            default:
+                break;
+        }
+    }
+    console.log('to background jsx data', data)
+    jsxs[prop_type] = object
+    console.log(jsxs, refs)
+    return {jsxs, refs}
+}
 export function toJSX(val, clickCallbacks) {
     const data = {...val}
     const jsxs = {};

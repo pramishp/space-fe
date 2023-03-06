@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBackgroundChanged}) {
+function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBackgroundSelected}) {
 
     const meshOptions = [
         {name: 'Sphere', id: 'sphere'},
@@ -44,7 +44,7 @@ function MenuBar({isXR, onMeshSelected, onLightSelected, onGroupSelected, onBack
     const handleBackgroundSelected = (event) => {
         const selectedId = event.target.value;
         console.log('selectedId', selectedId)
-        onBackgroundChanged(selectedId)
+        onBackgroundSelected(selectedId)
 
     }
 
