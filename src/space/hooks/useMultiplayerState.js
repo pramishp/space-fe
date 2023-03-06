@@ -469,7 +469,7 @@ export function useMultiplayerState(roomId, appInit) {
                 const isMyEvent = !(origin instanceof WebsocketProvider);
 
                 const level = parents.length;
-                const genericProps = { isFromUndoManager };
+                const genericProps = { isFromUndoManager, isMyEvent };
 
                 event.changes.keys.forEach((val, key)=>{
                     console.log(val, key)
@@ -477,7 +477,7 @@ export function useMultiplayerState(roomId, appInit) {
                         case 'add':
                             const data = yScene.get(key).toJSON();
                             console.log(data);
-                            app.addBackground({prop_type: key, op_type: data.op_type, val: data.val})
+                            app.addBackground({prop_type: key, op_type: data.op_type, val: data.val, ...genericProps})
                             break;
 
                         default:

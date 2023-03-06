@@ -230,7 +230,7 @@ export function toSceneJSX({prop_type, op_type, val}) {
         switch (op_type) {
             case 'star':
                 object = (
-                    <Stars ref={ref} {...val} />
+                    <><color attach="background" args={["#000000"]} /><Stars ref={ref} {...val} /></>
                 )
                 break;
         

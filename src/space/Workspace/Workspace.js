@@ -128,7 +128,7 @@ function Workspace({roomId, user, isXR}) {
         } 
     }
 
-    app.addBackground = ({prop_type, op_type, val}) => {
+    app.addBackground = ({prop_type, op_type, val, isFromUndoManager, isMyEvent}) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
