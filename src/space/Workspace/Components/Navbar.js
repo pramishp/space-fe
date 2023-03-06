@@ -9,12 +9,14 @@ const Navbar = () => {
     // fetch the dashboard if the user is authenticated.
     return (
         <div>
-            {user ? 
-            <div onClick={logoutUser}> Logout </div> : 
+            {user ?
+                <div className="flex items-center flex-shrink-0 w-full h-16 px-10 bg-white bg-opacity-75">
+                <button className="ml-auto bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" onClick={logoutUser}>
+                Log Out
+                </button>
+                </div>
+             :
             <>
-            <Link to ='/register' > Register </Link>
-            <span> | </span>
-            <Link to ='/login'> Login </Link> 
             </>}
         </div>
     )
