@@ -155,10 +155,25 @@ export function useMultiplayerState(roomId, appInit) {
     });
 
     // there is no dependency array added here. Perhaps the dependency array to be used is the app as well. Just like in the insert method.
-    const onDelete = useCallback((id) => {
+    const onDelete = useCallback(({uuid, type}) => {
         undoManager.stopCapturing();
         doc.transact(() => {
-            yMeshes.delete(id);
+            switch (type){
+                case TYPES.MESH:
+                    yMeshes.delete(uuid);
+                    break
+                case TYPES.ANIMATION:
+                    yAnimation.delete(uuid);
+                    break
+                case TYPES.MATERIAL:
+                    yMaterial.delete(uuid);
+                    break
+                case TYPES.GEOMETRY:
+                    yGeometry.delete(uuid);
+                default:
+                    console.error(`No ${type} type found for onDelete`)
+            }
+
         });
     });
 
@@ -205,13 +220,6 @@ export function useMultiplayerState(roomId, appInit) {
             const animationMap = objectToYMap(val);
             //insert into yJs
             yAnimation.set(uuid, animationMap);
-        });
-    });
-
-    const onAnimationDelete = useCallback(({ uuid }) => {
-        undoManager.stopCapturing();
-        doc.transact(() => {
-            yAnimation.delete(uuid);
         });
     });
 
@@ -302,12 +310,30 @@ export function useMultiplayerState(roomId, appInit) {
                             if (level === 1) {
                                 const mesh = yMeshes.get(key);
                                 const meshJson = mesh.toJSON();
-                                // lights, undo,
-                                const fullData = {
+                                // lights, undo, delete undo
+                                let fullData = {
                                     objects: {
                                         [meshJson.uuid]: meshJson,
                                     },
                                 };
+
+                                if (meshJson.type === 'Mesh' || meshJson.type === "Line"){
+                                    const material = yMaterial.get(meshJson["material"]);
+                                    const geometry = yGeometry.get(meshJson["geometry"]);
+
+                                    const materialJson = material.toJSON();
+                                    const geometryJson = geometry.toJSON();
+
+                                    fullData = {
+                                        ...fullData,
+                                        materials: {
+                                            [materialJson.uuid]: materialJson,
+                                        },
+                                        geometries: {
+                                            [geometryJson.uuid]: geometryJson,
+                                        },
+                                    }
+                                }
 
                                 if (meshJson.isFile) {
                                     app.insertMeshFile({
@@ -526,7 +552,6 @@ export function useMultiplayerState(roomId, appInit) {
         onAddChildren,
         onRemoveChildren,
         onAnimationAdd,
-        onAnimationDelete,
         onScenePropChange,
         onUndo,
         onRedo,

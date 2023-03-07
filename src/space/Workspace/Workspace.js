@@ -10,11 +10,17 @@ import {IMPORT_MESH_TYPES} from "../../common/consts";
 import TestCanvas from "../Editor/Editor";
 import {VRButton} from "@react-three/xr";
 import * as React from "react";
+import PresentationWrapper, {PRESENTATION_TYPES} from "../PresentationWrapper";
 
 
 function Workspace({roomId, user}) {
     const editorRef = useRef();
     const [otherUsers, setOtherUsers] = useState([]);
+    /*
+    * mode 0 : editor
+    * mode 1: preview
+    * */
+    const [mode, setMode] = useState(0);
 
     const app = {}
 
@@ -44,7 +50,6 @@ function Workspace({roomId, user}) {
         onAddChildren,
         onRemoveChildren,
         onAnimationAdd,
-        onAnimationDelete,
         onUpdate,
         onScenePropChange,
         onUndo,
@@ -73,6 +78,29 @@ function Workspace({roomId, user}) {
             onRedo();
         } else if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
             onUndo();
+        } else if (event.key === 'Delete' || event.key === 'Backspace') {
+            // delete the selected item
+            if (editorRef && editorRef.current) {
+                const editor = editorRef.current;
+                const selectedItems = editor.state.selectedItems;
+                if (selectedItems.length > 0) {
+                    selectedItems.forEach(uuid => {
+                        editor.deleteMesh({uuid}, true)
+                    })
+                }
+
+            }
+        } else if ((event.ctrlKey || event.metaKey) && event.key === 'p'){
+            event.preventDefault();
+            if (mode !== 1){
+                setMode(1)
+            }
+        }
+        else if ((event.key === 'Escape' || event.key === 'Esc')) {
+            // set to editor mode if not so
+            if (mode !== 0) {
+                setMode(0)
+            }
         }
     }
 
@@ -81,7 +109,7 @@ function Workspace({roomId, user}) {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [mode]);
 
     // mesh
     // NOTE: YJS
@@ -113,12 +141,12 @@ function Workspace({roomId, user}) {
     }
     // might not need switch here
     // FIX: 4
-    app.onBackgroundAdded = ({ prop_type, op_type , val }) => {
+    app.onBackgroundAdded = ({prop_type, op_type, val}) => {
         console.log('here')
         if (prop_type === 'background') {
             switch (op_type) {
                 case "star":
-                    onScenePropChange({ prop_type, op_type, val})
+                    onScenePropChange({prop_type, op_type, val})
                     break
                 case "sky":
                     break
@@ -127,7 +155,7 @@ function Workspace({roomId, user}) {
                 case "environment":
                     break
             }
-        } 
+        }
     }
 
     app.addBackground = ({prop_type, op_type, val, isFromUndoManager, isMyEvent}) => {
@@ -136,7 +164,7 @@ function Workspace({roomId, user}) {
             if (!isMyEvent || isFromUndoManager) {
                 editor.insertBackground({prop_type, op_type, val}, false)
             }
-        } 
+        }
     }
 
     app.insertMesh = ({uuid, val, isFromUndoManager, isMyEvent}) => {
@@ -148,7 +176,7 @@ function Workspace({roomId, user}) {
         }
     }
 
-    app.onMeshFileInserted = ({uuid, val})=>{
+    app.onMeshFileInserted = ({uuid, val}) => {
 
         onMeshFileInserted({uuid, val})
     }
@@ -209,14 +237,14 @@ function Workspace({roomId, user}) {
     }
 
     app.onDeleteMesh = ({uuid}) => {
-
+        onDelete({uuid, type: TYPES.MESH})
     }
 
     // updateMesh props
-    app.updateObject = ({uuid, key, val, isFromUndoManager, isMyEvent, }) => {
+    app.updateObject = ({uuid, key, val, isFromUndoManager, isMyEvent,}) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
-            if (!isMyEvent || isFromUndoManager){
+            if (!isMyEvent || isFromUndoManager) {
                 editor.updateObject({uuid, key, val})
             }
         }
@@ -266,7 +294,7 @@ function Workspace({roomId, user}) {
         onUpdate({uuid, key, val, type: TYPES.ANIMATION})
     }
 
-    app.updateAnimation = ({uuid, key, val, isMyEvent, isFromUndoManager})=>{
+    app.updateAnimation = ({uuid, key, val, isMyEvent, isFromUndoManager}) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
@@ -277,7 +305,7 @@ function Workspace({roomId, user}) {
     }
 
     app.onDeleteAnimation = ({uuid}) => {
-        onAnimationDelete({uuid})
+        onDelete({uuid, type: TYPES.ANIMATION})
     }
 
     app.deleteAnimation = ({uuid, isMyEvent, isFromUndoManager}) => {
@@ -301,7 +329,7 @@ function Workspace({roomId, user}) {
     }
 
     if (loading) {
-        return <div>Loading</div>
+        return <div>Loading Data</div>
     }
     app.onScenePropChanged = ({op_type}) => {
         console.log(op_type)
@@ -317,7 +345,6 @@ function Workspace({roomId, user}) {
     const initData = getInitData();
     //TODO: Why console.log(initData) here is called 8 times ?
 
-
     return (
         <>
             <Menu onModelUpload={onModelUpload}/>
@@ -327,7 +354,10 @@ function Workspace({roomId, user}) {
                 {/*    /!*<AnimationApp/>*!/*/}
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
-                <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers}/>
+
+                {mode === 0 && <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers}/>}
+                {mode === 1 && <PresentationWrapper workspaceId={roomId} type={PRESENTATION_TYPES["2D_INTERACTIVE"]}/>}
+
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}
             </div>
