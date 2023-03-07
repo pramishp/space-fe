@@ -6,11 +6,10 @@ import AnimationSequence from "./AnimationSequence";
 import {Box} from "@react-three/drei";
 
 function Presentation({data}) {
-    const {jsxs, refs} = toJSX(data);
+    const {jsxs, refs, scene} = toJSX(data);
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
     const [play, setPlay] = useState(true);
-
 
     const seq = new AnimationSequence({
         meshRefs: refGraph,
@@ -31,7 +30,9 @@ function Presentation({data}) {
         if (play){
             if (!seq.initialized) {
                 seq.init();
-                seq.playAnimations(0);
+                if (seq.length > 0){
+                    seq.playAnimations(0);
+                }
             }
         }
         return () => {

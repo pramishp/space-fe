@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App, {Navigator} from "./App";
-import PresentationWrapper from "./space/PresentationWrapper";
+import PresentationWrapper, {PRESENTATION_TYPES} from "./space/PresentationWrapper";
 import TestCanvasUI from "./space/Editor/components/xruitest";
+
 
 // WARNING: Memory Leak Detected.
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,7 +14,7 @@ root.render(
   <React.StrictMode>
     {/*<Workspace />*/}
      <App />
-      {/*<PresentationWrapper/>*/}
+    {/*  <PresentationWrapper type={PRESENTATION_TYPES.VR} workspaceId={'1234-v2.15'}/>*/}
     {/*<Navigator/>*/}
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>

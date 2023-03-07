@@ -4,6 +4,7 @@ THREE.Mesh.prototype.toJSONWithPosition = function () {
 
     var data = THREE.Object3D.prototype.toJSON.call(this);
     data.object.position = this.position.toArray();
+    data.object.rotation = this.rotation.toArray();
     return data;
 };
 
@@ -14,7 +15,8 @@ export const FILE_TYPES = {
 }
 
 export const SHAPE_TYPES = {
-    "ELLIPSE": "ellipse"
+    "ELLIPSE": "ellipse",
+    "LINE": "line"
 }
 
 export const ANIMATION_TYPES = {
@@ -155,11 +157,12 @@ export const BASIC_OBJECTS = {
             return mesh2json(mesh)
         },
     },
+
     ellipse: {
         get: function () {
             const curve = new THREE.EllipseCurve(
                 0, 0,            // ax, aY
-                1, 1,           // xRadius, yRadius
+                5, 1,           // xRadius, yRadius
                 0, 2 * Math.PI,  // aStartAngle, aEndAngle
                 false,            // aClockwise
                 0                 // aRotation
@@ -173,7 +176,24 @@ export const BASIC_OBJECTS = {
             const ellipse = new THREE.Line(geometry, material);
             ellipse.userData = {'type': SHAPE_TYPES.ELLIPSE}
             ellipse.position.set(0, 0, -2)
+            ellipse.rotation.set(Math.PI/2, 0, 0)
             return mesh2json(ellipse)
+        }
+    },
+    line: {
+        get: function(){
+            // Create the geometry for the line with two points
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-1, 0, 0),
+                new THREE.Vector3(1, 0, 0)
+            ]);
+
+            const material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 2, dashed: false});
+            // Create the final object to add to the scene
+            const line = new THREE.Line(geometry, material);
+            line.userData = {'type': SHAPE_TYPES.LINE}
+            line.position.set(0, 0, -2)
+            return mesh2json(line)
         }
     }
 }

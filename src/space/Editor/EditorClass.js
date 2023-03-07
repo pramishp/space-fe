@@ -355,8 +355,14 @@ export default class Editor extends React.Component {
             })
         })
 
+        // deselect the current selection on deletion
+        const {selectedItems} = this.state;
+        if (selectedItems.length > 0 && uuid === selectedItems[0]){
+            this.onDeselect();
+        }
+
         // notify app
-        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {uuid}, app}, notify)
+        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {uuid}}, notify)
     }
 
     onPositionChange = (e) => {
