@@ -9,6 +9,7 @@ import {SHAPE_TYPES} from "../constants";
 import LineEditor from "./PropsEditor/LineEditor";
 import {Box} from "@react-three/flex";
 import {NumberInput} from "./VRUIs/NumberInput";
+import ScenePropsEditor from "./PropsEditor/ScenePropsEditor";
 
 const _ = require("lodash")
 
@@ -101,12 +102,14 @@ function AnimationEditor({animations, selectedItems, onAnimationDelete, updateAn
     )
 }
 
+
+
 function PropsEditor(props) {
     const {isXR, selectedItems, refs} = props;
     // console.log('isXR', isXR)
     const Empty = isXR ? <></> : <div style={{'margin': '40px'}}/>
     if (selectedItems.length === 0) {
-        return Empty
+        return <ScenePropsEditor {...props}/>
     }
     // handling single item selection only
     const selectedItemUUID = selectedItems[0]
@@ -116,6 +119,7 @@ function PropsEditor(props) {
         return Empty
     }
     const object = refs[selectedItemUUID].current;
+
 
     return (
         <>

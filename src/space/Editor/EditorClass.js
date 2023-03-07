@@ -487,6 +487,11 @@ export default class Editor extends React.Component {
         this.insertBackground({prop_type, op_type, val});
     }
 
+    onBackgroundColorChange = ({color}) =>{
+        //TODO: handle scene background color change
+        console.log('background color changed: ')
+    }
+
     // upload model
     // NOTE: thrrejs gtlf loader
     onModelUpload = (url) => {
@@ -673,19 +678,20 @@ export default class Editor extends React.Component {
         }
     }
 
-    onVRTransformReleased({uuid, worldPosition, worldQuaternion}) {
+    onVRTransformReleased({uuid, worldPosition, worldQuaternion, worldRotation}) {
         // console.log("worldPOsition , wordQuaterninon : ", worldPosition, worldQuaternion)
         const selectedItem = uuid;
         const targetPosition = worldPosition;
         const targetRotation = worldQuaternion;
         const position = targetPosition.toArray();
         const quaternion = targetRotation.toArray();
+        const rotation = worldRotation.toArray();
 
         this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "position", val: position}})
         // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "quaternion", val: quaternion}})
+        // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "rotation", val: rotation}})
 
     }
-
 
     enterAnimationMode() {
         const {selectedItems} = this.state;
@@ -733,14 +739,15 @@ export default class Editor extends React.Component {
                                  onBackgroundSelected={this.onAddBackgroundSelected}
                                  isXR={false}
                         />
-
                         <input type="file" onChange={this.onModelUpload}/>
                     </div>
                 </div>
 
-
                 <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
                              animations={animations}
+                             sceneBackgroundColor={'#000'}
+                             onBackgroundSelected={this.onAddBackgroundSelected}
+                             onBackgroundColorChange={this.onBackgroundColorChange}
                              updateAnimation={this.updateAnimation}
                              onAnimationDelete={this.onDeleteAnimationClicked}
                              onMaterialPropsChanged={this.onMaterialPropsChanged}

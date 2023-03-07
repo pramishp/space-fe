@@ -8,7 +8,6 @@ import {Button} from "./VRUIs/Button";
 import VRUIContainer from "./VRUIs/VRUIContainer";
 import {Heading6} from "./VRUIs/Headings";
 
-
 function VRMenuItem({menuItem, handleButtonSelect, isXR}) {
     //onCli(ck, onHover, title, isXR
     return (
@@ -18,7 +17,6 @@ function VRMenuItem({menuItem, handleButtonSelect, isXR}) {
             onClick={() => handleButtonSelect(menuItem)}
         />
     )
-
 }
 
 
@@ -66,12 +64,6 @@ function MenuBar({
         const selectedId = event.target.value;
         onGroupSelected(selectedId);
     };
-    const handleBackgroundSelected = (event) => {
-        const selectedId = event.target.value;
-        console.log('selectedId', selectedId)
-        onBackgroundSelected(selectedId)
-
-    }
 
     const handleButtonSelect = (menuItem) => {
         const selectedId = menuItem.id;
