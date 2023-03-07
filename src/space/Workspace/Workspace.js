@@ -347,7 +347,6 @@ function Workspace({roomId, user}) {
 
     return (
         <>
-            <Menu onModelUpload={onModelUpload}/>
             <div className="App" style={{height: window.innerHeight}}>
                 {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}

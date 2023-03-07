@@ -739,7 +739,7 @@ export default class Editor extends React.Component {
             editorMode,
             backgroundGraph
         } = this.state;
-        const {otherUsers} = this.props;
+        const {otherUsers, onModelUpload} = this.props;
         return (
             <div>
                 <Menu onModelUpload={onModelUpload} />
