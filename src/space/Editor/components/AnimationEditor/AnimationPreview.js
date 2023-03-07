@@ -19,7 +19,7 @@ export default function AnimationPreview({hoveredAnimation, selectedAnimation, r
     
     useEffect(() => {
     //hoveredAnimation
-    onItemHovered()
+    hoveredAnimation && onItemHovered({val:hoveredAnimation.val})
     }, [hoveredAnimation, selectedAnimation])
     
 
