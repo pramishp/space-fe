@@ -1,4 +1,5 @@
 import { RayGrab, Interactive, useController } from '@react-three/xr'
+import {useFrame} from "@react-three/fiber"
 import React, { useState, useRef } from 'react'
 import * as THREE from "three";
 import { useHelper } from '@react-three/drei';
@@ -52,7 +53,13 @@ function VRItem(props) {
     const handleSelectEnd = (event) => {
         // after the select End, call the callback for position and rotaiton change
         const controller = event.target.controller;
-        props.onVRTransformReleased({ "uuid": props.uuid, "worldPosition": controller.position, "worldQuaternion": controller.quaternion });
+
+        let worldPosition = event.intersection.point
+        // console.log(event)
+        props.onVRTransformReleased({ "uuid": props.uuid, "worldPosition": worldPosition,
+            "worldQuaternion": controller.quaternion,
+            "worldRotation": controller.rotation
+        });
     }
     const handleSqueezeStart = (event) => {
         // console.log("Squeeze started : ", event);
@@ -70,14 +77,11 @@ function VRItem(props) {
 
         // set scaling of the object
         let scale = calculateScale(startDistance, endDistance, event.intersection.object.scale);
-        // console.log("scale : ", scale);
-        props.onObjectPropsChanged({ "uuid": props.uuid, "key": "scale", "val": scale });
+        props.onObjectPropsChanged({ "uuid": props.uuid, "key": "scale", "val": [scale, scale, scale] });
         // props.children.ref.current.scale.x = scale;
         // props.children.ref.current.scale.y = scale;
         // props.children.ref.current.scale.z = scale;
     }
-
-    // console.log("props children : ", props.children);
 
     useHelper(selectMesh && props.children.ref, BoxHelper, 'cyan')
 

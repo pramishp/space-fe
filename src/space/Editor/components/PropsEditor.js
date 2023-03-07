@@ -9,15 +9,16 @@ import {SHAPE_TYPES} from "../constants";
 import LineEditor from "./PropsEditor/LineEditor";
 import {Box} from "@react-three/flex";
 import {NumberInput} from "./VRUIs/NumberInput";
+import ScenePropsEditor from "./PropsEditor/ScenePropsEditor";
 
 const _ = require("lodash")
 
-function AnimationEditItem({item, onDelete, isXR, onTimeScaleChanged}) {
+function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
     const {timeScale} = item;
     const onValueChange = (e)=>{
-        const value = parseFloat(e.target.value);
-        if (onTimeScaleChanged){
-            onTimeScaleChanged({uuid: item.uuid, timeScale: value})
+        const value = e.target.value
+        if (updateAnimation){
+            updateAnimation({uuid: item.uuid, key: "timeScale", val: value})
         }
     }
     if (isXR) {
@@ -52,7 +53,8 @@ function AnimationEditItem({item, onDelete, isXR, onTimeScaleChanged}) {
                 <input
                     type="number"
                     id="timescale"
-                    value={1}
+                    step="0.01"
+                    value={timeScale}
                     onChange={onValueChange}
                 />
             </div>
@@ -61,7 +63,7 @@ function AnimationEditItem({item, onDelete, isXR, onTimeScaleChanged}) {
     )
 }
 
-function AnimationEditor({animations, selectedItems, onAnimationDelete, onAnimationTimeScaleChanged, isXR}) {
+function AnimationEditor({animations, selectedItems, onAnimationDelete, updateAnimation, isXR}) {
     const Empty = isXR ? <></> : <div/>
     if (selectedItems.length === 0) {
         return Empty
@@ -81,6 +83,7 @@ function AnimationEditor({animations, selectedItems, onAnimationDelete, onAnimat
                 {heading}
                 {animationList.map((item) => {
                     return <AnimationEditItem isXR={isXR} item={item}
+                                              updateAnimation={updateAnimation}
                                               onDelete={() => onAnimationDelete({uuid: item.uuid})}/>
                 })}
             </VRUIContainer>
@@ -92,19 +95,21 @@ function AnimationEditor({animations, selectedItems, onAnimationDelete, onAnimat
             {animationList.map((item) => {
                 return <AnimationEditItem isXR={isXR} item={item}
                                           onDelete={() => onAnimationDelete({uuid: item.uuid})}
-                                          onTimeScaleChanged={onAnimationTimeScaleChanged}
+                                          updateAnimation={updateAnimation}
                 />
             })}
         </>
     )
 }
 
+
+
 function PropsEditor(props) {
     const {isXR, selectedItems, refs} = props;
     // console.log('isXR', isXR)
     const Empty = isXR ? <></> : <div style={{'margin': '40px'}}/>
     if (selectedItems.length === 0) {
-        return Empty
+        return <ScenePropsEditor {...props}/>
     }
     // handling single item selection only
     const selectedItemUUID = selectedItems[0]
@@ -114,6 +119,7 @@ function PropsEditor(props) {
         return Empty
     }
     const object = refs[selectedItemUUID].current;
+
 
     return (
         <>

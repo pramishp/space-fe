@@ -8,9 +8,11 @@ import {useMultiplayerState} from "../hooks/useMultiplayerState";
 import {FILE_TYPES, TYPES} from "../Editor/constants";
 import {IMPORT_MESH_TYPES} from "../../common/consts";
 import TestCanvas from "../Editor/Editor";
+import {VRButton} from "@react-three/xr";
+import * as React from "react";
 
 
-function Workspace({roomId, user, isXR}) {
+function Workspace({roomId, user}) {
     const editorRef = useRef();
     const [otherUsers, setOtherUsers] = useState([]);
 
@@ -58,12 +60,12 @@ function Workspace({roomId, user, isXR}) {
     app.room = {roomId, userId: instanceId, users: otherUsers}
 
     // user handling
-    app.user = {id: instanceId, instanceId} //TODO: change user id
+    app.user = {instanceId, ...user}
 
     useEffect(() => {
         onMount(app);
         onChangePresence(app, app.user);
-    }, [isXR, otherUsers]);
+    }, [otherUsers]);
 
 
     function handleKeyDown(event) {
@@ -261,15 +263,14 @@ function Workspace({roomId, user, isXR}) {
     }
 
     app.onUpdateAnimation = ({uuid, key, val}) => {
-        //TODO: call multiplayer
+        onUpdate({uuid, key, val, type: TYPES.ANIMATION})
     }
 
     app.updateAnimation = ({uuid, key, val, isMyEvent, isFromUndoManager})=>{
         if (editorRef && editorRef.current) {
             const editor = editorRef.current;
             if (!isMyEvent || isFromUndoManager) {
-                // editor.editAnimation({uuid, key, val}, false)
-                //TODO: call editAnimation
+                editor.updateAnimation({uuid, val, key}, false)
             }
 
         }
@@ -326,7 +327,9 @@ function Workspace({roomId, user, isXR}) {
                 {/*    /!*<AnimationApp/>*!/*/}
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
+
                 <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers} onModelUpload={onModelUpload} />
+
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}
             </div>
