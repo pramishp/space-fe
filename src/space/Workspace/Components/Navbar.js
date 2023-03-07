@@ -10,7 +10,7 @@ const Navbar = () => {
     return (
         <div>
             {user ?
-                <div className="flex items-center flex-shrink-0 w-full h-16 px-10 bg-white bg-opacity-75">
+                <div className="flex items-center flex-shrink-0 w-full h-16 px-10  bg-gradient-to-r from-indigo-600 to-blue-500 shadow-lg">
                 <button className="ml-auto bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" onClick={logoutUser}>
                 Log Out
                 </button>

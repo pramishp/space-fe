@@ -271,6 +271,7 @@ export default class Editor extends React.Component {
                     backgroundGraph: {...localJsxs},
                     backgroundRefGraph: {...localRefs}
                 })
+                break
         }
         this.notifyApp({ type: EDITOR_OPS.ADD_BACKGROUND, data: { prop_type, op_type, val } }, notify)
     }
@@ -681,7 +682,7 @@ export default class Editor extends React.Component {
         this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid: selectedItem, key: "quaternion", val: quaternion } })
 
     }
-    
+
 
     enterAnimationMode() {
         const {selectedItems} = this.state;
@@ -796,7 +797,7 @@ export default class Editor extends React.Component {
                                                mode={this.transformModes[transformMode]}
                                                onObjectChange={(e) => this.onPositionChange(e)}
                             />
-                            {                                
+                            {
                                 Object.entries(graph).map(([uuid, item]) => {
                                     return (
                                         <VRItem uuid={uuid} onSelect={this.onSelect}
@@ -815,9 +816,9 @@ export default class Editor extends React.Component {
                                     )
                                 })
                             }
-                            
 
-                            
+
+
 
 
                             <Helpers refs={refGraph} graph={graph} selectedItems={selectedItems}

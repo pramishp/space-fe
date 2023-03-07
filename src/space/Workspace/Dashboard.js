@@ -79,7 +79,7 @@ const Dashboard = () => {
             <ul>
               {projects.map((project) => {
                 return (
-                  <div className='flex flex-col pb-2 overflow-auto'>
+                  <div className='flex flex-col pb-2 overflow-auto' onClick={handleClick}>
                     <div className='relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100'>
                       <h4 className='mt-3 text-sm font-medium'>
                         {project.name} - {project.title}

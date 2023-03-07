@@ -190,9 +190,36 @@ export const BACKGROUND_TYPES = {
       fade: true,
     },
   },
-  sky: {},
-  color: {},
-  environment: {},
+  sky: {
+      prop_type: 'background',
+      op_type: 'sky',
+      val: {
+        distance: 450000,
+        sunPosition: [0, 1, 0],
+        inclination: 0,
+        azimuth: 0.25
+      }
+  },
+  color: {
+      prop_type: 'background',
+      op_type: 'color',
+      val: {
+          args: "#000000"
+      }
+  },
+// pass the image for the six sides.
+  environment: {
+      prop_type: 'background',
+      op_type: 'env',
+      val: {
+        background: false,
+        blur: 0,
+        files: ['', '', '', '', '', ''] ,
+        path: '',
+        scene: undefined,
+        encoding: undefined
+      }
+  },
 }
 
 export const TYPES = {
