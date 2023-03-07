@@ -180,22 +180,49 @@ export const BASIC_OBJECTS = {
 
 // <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 export const BACKGROUND_TYPES = {
-    stars: {
-        prop_type: 'background',
-        op_type: 'star',
-        val: {
-            radius: 100,
-            depth: 50,
-            count: 5000,
-            factor: 4,
-            saturation: 0,
-            speed: 1,
-            fade: true,
-        },
-        sky: {},
-        color: {},
-        environment: {},
-    }
+  stars: {
+    prop_type: 'background',
+    op_type: 'star',
+    val: {
+      radius: 100,
+      depth: 50,
+      count: 5000,
+      factor: 4,
+      saturation: 0,
+      speed: 1,
+      fade: true,
+    },
+  },
+  sky: {
+      prop_type: 'background',
+      op_type: 'sky',
+      val: {
+        distance: 450000,
+        sunPosition: [0, 1, 0],
+        inclination: 0,
+        azimuth: 0.25
+      }
+  },
+  color: {
+      prop_type: 'background',
+      op_type: 'color',
+      val: {
+          args: "#000000"
+      }
+  },
+// pass the image for the six sides.
+  environment: {
+      prop_type: 'background',
+      op_type: 'env',
+      val: {
+        background: false,
+        blur: 0,
+        files: ['', '', '', '', '', ''] ,
+        path: '',
+        scene: undefined,
+        encoding: undefined
+      }
+  },
 }
 
 export const TYPES = {
