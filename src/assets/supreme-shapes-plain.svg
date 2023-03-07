@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:cc="http://web.resource.org/cc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:ns1="http://sozi.baierouge.fr"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    id="svg2"
+    viewBox="0 0 360 360"
+    version="1.0"
+  >
+  <g
+      id="layer1"
+    >
+    <rect
+        id="rect2407"
+        style="fill:#000000"
+        transform="matrix(4,0,0,4,-450,-330)"
+        height="30"
+        width="30"
+        y="90"
+        x="120"
+    />
+    <path
+        id="path2462"
+        style="fill-rule:evenodd;fill:#000000"
+        d="m169.59 121.2l-15 25.98h30l-15-25.98z"
+        transform="matrix(4 0 0 4 -588.35 -266.71)"
+    />
+    <path
+        id="path2480"
+        style="fill-rule:evenodd;fill:#000000"
+        d="m165 185.5l-15 25.97 15 26h30l15-26-15-25.97h-30z"
+        transform="matrix(2 0 0 2 -90 -152.94)"
+    />
+    <path
+        id="path2490"
+        style="fill:#000000"
+        d="m182.12 276.71a55.412 54.353 0 1 1 -110.83 0 55.412 54.353 0 1 1 110.83 0z"
+        transform="matrix(1.0828 0 0 1.1039 132.8 -215.45)"
+    />
+  </g
+  >
+  <metadata
+    >
+    <rdf:RDF
+      >
+      <cc:Work
+        >
+        <dc:format
+          >image/svg+xml</dc:format
+        >
+        <dc:type
+            rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+        />
+        <cc:license
+            rdf:resource="http://creativecommons.org/licenses/publicdomain/"
+        />
+        <dc:publisher
+          >
+          <cc:Agent
+              rdf:about="http://openclipart.org/"
+            >
+            <dc:title
+              >Openclipart</dc:title
+            >
+          </cc:Agent
+          >
+        </dc:publisher
+        >
+        <dc:title
+          >supreme shapes</dc:title
+        >
+        <dc:date
+          >2011-02-02T23:50:45</dc:date
+        >
+        <dc:description
+          >This picture is meant to show people the supreme shapes. They were designed to be big enough to see clearly.&#13;\nI made them in inkscape, which is currently the best free vector graphics program available for Linux.&#13;\n&#13;\nWhen dealing with the natural world we live in, we tend to not appreciate the most basic things around us.&#13;\nMany colors, numbers, and shapes, make up the objects which we see and feel. Although there are endless variations of everything,I have noticed that almost everything man made tends to resemble one of 4 common shapes.&#13;\n&#13;\nAlso, look up the definition of supreme and you'll see why I like this word.&#13;\nhttp://en.wiktionary.org/wiki/supreme&#13;\n&#13;\nregular quadrilateral(square)&#13;\n&#13;\nThe square is my favorite shape of all. All of it's four sides are the same length. Many people think that&#13;\na square and rectangle are different things, however, a square is a type of rectangle. Other rectangles may have&#13;\na different width/height ratio but all types of rectangles are useful for building things(brick houses,legos,chessboards,etc).&#13;\nIt's also the only type of shape which can actually be represented accurately on a computer screen because pixels&#13;\nare squares. If you look around you, you'll probably find that squares and other&#13;\nrectangles(all of which can be divided into smaller squares), are the most commonly made shape of all man-made objects.&#13;\nThe 3 dimensional version of a square is called a cube. Most furniture and storage containers are a rectangle on every side.&#13;\n&#13;\nregular triangle&#13;\n&#13;\nA triangle is a 3 sided shape.&#13;\nAll triangles are interesting, however, the most commonly used triangle is a regular or equilateral triangle.&#13;\nRegular triangles have something in common with squares in that both of them can tesselate. This means that it's&#13;\npossible fit a bunch of them together with no gaps. Many times, the are useful in making other shapes.&#13;\n&#13;\nregular hexagon&#13;\n&#13;\nA hexagon has 6 sides, but a regular hexagon is the most useful because it is the regular polygon with the most sides&#13;\nthat can still tesselate perfectly! A regular hexagon can be formed with 6 regular triangles.&#13;\n&#13;\ncircle&#13;\n&#13;\ncircles are totally different from the other 3 supreme shapes. They do not tesselate, they can't be described by a number of sides. However, there are two reason that I include them in my definition of supreme shapes. First, they occur in God's creation more than anything else. Almost all plants have circular parts. The stems of plants(and trunks of trees), many fruits, and maybe every living animal. Although not all things are perfect circles, many things on the human body are mostly round. Rarely do you find anything that is flat or straight. The second reason is that they are useful for anything that is designed to move. Think of wheels on everything or spheres which are used for nearly every sport.&#13;\nRound things move easy. This is the total opposite of rectangles which are useful when you need something to stay in one place.&#13;\n</dc:description
+        >
+        <dc:source
+          >https://openclipart.org/detail/116905/supreme-shapes-by-10binary</dc:source
+        >
+        <dc:creator
+          >
+          <cc:Agent
+            >
+            <dc:title
+              >10binary</dc:title
+            >
+          </cc:Agent
+          >
+        </dc:creator
+        >
+        <dc:subject
+          >
+          <rdf:Bag
+            >
+            <rdf:li
+              >10binary</rdf:li
+            >
+            <rdf:li
+              >Chandler</rdf:li
+            >
+            <rdf:li
+              >Isaac</rdf:li
+            >
+            <rdf:li
+              >Klebs</rdf:li
+            >
+            <rdf:li
+              >circle</rdf:li
+            >
+            <rdf:li
+              >hexagon</rdf:li
+            >
+            <rdf:li
+              >square</rdf:li
+            >
+            <rdf:li
+              >supreme</rdf:li
+            >
+            <rdf:li
+              >triangle</rdf:li
+            >
+          </rdf:Bag
+          >
+        </dc:subject
+        >
+      </cc:Work
+      >
+      <cc:License
+          rdf:about="http://creativecommons.org/licenses/publicdomain/"
+        >
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#Reproduction"
+        />
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#Distribution"
+        />
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#DerivativeWorks"
+        />
+      </cc:License
+      >
+    </rdf:RDF
+    >
+  </metadata
+  >
+</svg
+>

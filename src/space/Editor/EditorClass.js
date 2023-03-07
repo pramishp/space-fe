@@ -273,6 +273,7 @@ export default class Editor extends React.Component {
                     backgroundGraph: {...localJsxs},
                     backgroundRefGraph: {...localRefs}
                 })
+                break
         }
         this.notifyApp({type: EDITOR_OPS.ADD_BACKGROUND, data: {prop_type, op_type, val}}, notify)
     }
@@ -850,7 +851,6 @@ export default class Editor extends React.Component {
                                     )
                                 })
                             }
-
 
                             <Helpers refs={refGraph} graph={graph} selectedItems={selectedItems}
                                      onSelect={this.onSelect} clickCallbacks={this.clickCallbacks}/>
