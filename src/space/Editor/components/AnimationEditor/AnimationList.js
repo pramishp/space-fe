@@ -9,8 +9,8 @@ import {useEffect} from "react";
 import {ANIMATION_TYPES} from "../../constants";
 
 export default function AnimationList({isXR, onClick, refs, selectedItems, enterAnimationMode}) {
-    let mixer, action;
 
+    let mixer, action;
 
     const onItemClicked = ({uuid, val}) => {
         switch (val.type){
