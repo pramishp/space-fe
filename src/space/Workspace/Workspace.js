@@ -8,9 +8,11 @@ import {useMultiplayerState} from "../hooks/useMultiplayerState";
 import {FILE_TYPES, TYPES} from "../Editor/constants";
 import {IMPORT_MESH_TYPES} from "../../common/consts";
 import TestCanvas from "../Editor/Editor";
+import {VRButton} from "@react-three/xr";
+import * as React from "react";
 
 
-function Workspace({roomId, user, isXR}) {
+function Workspace({roomId, user}) {
     const editorRef = useRef();
     const [otherUsers, setOtherUsers] = useState([]);
 
@@ -63,7 +65,7 @@ function Workspace({roomId, user, isXR}) {
     useEffect(() => {
         onMount(app);
         onChangePresence(app, app.user);
-    }, [isXR, otherUsers]);
+    }, [otherUsers]);
 
 
     function handleKeyDown(event) {
@@ -325,7 +327,7 @@ function Workspace({roomId, user, isXR}) {
                 {/*    /!*<AnimationApp/>*!/*/}
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
-                <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers}/>
+                <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers}/>
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}
             </div>
