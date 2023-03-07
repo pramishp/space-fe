@@ -45,8 +45,12 @@ export const animations = {
         tracks: [
             {
                 name: '.quaternion',
-                times: [0, 1, 2],
-                values: [0, 0, 0, 1, 1, 0, 0, 6.123234262925839e-17, 0, 0, 0, 1],
+                "times": [0, 0.5, 1],
+                "values": [
+                    0,0,0,1, // Start at zero rotation
+                    0,0.7071,0,0.7071, // Rotate 90 degrees
+                    0,1,0,0 // Rotate 180 degrees
+                ],
                 type: 'quaternion'
             }
 
