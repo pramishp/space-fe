@@ -180,21 +180,22 @@ export const BASIC_OBJECTS = {
 
 // <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 export const BACKGROUND_TYPES = {
-  stars: {
-    prop_type: 'background',
-    op_type: 'star',
-    val: {
-      radius: 100,
-      depth: 50,
-      count: 5000,
-      factor: 4,
-      saturation: 0,
-      speed: 1,
-      fade: true,
-    },
-    sky: {},
-    color: {},
-    environment: {},
+    stars: {
+        prop_type: 'background',
+        op_type: 'star',
+        val: {
+            radius: 100,
+            depth: 50,
+            count: 5000,
+            factor: 4,
+            saturation: 0,
+            speed: 1,
+            fade: true,
+        },
+        sky: {},
+        color: {},
+        environment: {},
+    }
 }
 
 export const TYPES = {
