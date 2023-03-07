@@ -7,13 +7,15 @@ import {Line, useHelper} from "@react-three/drei";
 import {LineHelperComponent} from "./components/helpers/LineHelper";
 
 import * as EmptyHelper from "../../common/helpers/EmptyHelper";
+import {Interactive} from "@react-three/xr";
+import VRItem from "./components/VRItem";
 
 extend(EmptyHelper)
 
 let geometry = new THREE.SphereGeometry(2, 4, 2);
 let material = new THREE.MeshBasicMaterial({color: 0xff0000, visible: false});
 
-export default function Helpers({selectedItems, refs, onSelect, graph, clickCallbacks}) {
+export default function Helpers({isXR, selectedItems, refs, onSelect, graph, clickCallbacks, onVRTransformReleased}) {
 
     return (
         <>
@@ -37,21 +39,22 @@ export default function Helpers({selectedItems, refs, onSelect, graph, clickCall
 
                         case 'DirectionalLight':
                             return (
-                                <directionalLightHelper args={[mesh, 0.5, '#000']}>
+
+                                <directionalLightHelper args={[mesh, 0.5, '#f83e3e']}>
                                     <mesh {...clickCallbacks} onClick={() => onSelect({uuid, object: mesh})}>
-                                        <sphereGeometry args={[0.5, 1, 0.5]}/>
-                                        <meshBasicMaterial color={0xff0000} visible={false}/>
-                                    </mesh>
+                                            <sphereGeometry args={[0.5, 1, 0.5]}/>
+                                            <meshBasicMaterial color={0xff0000} visible={false}/>
+                                        </mesh>
                                 </directionalLightHelper>
                             )
 
                         case 'PointLight':
                             return (
-                                <pointLightHelper args={[mesh, 0.5, '#000']}>
-                                    <mesh {...clickCallbacks} onClick={() => onSelect({uuid, object: mesh})}>
-                                        <sphereGeometry args={[0.5, 1, 0.5]}/>
-                                        <meshBasicMaterial color={0xff0000} visible={false}/>
-                                    </mesh>
+                                <pointLightHelper args={[mesh, 0.5, '#ea4242']}>
+                                        <mesh {...clickCallbacks} onClick={() => onSelect({uuid, object: mesh})}>
+                                            <sphereGeometry args={[0.5, 1, 0.5]}/>
+                                            <meshBasicMaterial color={0xff0000} visible={false}/>
+                                        </mesh>
                                 </pointLightHelper>
                             )
                         default:

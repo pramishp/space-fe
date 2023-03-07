@@ -23,7 +23,11 @@ const SphereGeometryEditor = ({ mesh }) => {
     };
 
     return (
-        <div>
+        <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+        }}>
             <div>
                 <label htmlFor="radius">Radius:</label>
                 <input

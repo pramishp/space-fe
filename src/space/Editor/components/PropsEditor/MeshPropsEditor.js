@@ -5,22 +5,22 @@ import VRUIContainer from "../VRUIs/VRUIContainer";
 import {Heading6} from "../VRUIs/Headings";
 import {NumberInput} from "../VRUIs/NumberInput";
 
-const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR}) => {
+const MeshEditor = ({mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR}) => {
     const size = mesh.scale.x;
     const color = mesh.material.color;
 
     const handleColorChange = e => {
-        onMaterialPropsChanged({object_uuid: mesh.uuid, uuid:mesh.material.uuid, key: "color", val: e.target.value})
+        onMaterialPropsChanged({object_uuid: mesh.uuid, uuid: mesh.material.uuid, key: "color", val: e.target.value})
     };
 
     const handleSizeChange = e => {
         const value = parseFloat(e.target.value);
-        onObjectPropsChanged({object_uuid: mesh.uuid, uuid:mesh.uuid, key: "scale", val:[value, value, value]})
+        onObjectPropsChanged({object_uuid: mesh.uuid, uuid: mesh.uuid, key: "scale", val: [value, value, value]})
     };
 
-    if (isXR){
+    if (isXR) {
         return (
-            <VRUIContainer position={[1,4,0]}>
+            <VRUIContainer position={[1, 4, 0]}>
                 {/*<>*/}
                 {/*    <Heading6>Size:</Heading6>*/}
                 {/*    <NumberInput value={size} onChange={handleSizeChange}/>*/}
@@ -30,27 +30,22 @@ const MeshEditor = ({ mesh, onObjectPropsChanged, onMaterialPropsChanged, isXR})
     }
 
     return (
-        <div>
+        <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+        }}>
             <div>
                 <label htmlFor="color">Color:</label>
                 <input
                     type="color"
                     id="color"
-                    value={'#'+color.getHexString()}
+                    value={'#' + color.getHexString()}
                     onChange={handleColorChange}
                 />
             </div>
-            {/*<div>*/}
-            {/*    <label htmlFor="size">Size:</label>*/}
-            {/*    <input*/}
-            {/*        type="number"*/}
-            {/*        id="size"*/}
-            {/*        value={size}*/}
-            {/*        onChange={handleSizeChange}*/}
-            {/*    />*/}
-            {/*</div>*/}
 
-            {mesh.geometry.type==="SphereGeometry" && <SphereGeometryEditor mesh={mesh}/>}
+            {mesh.geometry.type === "SphereGeometry" && <SphereGeometryEditor mesh={mesh}/>}
         </div>
     );
 };
