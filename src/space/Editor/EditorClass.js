@@ -49,7 +49,7 @@ import Menu from "../Workspace/Menu";
 import {Stars} from "@react-three/drei";
 import {valuesIn} from "lodash";
 import {XRButtonStatus} from "@react-three/xr/dist/XR";
-import { ThreeSixty } from "@mui/icons-material";
+import {ThreeSixty} from "@mui/icons-material";
 
 
 export default class Editor extends React.Component {
@@ -361,7 +361,7 @@ export default class Editor extends React.Component {
 
         // deselect the current selection on deletion
         const {selectedItems} = this.state;
-        if (selectedItems.length > 0 && uuid === selectedItems[0]){
+        if (selectedItems.length > 0 && uuid === selectedItems[0]) {
             this.onDeselect();
         }
 
@@ -730,14 +730,16 @@ export default class Editor extends React.Component {
         }
     }
 
-    onHoverOnAnimation({uuid, val}){
+    onHoverOnAnimation({uuid, val}) {
         this.setState({hoveredAnimation: {uuid, val}})
         //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
-    onUnhoverOnAnimation(){
+
+    onUnhoverOnAnimation() {
         this.setState({hoveredAnimation: {}})
     }
-    onSelectOnAnimation({uuid, val}){
+
+    onSelectOnAnimation({uuid, val}) {
         this.setState({selectedAnimation: {uuid, val}})
         //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
@@ -783,6 +785,7 @@ export default class Editor extends React.Component {
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
                 {/* //TODO: if XR support, then only show */}
+
                 <VRButton/>
 
                 <div style={{height: window.innerHeight, width: '90%'}}>
@@ -877,7 +880,7 @@ export default class Editor extends React.Component {
                                                     onHoverOnAnimation={this.onHoverOnAnimation}
                                                     onSelectOnAnimation={this.onSelectOnAnimation}
                                                     onUnhoverOnAnimation={this.onUnhoverOnAnimation}
-                                    />}
+                            />}
 
 
                             {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR}/>}

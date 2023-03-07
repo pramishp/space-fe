@@ -13,9 +13,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/*<Workspace />*/}
-     {/* <App /> */}
-      {/*<PresentationWrapper/>*/}
-    <Navigator/>
+      <App />
+      <PresentationWrapper/>
+    {/*<Navigator/>*/}
 
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>
