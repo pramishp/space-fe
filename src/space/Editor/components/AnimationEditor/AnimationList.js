@@ -9,10 +9,8 @@ import {useEffect} from "react";
 import {ANIMATION_TYPES} from "../../constants";
 
 export default function AnimationList({isXR, onClick, refs, selectedItems, enterAnimationMode}) {
-
     let mixer, action;
 
-    const {scene} = useThree();
 
     const onItemClicked = ({uuid, val}) => {
         switch (val.type){
@@ -82,29 +80,47 @@ export default function AnimationList({isXR, onClick, refs, selectedItems, enter
         }
 
     })
-
-    return (
-        <Billboard
-            position={[0, 4, 0]}
-            follow={true}
-            lockX={false}
-            lockY={false}
-            lockZ={false} // Lock the rotation on the z axis (default=false)
-        >
-            <Flex justifyContent="center" alignItems="center">
-                {Object.entries(animations).map(([uuid, item]) => {
-                    return (
-                        <Box key={`box-${uuid}`} centerAnchor>
-
-                            <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
-                                    onHover={() => onItemHovered({uuid, val: item})}
-                                    title={item.name}/>
-
-                        </Box>
-                    )
-                })}
-            </Flex>
-        </Billboard>
-    )
+    if (isXR) {
+        return (
+            <Billboard
+                position={[0, 4, 0]}
+                follow={true}
+                lockX={false}
+                lockY={false}
+                lockZ={false} // Lock the rotation on the z axis (default=false)
+            >
+                <Flex justifyContent="center" alignItems="center">
+                    {Object.entries(animations).map(([uuid, item]) => {
+                        return (
+                            <Box key={`box-${uuid}`} centerAnchor>
+    
+                                <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
+                                        onHover={() => onItemHovered({uuid, val: item})}
+                                        title={item.name}/>
+    
+                            </Box>
+                        )
+                    })}
+                </Flex>
+            </Billboard>
+        )
+    } else {
+        return (
+            <div className="grid grid-cols-2 gap-4">
+              {/* loop through each animation object */}
+              {Object.values(animations).map((animation) => (
+                <div key={animation.uuid}>
+                  <img
+                    src={animation.img}
+                    alt={animation.name}
+                    className="w-full h-auto"
+                  />
+                  <div className="text-center font-bold">{animation.name}</div>
+                </div>
+              ))}
+            </div>
+          ) 
+    }
+    
 }
 

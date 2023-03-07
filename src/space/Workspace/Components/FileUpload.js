@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import AuthContext from '../Context/AuthContext'
 import axios from 'axios'
 
-function FileUpload() {
+function FileUpload({onModelUpload}) {
   const { authTokens } = useContext(AuthContext)
   const [selectedFile, setSelectedFile] = useState(null)
   const [files, setFiles] = useState([])
@@ -12,6 +12,10 @@ function FileUpload() {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0])
+  }
+  const handleFileClick = (url) => {
+    console.log(url)
+    onModelUpload(url)
   }
   const uploadFile = async () => {
     const formData = new FormData()
@@ -64,20 +68,20 @@ function FileUpload() {
     getFiles()
   }
   console.log(files.length)
-
+  
   return (
     <div className='mt-4'>
       <div className='bg-white rounded-md shadow-md p-4'>
         <form onSubmit={handleFormSubmit}>
           <label htmlFor='file-upload' className='cursor-pointer'>
-            <input
-              id='file-upload'
-              type='file'
-              onChange={handleFileChange}
-            />
+          <input
+            className="relative m-0 block w-full min-w-0 flex-auto cursor-pointer rounded border border-solid border-indigo-400 bg-indigo-500 bg-clip-padding px-3 py-1.5 text-base font-normal text-indigo-800 outline-none transition duration-300 ease-in-out file:-mx-3 file:-my-1.5 file:cursor-pointer file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-indigo-100 file:px-3 file:py-1.5 file:text-indigo-800 file:transition file:duration-150 file:ease-in-out file:[margin-inline-end:0.75rem] file:[border-inline-end-width:1px] hover:file:bg-indigo-200 focus:border-indigo-500 focus:bg-indigo-300 focus:text-indigo-800 focus:shadow-[0_0_0_1px] focus:shadow-indigo focus:outline-none dark:bg-transparent dark:text-indigo-300 dark:focus:bg-transparent"
+            type="file"
+            onChange={handleFileChange}
+          />
             <button
               type='submit'
-              className='bg-indigo-500 hover:bg-indigo-700 text-white py-2 px-4 rounded-md flex items-center justify-center'
+              className='bg-indigo-500 hover:bg-indigo-700 text-white py-2 px-4 mt-2 rounded-md flex items-center justify-center'
             >
               <UploadFileOutlined className='mr-2' i />
               Upload
@@ -86,32 +90,34 @@ function FileUpload() {
         </form>
         {files.length > 0 && (
           <div className='mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {uploadingFile && (
-              <div className='relative pt-1'>
-                <div className='overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200'>
-                  <div
-                    style={{ width: `${uploadProgress}%` }}
-                    className='shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500'
-                  ></div>
-                </div>
+          {uploadingFile && (
+            <div className='relative pt-1'>
+              <div className='overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200'>
+                <div
+                  style={{ width: `${uploadProgress}%` }}
+                  className='shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500'
+                ></div>
               </div>
-            )}
+            </div>
+          )}
+          <div className='w-full rounded-sm p-4'>
             {files.map((file) => (
-              <div key={file.id} className='bg-gray-100 rounded-md p-4'>
-                <div className='font-bold'>{file.original_filename}</div>
-                <div className='flex items-center justify-center mt-4'>
-                  <a
-                    href={file.url}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='text-indigo-500 hover:text-indigo-700'
-                  >
-                    View
-                  </a>
-                </div>
+              <div key={file.id} className='w-full rounded-sm p-4 flex flex-row items-center justify-between'>
+              <div className='font-bold mr-4 flex-shrink-0'>{file.original_filename}</div>
+              <div className='flex justify-end'>
+                <a
+                  onClick={() => handleFileClick(file.url)}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-indigo-500 hover:text-indigo-700 ml-4'
+                >
+                  View
+                </a>
               </div>
+            </div>
             ))}
           </div>
+        </div>
         )}
       </div>
     </div>

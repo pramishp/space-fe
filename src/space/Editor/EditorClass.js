@@ -44,6 +44,7 @@ import { Quaternion, Scene, ShaderMaterial } from "three";
 import SideMenu from "./SideMenu";
 import { Stars } from "@react-three/drei";
 import { valuesIn } from "lodash";
+import Menu from "../Workspace/Menu";
 
 export default class Editor extends React.Component {
 
@@ -699,9 +700,10 @@ export default class Editor extends React.Component {
     render() {
 
         const { selectedItems, graph, refGraph, animations, rerender, transformMode, editorMode, backgroundGraph } = this.state;
-        const { isXR, otherUsers } = this.props;
+        const { isXR, otherUsers, onModelUpload } = this.props;
         return (
             <div>
+                <Menu onModelUpload={onModelUpload} />
                 <div>
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <MenuBar onLightSelected={this.onAddLightSelected}
@@ -780,10 +782,10 @@ export default class Editor extends React.Component {
 
                             <DisplayUsers otherUsers={otherUsers}/>
 
-                            <AnimationList isXR={isXR} refs={refGraph}
-                                           selectedItems={selectedItems}
-                                           enterAnimationMode={this.enterAnimationMode.bind(this)}
-                                           onClick={this.onAnimationListClicked}/>
+                            {/* <AnimationList isXR={isXR} refs={refGraph} */}
+                                           {/* selectedItems={selectedItems} */}
+                                           {/* enterAnimationMode={this.enterAnimationMode.bind(this)} */}
+                                           {/* onClick={this.onAnimationListClicked}/> */}
                             <Ground/>
 
                             {/*{*/}

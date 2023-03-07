@@ -326,7 +326,7 @@ function Workspace({roomId, user, isXR}) {
                 {/*    /!*<AnimationApp/>*!/*/}
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
-                <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers}/>
+                <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers} onModelUpload={onModelUpload} />
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}
             </div>
