@@ -776,10 +776,10 @@ export default class Editor extends React.Component {
 
 
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
-</div>
+            </div>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
-                //TODO: if XR support, then only show
+                {/* //TODO: if XR support, then only show */}
                 <VRButton/>
 
                 <div style={{height: window.innerHeight, width: '90%'}}>
