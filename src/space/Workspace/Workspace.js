@@ -354,6 +354,7 @@ function Workspace({roomId, user}) {
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
 
+
                 {mode === 0 && <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers}onModelUpload={onModelUpload} />}
                 {mode === 1 && <PresentationWrapper workspaceId={roomId} type={PRESENTATION_TYPES["2D_INTERACTIVE"]}/>}
 
