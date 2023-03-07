@@ -487,7 +487,7 @@ export default class Editor extends React.Component {
         this.insertBackground({prop_type, op_type, val});
     }
 
-    onBackgroundColorChange = ({color}) =>{
+    onBackgroundColorChange = ({color}) => {
         //TODO: handle scene background color change
         console.log('background color changed: ')
     }
@@ -717,7 +717,7 @@ export default class Editor extends React.Component {
     }
 
     render() {
-        const {
+        let {
             isXR,
             selectedItems,
             graph,
@@ -743,6 +743,9 @@ export default class Editor extends React.Component {
                     </div>
                 </div>
 
+                <div>
+                    <DisplayUsers otherUsers={otherUsers} isXR={false}/>
+                </div>
                 <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
                              animations={animations}
                              sceneBackgroundColor={'#000'}
@@ -821,11 +824,11 @@ export default class Editor extends React.Component {
                             />}
 
                             {isXR && <AnimationList isXR={true} refs={refGraph}
-                                           selectedItems={selectedItems}
-                                           enterAnimationMode={this.enterAnimationMode.bind(this)}
-                                           onClick={this.onAnimationListClicked}/>}
+                                                    selectedItems={selectedItems}
+                                                    enterAnimationMode={this.enterAnimationMode.bind(this)}
+                                                    onClick={this.onAnimationListClicked}/>}
 
-                            <DisplayUsers otherUsers={otherUsers}/>
+                            {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR}/>}
                             <Ground/>
 
                             {/*{*/}
@@ -860,6 +863,7 @@ export default class Editor extends React.Component {
                             }
 
                             <Helpers refs={refGraph} graph={graph} selectedItems={selectedItems}
+                                     onVRTransformReleased={this.onVRTransformReleased}
                                      onSelect={this.onSelect} clickCallbacks={this.clickCallbacks}/>
                             {/*<>*/}
                             {/*    <ambientLight ref={directionalLightRef} args={[0x505050]}/>*/}

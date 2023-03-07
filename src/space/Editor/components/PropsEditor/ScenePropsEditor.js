@@ -18,7 +18,11 @@ export default function ScenePropsEditor({onBackgroundSelected, sceneBackgroundC
     };
 
     return (
-        <div>
+        <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+        }}>
             <label>Background:</label>
             <select
                 className='w-full px-4 py-2 rounded-md border border-gray-300 mt-2'

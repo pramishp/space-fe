@@ -60,7 +60,7 @@ function Workspace({roomId, user}) {
     app.room = {roomId, userId: instanceId, users: otherUsers}
 
     // user handling
-    app.user = {id: instanceId, instanceId} //TODO: change user id
+    app.user = {instanceId, ...user}
 
     useEffect(() => {
         onMount(app);

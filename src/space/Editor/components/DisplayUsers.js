@@ -1,31 +1,43 @@
 import {Billboard, Text, Sphere} from "@react-three/drei";
 import {Flex, Box} from '@react-three/flex';
+import NameCircle from "./uis/NameCircle";
+import VRUIContainer from "./VRUIs/VRUIContainer";
+import {Title} from "./VRUIs/Headings";
+import {Button} from "./VRUIs/Button";
 
 
 export default function DisplayUsers({isXR, otherUsers}) {
 
-    return (
-        <Billboard
-            position={[0, 5, 0]}
-            follow={true}
-            lockX={false}
-            lockY={false}
-            lockZ={false} // Lock the rotation on the z axis (default=false)
-        >
-            <Flex flexDirection="column" flexWrap="wrap">
-                {/*<Box centerAnchor>*/}
-                {/*    {otherUsers.length > 0 ? <Text color={'black'} fontSize={0.15}>Users:</Text>: null}*/}
-                {/*</Box>*/}
+    if (otherUsers.length === 0){
+        return <></>
+    }
 
-                {otherUsers.map((item) => {
+    if (isXR){
+        return (
+            <VRUIContainer position={[-4, 1, 2]} title={"Other Users"}>
+                    {otherUsers.map((item) => {
+                        const {first, last} = item.tdUser.name;
                         return (
-                            <Box centerAnchor width="auto" height="auto" flexGrow={1}>
-                                <Text color={'black'} fontSize={0.1}>{item.id}</Text>
-                            </Box>
+                                <Button title={`${first} ${last}`}/>
                         )
                     })}
-            </Flex>
-        </Billboard>
+            </VRUIContainer>
+        )
+    }
+
+    return (
+        <div style={{
+            display: "flex",
+            justifyContent: "right",
+            alignItems: "center"
+        }}>
+            {otherUsers.map((item) => {
+                return (
+                    <NameCircle {...item.tdUser.name}/>
+                )
+            })}
+        </div>
     )
+
 }
 

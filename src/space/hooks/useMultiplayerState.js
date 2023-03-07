@@ -60,7 +60,7 @@ export function useMultiplayerState(roomId, appInit) {
                 if (doc && isSynced && loading) {
                     setLoading(false);
                     if (app) {
-                        app.updateUsers(room.getOthers());
+                        app.updateUsers(room.getOthers().map(i=>i.presence));
                     }
                 }
             });
@@ -253,7 +253,7 @@ export function useMultiplayerState(roomId, appInit) {
             app.updateUsers(
                 users
                     .filter((user) => user.presence)
-                    .map((other) => other.presence.tdUser)
+                    .map((other) => other.presence)
                     .filter(Boolean),
             );
         });
