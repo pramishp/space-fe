@@ -20,7 +20,6 @@ export function usePresentationData(roomId) {
     const yAnimation = doc.getMap("animations");
 
     useEffect(() => {
-        console.log('getting called')
         if (provider) {
             provider.on('sync', function (isSynced) {
                 if (doc && isSynced && loading) {

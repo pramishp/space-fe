@@ -359,8 +359,14 @@ export default class Editor extends React.Component {
             })
         })
 
+        // deselect the current selection on deletion
+        const {selectedItems} = this.state;
+        if (selectedItems.length > 0 && uuid === selectedItems[0]){
+            this.onDeselect();
+        }
+
         // notify app
-        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {uuid}, app}, notify)
+        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {uuid}}, notify)
     }
 
     onPositionChange = (e) => {
@@ -751,6 +757,7 @@ export default class Editor extends React.Component {
         } = this.state;
         const {onModelUpload, otherUsers} = this.props;
         return (
+            <div style={{display: "flex"}}>
             <div>
                 <Menu onModelUpload={onModelUpload} 
                     onLightSelected={this.onAddLightSelected}
@@ -765,35 +772,37 @@ export default class Editor extends React.Component {
                     onSelectOnAnimation={this.onSelectOnAnimation}
                     onUnhoverOnAnimation={this.onUnhoverOnAnimation}
                 />
-                {/* <div>
-                    <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <MenuBar onLightSelected={this.onAddLightSelected}
-                                 onMeshSelected={this.onAddMeshSelected}
-                                 onGroupSelected={this.onAddGroupSelected}
-                                 onBackgroundSelected={this.onAddBackgroundSelected}
-                                 isXR={false}
-                        />
-                        <input type="file" onChange={this.onModelUpload}/>
-                    </div>
-                </div> */}
+            
 
-                <div>
+
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
-                </div>
-                <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
-                             animations={animations}
-                             sceneBackgroundColor={'#000'}
-                             onBackgroundSelected={this.onAddBackgroundSelected}
-                             onBackgroundColorChange={this.onBackgroundColorChange}
-                             updateAnimation={this.updateAnimation}
-                             onAnimationDelete={this.onDeleteAnimationClicked}
-                             onMaterialPropsChanged={this.onMaterialPropsChanged}
-                             onObjectPropsChanged={this.onObjectPropsChanged}/>
+</div>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
+                //TODO: if XR support, then only show
                 <VRButton/>
 
-                <div style={{height: window.innerHeight}}>
+                <div style={{height: window.innerHeight, width: '90%'}}>
+                    <div>
+                        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                            {/*<MenuBar onLightSelected={this.onAddLightSelected}*/}
+                            {/*         onMeshSelected={this.onAddMeshSelected}*/}
+                            {/*         onGroupSelected={this.onAddGroupSelected}*/}
+                            {/*         onBackgroundSelected={this.onAddBackgroundSelected}*/}
+                            {/*         isXR={false}*/}
+                            {/*/>*/}
+                            {/*<input type="file" onChange={this.onModelUpload}/>*/}
+                        </div>
+                        <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
+                                     animations={animations}
+                                     sceneBackgroundColor={'#000'}
+                                     onBackgroundSelected={this.onAddBackgroundSelected}
+                                     onBackgroundColorChange={this.onBackgroundColorChange}
+                                     updateAnimation={this.updateAnimation}
+                                     onAnimationDelete={this.onDeleteAnimationClicked}
+                                     onMaterialPropsChanged={this.onMaterialPropsChanged}
+                                     onObjectPropsChanged={this.onObjectPropsChanged}/>
+                    </div>
                     <Canvas legacy={false}
                             camera={{
                                 fov: 50, aspect: 1,
@@ -911,6 +920,10 @@ export default class Editor extends React.Component {
                             <Controls makeDefault/>
                         </XR>
                     </Canvas>
+                </div>
+
+                <div>
+                    <p>Applied Animations</p>
                 </div>
             </div>
         )
