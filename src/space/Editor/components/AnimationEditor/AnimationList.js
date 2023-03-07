@@ -11,10 +11,8 @@ import VRUIContainer from "../VRUIs/VRUIContainer";
 import {Heading5, Heading6} from "../VRUIs/Headings";
 
 export default function AnimationList({isXR, onClick, refs, selectedItems, enterAnimationMode}) {
-
     let mixer, action;
 
-    const {scene} = useThree();
 
     const onItemClicked = ({uuid, val}) => {
         switch (val.type){
@@ -85,8 +83,9 @@ export default function AnimationList({isXR, onClick, refs, selectedItems, enter
 
     })
 
-    return (
-        <VRUIContainer position={[-4, 1, 1]} title={"Animations"}>
+    if (isXR) {
+        return (
+                <VRUIContainer position={[-4, 1, 1]} title={"Animations"}>
                 {Object.entries(animations).map(([uuid, item]) => {
                     return (
                             <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
@@ -96,6 +95,25 @@ export default function AnimationList({isXR, onClick, refs, selectedItems, enter
                     )
                 })}
         </VRUIContainer>
-    )
+        )
+    } else {
+        return (
+            <div className="grid grid-cols-2 gap-4">
+              {/* loop through each animation object */}
+              {Object.values(animations).map((animation) => (
+                <div key={animation.uuid}>
+                  <img
+                    src={animation.img}
+                    alt={animation.name}
+                    className="w-full h-auto"
+                  />
+                  <div className="text-center font-bold">{animation.name}</div>
+                </div>
+              ))}
+            </div>
+          ) 
+    }
+    
+
 }
 
