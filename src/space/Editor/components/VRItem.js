@@ -52,7 +52,10 @@ function VRItem(props) {
     const handleSelectEnd = (event) => {
         // after the select End, call the callback for position and rotaiton change
         const controller = event.target.controller;
-        props.onVRTransformReleased({ "uuid": props.uuid, "worldPosition": controller.position, "worldQuaternion": controller.quaternion });
+        const worldPosition = new THREE.Vector3();
+        controller.localToWorld(controller.position, worldPosition);
+        console.log(controller, worldPosition)
+        props.onVRTransformReleased({ "uuid": props.uuid, "worldPosition": worldPosition, "worldQuaternion": controller.quaternion });
     }
     const handleSqueezeStart = (event) => {
         // console.log("Squeeze started : ", event);
@@ -91,7 +94,7 @@ function VRItem(props) {
     </Interactive>
 
     if (isRayGrabEnabled) {
-        return (<RayGrab>
+        return (<RayGrab onSelectEnd={e=>{console.log('select end ray grab', e)}}>
             {children}
         </RayGrab>)
     }

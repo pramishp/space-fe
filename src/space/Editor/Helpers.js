@@ -37,7 +37,7 @@ export default function Helpers({selectedItems, refs, onSelect, graph, clickCall
 
                         case 'DirectionalLight':
                             return (
-                                <directionalLightHelper args={[mesh, 1]}>
+                                <directionalLightHelper args={[mesh, 0.5, '#000']}>
                                     <mesh {...clickCallbacks} onClick={() => onSelect({uuid, object: mesh})}>
                                         <sphereGeometry args={[0.5, 1, 0.5]}/>
                                         <meshBasicMaterial color={0xff0000} visible={false}/>
@@ -47,7 +47,7 @@ export default function Helpers({selectedItems, refs, onSelect, graph, clickCall
 
                         case 'PointLight':
                             return (
-                                <pointLightHelper args={[mesh, 1]} size={0.5}>
+                                <pointLightHelper args={[mesh, 0.5, '#000']}>
                                     <mesh {...clickCallbacks} onClick={() => onSelect({uuid, object: mesh})}>
                                         <sphereGeometry args={[0.5, 1, 0.5]}/>
                                         <meshBasicMaterial color={0xff0000} visible={false}/>

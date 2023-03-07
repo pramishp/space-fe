@@ -46,24 +46,11 @@ export const Navigator = () => {
 }
 
 function App() {
-  const [isXR, setXR] = useState(false)
-
-  useEffect(() => {
-        checkXR()
-      })
-
-  const checkXR = () => {
-    if (navigator.xr) {
-      setXR(true)
-    } else {
-      setXR(false)
-    }
-  }
 
     const user = {id: "aadsd345-khajs43"}
     const roomId = "1234-v2.14"
 
-  return (<><Workspace roomId={roomId} user={user} isXR={isXR}/></>)
+  return (<><Workspace roomId={roomId} user={user}/></>)
 }
 
 export default App
