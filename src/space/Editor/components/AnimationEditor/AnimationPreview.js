@@ -10,35 +10,26 @@ import {ANIMATION_TYPES} from "../../constants";
 import VRUIContainer from "../VRUIs/VRUIContainer";
 import {Heading5, Heading6} from "../VRUIs/Headings";
 
-export default function AnimationList({isXR, onClick, refs, selectedItems, enterAnimationMode}) {
+
+// the hovered here is for the type of animation.
+export default function AnimationPreview({hoveredAnimation, selectedAnimation, refs, selectedItems}) {
 
     let mixer, action;
-
-    const onItemClicked = ({uuid, val}) => {
-        switch (val.type){
-            case ANIMATION_TYPES.KEYFRAME:
-                if (onClick) {
-                    onClick({uuid, val});
-                }
-                break
-            case ANIMATION_TYPES.PATH:
-                if(enterAnimationMode){
-                    enterAnimationMode()
-                }
-                break
-
-            default:
-                console.log(`No case handled for ${val.type} animation`)
-
-        }
-
-
-    }
+    // the mesh to be selected is handled in the editor class.
+    
+    useEffect(() => {
+    //hoveredAnimation
+    onItemHovered()
+    }, [hoveredAnimation, selectedAnimation])
+    
 
     const onItemHovered = ({uuid, val}) => {
+        console.log('uuid and val', uuid, val)
         if (val.type !== ANIMATION_TYPES.KEYFRAME){
             return
         }
+        // check for animations coming from another path.
+        // the selected item comes from the editor class itself.
         if (selectedItems.length === 1 && refs[selectedItems[0]].current) {
             if (mixer) {
                 mixer.stopAllAction();
@@ -83,36 +74,6 @@ export default function AnimationList({isXR, onClick, refs, selectedItems, enter
 
     })
 
-    if (isXR) {
-        return (
-                <VRUIContainer position={[-4, 1, 1]} title={"Animations"}>
-                {Object.entries(animations).map(([uuid, item]) => {
-                    return (
-                            <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
-                                    onHover={() => onItemHovered({uuid, val: item})}
-                                    title={item.name}/>
-
-                    )
-                })}
-        </VRUIContainer>
-        )
-    } else {
-        return (
-            <div className="grid grid-cols-2 gap-4">
-              {/* loop through each animation object */}
-              {Object.values(animations).map((animation) => (
-                <div key={animation.uuid}>
-                  <img
-                    src={animation.img}
-                    alt={animation.name}
-                    className="w-full h-auto"
-                  />
-                  <div className="text-center font-bold">{animation.name}</div>
-                </div>
-              ))}
-            </div>
-          ) 
-    }
     
 
 }

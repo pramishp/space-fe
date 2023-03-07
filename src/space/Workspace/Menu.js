@@ -3,8 +3,8 @@ import Sidebar from './Components/Sidebar.js'
 import SearchModel from './Components/SearchModel.js'
 import FileUpload from './Components/FileUpload.js'
 import MenuBar from '../Editor/components/MenuBar'
-import AnimationList from '../Editor/components/AnimationEditor/AnimationList.js'
-function Menu({ onModelUpload }) {
+import AnimationMenu from '../Editor/components/AnimationEditor/AnimationMenu.js'
+function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected, onBackgroundSelected, isXR, selectedItems, enterAnimationMode, onClick , onHoverOnAnimation, onSelectOnAnimation, onUnhoverOnAnimation }) {
     const [modelView, setModelView] = useState(false)
     const [optionsView, setOptionsView] = useState(false)
     const [animationsView, setAnimationsView] = useState(false)
@@ -52,14 +52,26 @@ function Menu({ onModelUpload }) {
             {optionsView &&
                 <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200'>
                     <div className='w-5/6 max-w-lg'>
-                        <MenuBar />
+                    <MenuBar onLightSelected={onLightSelected}
+                                 onMeshSelected={onMeshSelected}
+                                 onGroupSelected={onGroupSelected}
+                                 onBackgroundSelected={onBackgroundSelected}
+                                 isXR={false}
+                        />
                     </div>
                 </div>
             }
             {animationsView &&
                 <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200'>
                     <div className='w-5/6 max-w-lg'>
-                        <AnimationList isXR={false}/>
+                        <AnimationMenu isXR={isXR}
+                            selectedItems={selectedItems}
+                        enterAnimationMode={enterAnimationMode}
+                    onClick={onClick}
+                    onHoverOnAnimation={onHoverOnAnimation}
+                    onSelectOnAnimation={onSelectOnAnimation}
+                    onUnhoverOnAnimation={onUnhoverOnAnimation}
+                        />
                     </div>
                 </div>
             }

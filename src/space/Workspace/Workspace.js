@@ -320,7 +320,6 @@ function Workspace({roomId, user}) {
 
     return (
         <>
-            <Menu onModelUpload={onModelUpload}/>
             <div className="App" style={{height: window.innerHeight}}>
                 {/*<Canvas>*/}
                 {/*<Renderer data={sampleJson} setRefs={setRefs}/>*/}
@@ -328,7 +327,7 @@ function Workspace({roomId, user}) {
                 {/*</Canvas>*/}
                 {/*<TestCanvas/>*/}
 
-                <Editor ref={editorRef} app={app} initData={initData} isXR={isXR} otherUsers={otherUsers} onModelUpload={onModelUpload} />
+                <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers} onModelUpload={onModelUpload} />
 
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}

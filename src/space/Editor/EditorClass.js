@@ -30,7 +30,8 @@ import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../..
 
 import Helpers from "./Helpers";
 import PropsEditor from "./components/PropsEditor";
-import AnimationList from "./components/AnimationEditor/AnimationList";
+import AnimationPreview from "./components/AnimationEditor/AnimationPreview";
+import AnimationMenu from "./components/AnimationEditor/AnimationMenu";
 import {AnimationTree} from "./components/AnimationEditor/AnimationSequenceEditor";
 import DisplayUsers from "./components/DisplayUsers";
 
@@ -48,6 +49,7 @@ import Menu from "../Workspace/Menu";
 import {Stars} from "@react-three/drei";
 import {valuesIn} from "lodash";
 import {XRButtonStatus} from "@react-three/xr/dist/XR";
+import { ThreeSixty } from "@mui/icons-material";
 
 
 export default class Editor extends React.Component {
@@ -75,6 +77,8 @@ export default class Editor extends React.Component {
         this.state = {
             rerender: false,
             selectedItems: [],
+            hoveredAnimation: {},
+            selectedAnimation: {},
             graph: this.jsxData.jsxs,
             refGraph: this.jsxData.refs,
             backgroundGraph: this.backgroundData.jsxs,
@@ -720,6 +724,18 @@ export default class Editor extends React.Component {
         }
     }
 
+    onHoverOnAnimation({uuid, val}){
+        this.setState({hoveredAnimation: {uuid, val}})
+        AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
+    }
+    onUnhoverOnAnimation(){
+        this.setState({hoveredAnimation: {}})
+    }
+    onSelectOnAnimation({uuid, val}){
+        this.setState({selectedAnimation: {uuid, val}})
+        AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
+    }
+
 
     render() {
         let {
@@ -733,11 +749,23 @@ export default class Editor extends React.Component {
             editorMode,
             backgroundGraph
         } = this.state;
-        const {otherUsers} = this.props;
+        const {onModelUpload, otherUsers} = this.props;
         return (
             <div>
-                <Menu onModelUpload={onModelUpload} />
-                <div>
+                <Menu onModelUpload={onModelUpload} 
+                    onLightSelected={this.onAddLightSelected}
+                    onMeshSelected={this.onAddMeshSelected}
+                    onGroupSelected={this.onAddGroupSelected}
+                    onBackgroundSelected={this.onAddBackgroundSelected}
+                    isXR={false}
+                    selectedItems={selectedItems}
+                    enterAnimationMode={this.enterAnimationMode.bind(this)}
+                    onClick={this.onAnimationListClicked}
+                    onHoverOnAnimation={this.onHoverOnAnimation}
+                    onSelectOnAnimation={this.onSelectOnAnimation}
+                    onUnhoverOnAnimation={this.onUnhoverOnAnimation}
+                />
+                {/* <div>
                     <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                         <MenuBar onLightSelected={this.onAddLightSelected}
                                  onMeshSelected={this.onAddMeshSelected}
@@ -747,7 +775,7 @@ export default class Editor extends React.Component {
                         />
                         <input type="file" onChange={this.onModelUpload}/>
                     </div>
-                </div>
+                </div> */}
 
                 <div>
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
@@ -829,10 +857,14 @@ export default class Editor extends React.Component {
                                               isXR={true}
                             />}
 
-                            {isXR && <AnimationList isXR={true} refs={refGraph}
+                            {isXR && <AnimationMenu isXR={true} refs={refGraph}
                                                     selectedItems={selectedItems}
                                                     enterAnimationMode={this.enterAnimationMode.bind(this)}
-                                                    onClick={this.onAnimationListClicked}/>}
+                                                    onClick={this.onAnimationListClicked}
+                                                    onHoverOnAnimation={this.onHoverOnAnimation}
+                                                    onSelectOnAnimation={this.onSelectOnAnimation}
+                                                    onUnhoverOnAnimation={this.onUnhoverOnAnimation}
+                                    />}
 
 
                             {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR}/>}

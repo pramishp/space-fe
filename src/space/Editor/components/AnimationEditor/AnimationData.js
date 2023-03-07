@@ -1,5 +1,9 @@
 import {ANIMATION_TYPES} from "../../constants";
 // TODO: add icon or image here.
+import translateImg from '../../../../assets/translation_animation.png';
+import scaleImg from '../../../../assets/scale_animation.png';
+import rotateImg from '../../../../assets/rotation_animation.png';
+import pathImg from '../../../../assets/path_animation.png'
 export const animations = {
     'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d': {
         name: 'position',
@@ -17,7 +21,7 @@ export const animations = {
             }
         ],
         uuid: 'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d',
-        img: '',
+        img: translateImg,
         blendMode: 2500
     },
     'd77c5fc4-f70b-4ec3-ace7-3dd187185451': {
@@ -37,7 +41,7 @@ export const animations = {
 
         ],
         uuid: 'd77c5fc4-f70b-4ec3-ace7-3dd187185451',
-        img: '',
+        img: scaleImg,
         blendMode: 2500
     },
     "fc0a8baa-2226-49b9-989b-3ddfc3051a84": {
@@ -54,13 +58,13 @@ export const animations = {
 
         ],
         uuid: 'fc0a8baa-2226-49b9-989b-3ddfc3051a84',
-        img: '',
+        img: rotateImg,
         clampWhenFinished: true,
         blendMode: 2500
     },
     "765258bb-cb65-4107-9f3c-b3ac3a36d8b6":{
         uuid: "765258bb-cb65-4107-9f3c-b3ac3a36d8b6",
-        img: '',
+        img: pathImg,
         type: ANIMATION_TYPES.PATH,
         name: "Path"
 
