@@ -30,26 +30,18 @@ function SearchModel({onModelUpload}) {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
     </div>
-    <ul className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
       {objects.map((object) => (
-        <li key={object.uuid}>
-          <div className="bg-white rounded-md shadow-md p-4">
-            <h2 className="text-lg font-medium mb-2">{object.name}</h2>
+          <div key={object.id}>
             <img
-              className="w-full mb-2"
+              className="w-32 h-24 cursor-pointer"
               src={object.images}
               alt="No image found"
-            />
-            <button
-              className="bg-indigo-500 text-white px-4 py-2 rounded-md"
               onClick={() => handleClick(object.model)}
-            >
-              OPEN
-            </button>
+            />
           </div>
-        </li>
       ))}
-    </ul>
+    </div>
 </div>
   )
 }

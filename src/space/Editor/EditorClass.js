@@ -42,9 +42,13 @@ import LightMenuBar from "./components/VRMenuBar/LightMenuBar";
 import VRItem from "./components/VRItem";
 import {Quaternion, Scene, ShaderMaterial} from "three";
 import SideMenu from "./SideMenu";
+
+
+import Menu from "../Workspace/Menu";
 import {Stars} from "@react-three/drei";
 import {valuesIn} from "lodash";
 import {XRButtonStatus} from "@react-three/xr/dist/XR";
+
 
 export default class Editor extends React.Component {
 
@@ -722,6 +726,7 @@ export default class Editor extends React.Component {
         }
     }
 
+
     render() {
         let {
             isXR,
@@ -737,6 +742,7 @@ export default class Editor extends React.Component {
         const {otherUsers} = this.props;
         return (
             <div>
+                <Menu onModelUpload={onModelUpload} />
                 <div>
                     <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
                         <MenuBar onLightSelected={this.onAddLightSelected}
@@ -834,7 +840,9 @@ export default class Editor extends React.Component {
                                                     enterAnimationMode={this.enterAnimationMode.bind(this)}
                                                     onClick={this.onAnimationListClicked}/>}
 
+
                             {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR}/>}
+
                             <Ground/>
 
                             {/*{*/}
