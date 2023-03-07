@@ -60,7 +60,7 @@ export function useMultiplayerState(roomId, appInit) {
                 if (doc && isSynced && loading) {
                     setLoading(false);
                     if (app) {
-                        app.updateUsers(room.getOthers());
+                        app.updateUsers(room.getOthers().map(i=>i.presence));
                     }
                 }
             });
@@ -172,6 +172,9 @@ export function useMultiplayerState(roomId, appInit) {
                 case TYPES.MESH:
                     yMeshes.get(uuid).set(key, val);
                     break;
+                case TYPES.ANIMATION:
+                    yAnimation.get(uuid).set(key, val);
+                    break
                 default:
                     console.error("No case handled for ", type, "onUpdate");
             }
@@ -250,7 +253,7 @@ export function useMultiplayerState(roomId, appInit) {
             app.updateUsers(
                 users
                     .filter((user) => user.presence)
-                    .map((other) => other.presence.tdUser)
+                    .map((other) => other.presence)
                     .filter(Boolean),
             );
         });
@@ -270,8 +273,6 @@ export function useMultiplayerState(roomId, appInit) {
         window.addEventListener("beforeunload", handleDisconnect);
 
         function handleMeshChanges(events) {
-            console.log('here')
-            console.log(events)
             events.forEach((event) => {
                 const parents = Array.from(event.transaction.changedParentTypes);
                 const origin = event.transaction.origin;
@@ -440,6 +441,8 @@ export function useMultiplayerState(roomId, appInit) {
                 event.changes.keys.forEach((val, key) => {
                     switch (val.action) {
                         case "update":
+                            const animation = event.target.toJSON();
+                            app.updateAnimation({uuid: animation.uuid, key: key, val: animation[key], ...genericProps})
                             break;
                         case "add":
                             const data = yAnimation.get(key).toJSON();
