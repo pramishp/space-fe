@@ -741,37 +741,38 @@ export default class Editor extends React.Component {
         } = this.state;
         const {otherUsers, onModelUpload} = this.props;
         return (
-            <div>
+            <div style={{display: "flex"}}>
+                <div>
                 <Menu onModelUpload={onModelUpload} />
-                <div>
-                    <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                        <MenuBar onLightSelected={this.onAddLightSelected}
-                                 onMeshSelected={this.onAddMeshSelected}
-                                 onGroupSelected={this.onAddGroupSelected}
-                                 onBackgroundSelected={this.onAddBackgroundSelected}
-                                 isXR={false}
-                        />
-                        <input type="file" onChange={this.onModelUpload}/>
-                    </div>
-                </div>
-
-                <div>
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
+
                 </div>
-                <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
-                             animations={animations}
-                             sceneBackgroundColor={'#000'}
-                             onBackgroundSelected={this.onAddBackgroundSelected}
-                             onBackgroundColorChange={this.onBackgroundColorChange}
-                             updateAnimation={this.updateAnimation}
-                             onAnimationDelete={this.onDeleteAnimationClicked}
-                             onMaterialPropsChanged={this.onMaterialPropsChanged}
-                             onObjectPropsChanged={this.onObjectPropsChanged}/>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
+                //TODO: if XR support, then only show
                 <VRButton/>
 
-                <div style={{height: window.innerHeight}}>
+                <div style={{height: window.innerHeight, width: '90%'}}>
+                    <div>
+                        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                            {/*<MenuBar onLightSelected={this.onAddLightSelected}*/}
+                            {/*         onMeshSelected={this.onAddMeshSelected}*/}
+                            {/*         onGroupSelected={this.onAddGroupSelected}*/}
+                            {/*         onBackgroundSelected={this.onAddBackgroundSelected}*/}
+                            {/*         isXR={false}*/}
+                            {/*/>*/}
+                            {/*<input type="file" onChange={this.onModelUpload}/>*/}
+                        </div>
+                        <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
+                                     animations={animations}
+                                     sceneBackgroundColor={'#000'}
+                                     onBackgroundSelected={this.onAddBackgroundSelected}
+                                     onBackgroundColorChange={this.onBackgroundColorChange}
+                                     updateAnimation={this.updateAnimation}
+                                     onAnimationDelete={this.onDeleteAnimationClicked}
+                                     onMaterialPropsChanged={this.onMaterialPropsChanged}
+                                     onObjectPropsChanged={this.onObjectPropsChanged}/>
+                    </div>
                     <Canvas legacy={false}
                             camera={{
                                 fov: 50, aspect: 1,
@@ -885,6 +886,10 @@ export default class Editor extends React.Component {
                             <Controls makeDefault/>
                         </XR>
                     </Canvas>
+                </div>
+
+                <div>
+                    <p>Applied Animations</p>
                 </div>
             </div>
         )
