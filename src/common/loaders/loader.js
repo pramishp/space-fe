@@ -7,8 +7,7 @@ import * as THREE from 'three';
 import * as React from 'react';
 import {AnimationClip, DirectionalLightHelper} from "three";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../consts";
-import {Line, Stars, Sky} from "@react-three/drei";
-import { Environment } from 'drei';
+import {Environment, Stars, Sky} from "@react-three/drei";
 
 const _ = require('lodash')
 

@@ -218,7 +218,7 @@ export function useMultiplayerState(roomId, appInit) {
       // insert into yjs
       // ySence.set(background, backgroundMap)
       yScene.set(prop_type, backgroundMap)
-    console.log(scene)
+      console.log(yScene)
       //yScene.set(background, )
       //scene: {background:{ op_type: {} , val: {}}}
     })
