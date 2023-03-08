@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react'
 import '../../App.css'
 
@@ -14,6 +15,7 @@ import PresentationWrapper, { PRESENTATION_TYPES } from '../PresentationWrapper'
 
 function Workspace({ roomId, user }) {
   const editorRef = useRef()
+  const isXRSupported  = "xr" in navigator;
   const [otherUsers, setOtherUsers] = useState([])
   /*
    * mode 0 : editor
@@ -88,6 +90,7 @@ function Workspace({ roomId, user }) {
           selectedItems.forEach((uuid) => {
             editor.deleteMesh({ uuid }, true)
           })
+
         }
       }
     } else if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
@@ -262,11 +265,13 @@ function Workspace({ roomId, user }) {
     }
   }
 
+
   app.onUpdateMaterial = ({ uuid, key, val }) => {
     onUpdate({ uuid, key, val, type: TYPES.MATERIAL })
   }
 
   app.onReplaceGeometry = ({ uuid, key, val }) => {}
+
 
   /*
    * Animation
@@ -349,6 +354,7 @@ function Workspace({ roomId, user }) {
 
         {mode === 0 && (
           <Editor
+            isXRSupported={isXRSupported}
             ref={editorRef}
             app={app}
             initData={initData}
