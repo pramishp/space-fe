@@ -39,11 +39,11 @@ export function useMultiplayerState(roomId, appInit) {
   const instanceId = room.awareness.clientID
 
   /*
-          *   app.loadRoom(roomId, room);
-              app.setInstanceId(room.awareness.clientID);
-              app.setOtherUsers(joinedUsers)
-              app.setInitData(doc.toJSON())
-          * */
+            *   app.loadRoom(roomId, room);
+                app.setInstanceId(room.awareness.clientID);
+                app.setOtherUsers(joinedUsers)
+                app.setInitData(doc.toJSON())
+            * */
 
   const onMount = useCallback(
     (app_local) => {
@@ -218,7 +218,7 @@ export function useMultiplayerState(roomId, appInit) {
       // insert into yjs
       // ySence.set(background, backgroundMap)
       yScene.set(prop_type, backgroundMap)
-      console.log(yScene)
+      console.log('yScene', yScene)
       //yScene.set(background, )
       //scene: {background:{ op_type: {} , val: {}}}
     })
@@ -513,11 +513,11 @@ export function useMultiplayerState(roomId, appInit) {
         const level = parents.length
         const genericProps = { isFromUndoManager, isMyEvent }
 
-        event.changes.keys.forEach((val, key) => {
+        event.changes.keys.forEach((val, key, prop_type) => {
           console.log(val, key)
+          const data = yScene.get(key).toJSON()
           switch (val.action) {
             case 'add':
-              const data = yScene.get(key).toJSON()
               console.log(data)
               app.addSceneProps({
                 prop_type: key,
@@ -527,10 +527,17 @@ export function useMultiplayerState(roomId, appInit) {
               })
               break
             case 'update':
+              console.log(data)
+              app.updateSceneProps({
+                prop_type: key,
+                op_type: data.op_type,
+                val: data.val,
+                ...genericProps,
+              })
               // app.updateSceneProps()
               break
             case 'delete':
-              // app.deleteSceneProps()
+                app.deleteSceneProps({prop_type, ...genericProps})
               break
 
             default:

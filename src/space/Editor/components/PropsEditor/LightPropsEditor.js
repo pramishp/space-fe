@@ -57,7 +57,7 @@ const LightEditor = ({light, onObjectPropsChanged, isXR}) => {
     }
 
     return (
-        <div>
+        <div className='flex flex-col items-center h-12 bg-gray-100 border-gray-300 px-4'>
             <h5>Light Editor</h5>
             <div style={{
                 display: "flex",
@@ -97,4 +97,41 @@ const LightEditor = ({light, onObjectPropsChanged, isXR}) => {
     );
 };
 
+/* <div>
+    <h5>Light Editor</h5>
+    <div style={{
+        display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+    }}>
+    <div>
+    <label>Color:</label>
+    <input type="color" value={'#' + color.getHexString()} onChange={handleColorChange}/>
+    </div>
+    <div>
+    <label>Intensity:</label>
+    <input
+type="number"
+value={intensity}
+onChange={handleIntensityChange}
+    />
+    </div>
+    {light.type === 'PointLight' && (
+        <div>
+        <label>Distance:</label>
+        <input
+        type="number"
+        value={distance}
+        onChange={handleDistanceChange}
+        />
+        </div>
+    )}
+{light.type === 'PointLight' && (
+    <div>
+    <label>Decay:</label>
+    <input type="number" value={decay} onChange={handleDecayChange}/>
+    </div>
+)}
+    </div>
+    </div>*/
 export default LightEditor;
