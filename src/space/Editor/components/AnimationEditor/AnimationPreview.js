@@ -25,8 +25,8 @@ export default function AnimationPreview({hoveredAnimation, selectedAnimation, r
     
 
     const onItemHovered = ({uuid, val}) => {
-        console.log(val)
-        if (val.type !== ANIMATION_TYPES.KEYFRAME){
+        console.log('uuid and val', uuid, val)
+        if (val && val.type !== ANIMATION_TYPES.KEYFRAME){
             return
         }
         // check for animations coming from another path.

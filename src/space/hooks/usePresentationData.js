@@ -18,6 +18,7 @@ export function usePresentationData(roomId) {
     const yGeometry = doc.getMap("geometries");
     const yMaterial = doc.getMap("materials");
     const yAnimation = doc.getMap("animations");
+    const yScene = doc.getMap("scene");
 
     useEffect(() => {
         if (provider) {
@@ -33,7 +34,6 @@ export function usePresentationData(roomId) {
     }, [roomId]);
 
     const getData = useCallback(() => {
-        console.log('getting called')
         if (doc) {
             // formatting data for support in presentation layer
             const presentationData = doc.toJSON();
@@ -42,8 +42,8 @@ export function usePresentationData(roomId) {
                 [slideKey]: {
                     uuid: slideKey,
                     order: 0,
-                    animations: {}
-                }
+                    animations: {},
+                },
             }
             const animations = {};
             Object.entries(presentationData.animations).forEach(([uuid, i]) => {

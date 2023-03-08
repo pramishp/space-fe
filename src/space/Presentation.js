@@ -3,10 +3,10 @@ import {toJSX} from "../common/loaders/loader";
 import {useFrame} from "@react-three/fiber";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES} from "../common/consts";
 import AnimationSequence from "./AnimationSequence";
-import {Box} from "@react-three/drei";
 
 function Presentation({data}) {
-    const {jsxs, refs, scene} = toJSX(data);
+    const {scene:sceneProps} = data;
+    const {jsxs, refs} = toJSX(data);
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
     const [play, setPlay] = useState(true);
