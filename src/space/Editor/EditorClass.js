@@ -578,7 +578,7 @@ export default class Editor extends React.Component {
     console.log(prop_type, op_type, val)
     this.insertSceneProps({ prop_type, op_type, val })
   }
-
+  insertSceneProps
   onScenePropsColorChange = ({ color }) => {
     //TODO: handle scene background color change
     console.log('background color changed: ')
