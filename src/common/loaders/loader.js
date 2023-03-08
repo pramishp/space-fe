@@ -8,6 +8,7 @@ import * as React from 'react';
 import {AnimationClip, DirectionalLightHelper} from "three";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../consts";
 import {Environment, Stars, Sky} from "@react-three/drei";
+import {GltfModel} from "../../space/Gltf";
 
 const _ = require('lodash')
 
@@ -220,7 +221,6 @@ export const sampleJson = {
 }
 
 export function toSceneJSX({prop_type, op_type, val}) {
-    console.log(prop_type, op_type, val)
     const data = {...val}
     // console.log('data',data)
     const jsxs = {};
@@ -260,6 +260,7 @@ export function toSceneJSX({prop_type, op_type, val}) {
     // console.log(jsxs, refs)
     return {jsxs, refs}
 }
+
 export function toJSX(val, clickCallbacks) {
     const data = {...val}
     const jsxs = {};
@@ -271,6 +272,14 @@ export function toJSX(val, clickCallbacks) {
     //     return {jsxs: jsx, refs: ref}
     // }
     if (val.isFile) {
+        // const ref = React.createRef();
+        // const {uuid} = val;
+        // const object = <GltfModel ref={ref} key={uuid}
+        //                           uuid={uuid}
+        //                           val={val}
+        //                           clickCallbacks={clickCallbacks}/>
+        // jsxs[uuid] = object
+        // refs[uuid] = ref
         return {jsxs, refs}
     }
 
