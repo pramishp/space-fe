@@ -757,7 +757,7 @@ export default class Editor extends React.Component {
             editorMode,
             backgroundGraph
         } = this.state;
-        const {onModelUpload, otherUsers} = this.props;
+        const {onModelUpload, otherUsers, XRSupported} = this.props;
         return (
             <div style={{display: "flex"}}>
                 <div>
@@ -781,7 +781,7 @@ export default class Editor extends React.Component {
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
                 {/*//TODO: if XR support, then only show*/}
-                <VRButton/>
+                {XRSupported && <VRButton/>}
 
                 <div style={{height: window.innerHeight, width: '90%'}}>
                     <div>
@@ -808,7 +808,7 @@ export default class Editor extends React.Component {
                             camera={{
                                 fov: 50, aspect: 1,
                                 near: 0.01, far: 1000,
-                                position: [0, 5, 5],
+                                position: [0, 1, 4],
                             }}
                             onPointerMissed={this.onPointerMissed}
                     >
