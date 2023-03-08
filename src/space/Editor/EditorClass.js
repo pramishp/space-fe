@@ -222,6 +222,7 @@ export default class Editor extends React.Component {
     if (!app) {
       console.error('app is undefined/null ', app)
     }
+
     // notify is true by default, but for the operations from undo manager, notification are not to be called
     if (!notify) {
       return

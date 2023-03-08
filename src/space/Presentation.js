@@ -1,12 +1,43 @@
 import React, {useEffect, useState} from "react";
-import {toJSX} from "../common/loaders/loader";
+import {toJSX, toSceneJSX} from "../common/loaders/loader";
 import {useFrame} from "@react-three/fiber";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES} from "../common/consts";
 import AnimationSequence from "./AnimationSequence";
+import {GltfModel} from "./Gltf";
+import {EDITOR_OPS, FILE_TYPES} from "./Editor/constants";
+import {loadGltfFromUrl} from "../common/loaders/FileLoaders";
+import {Button} from "./Editor/components/VRUIs/Button";
+
+
+function getGltfJsx({objects}){
+    const jsxs = {}
+    const refs = {}
+    Object.entries(objects).forEach(([uuid, val])=>{
+        if (val.isFile) {
+            const ref = React.createRef();
+            const {uuid} = val;
+            const object = <GltfModel ref={ref} key={uuid}
+                                      uuid={uuid}
+                                      val={val}/>
+            jsxs[uuid] = object
+            refs[uuid] = ref
+        }
+    })
+
+    return {jsxs, refs}
+
+}
 
 function Presentation({data}) {
     const {scene:sceneProps} = data;
-    const {jsxs, refs} = toJSX(data);
+    const {jsxs: gltfJsxs, refs: gltfRefs} = getGltfJsx(data);
+
+    const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({prop_type: 'background', ...sceneProps.background})
+    let {jsxs, refs} = toJSX(data);
+
+    jsxs = {...jsxs, ...gltfJsxs}
+    refs = {...refs, ...gltfRefs}
+
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
     const [play, setPlay] = useState(true);
@@ -29,7 +60,7 @@ function Presentation({data}) {
     useEffect(() => {
         if (play){
             if (!seq.initialized) {
-                seq.init();
+                seq.init(refs);
                 if (seq.length > 0){
                     seq.playAnimations(0);
                 }
@@ -46,6 +77,7 @@ function Presentation({data}) {
         }
 
     }, [data, play])
+
 
     function handleKeyDown(event){
         if (event.key === "ArrowLeft") {
@@ -74,8 +106,16 @@ function Presentation({data}) {
 
     })
 
+    const playAnimations = ()=>{
+
+        setPlay(true);
+
+    }
+
+
     return (
         <>
+            {/*<Button title={"Play"} onClick={playAnimations}/>*/}
             {Object.entries(graph).map(([uuid, item]) => {
                 return (
                     <>
@@ -83,6 +123,14 @@ function Presentation({data}) {
                     </>
                 )
             })}
+            {gltfJsxs && Object.entries(gltfJsxs).map(([uuid, val])=>val)}
+            {
+                sceneJsxs && Object.entries(sceneJsxs).map(([uuid, val]) => {
+                    return (
+                        val
+                    )
+                })
+            }
         </>
     );
 }

@@ -37,9 +37,9 @@ export default class AnimationSequence {
 
     }
 
-    init() {
+    init(meshRefs) {
         // this.slideAnimations is set by getSequence
-        this.mixers = this.getMixers(this.slideAnimations, this.meshRefs);
+        this.mixers = this.getMixers(this.slideAnimations, meshRefs);
         this.parsedAnimations = this.parseAnimations(this.slideAnimations, this.animationsJson, this.meshRefs);
         // listeners contain all the on animation end callbacks, they have to be unsubscribed
         const {clipActions, listeners} = this.getClipActions(this.slideAnimations, this.mixers,
@@ -89,6 +89,7 @@ export default class AnimationSequence {
         const uniqueMeshes = new Set(allMeshes);
         uniqueMeshes.forEach((uuid) => {
             const meshRef = meshRefs[uuid]
+            if((!meshRef) || (!meshRef.current))console.error('meshRef is null')
             mixers[uuid] = new THREE.AnimationMixer(meshRef.current)
         })
         return mixers
@@ -121,7 +122,7 @@ export default class AnimationSequence {
             clipActions[uuid] = mixer.clipAction(clip);
 
             // set timescale
-            clipActions[uuid].timeScale = parseFloat(val.timeScale);
+            clipActions[uuid].timeScale = val.timeScale? parseFloat(val.timeScale): 1;
             // listeners are mixer based i.e. one listener for one animated mesh
             if (listeners[val.object_uuid] === undefined) {
                 listeners[val.object_uuid] = (e) => {
