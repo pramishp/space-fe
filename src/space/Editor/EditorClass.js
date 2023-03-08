@@ -77,12 +77,12 @@ export default class Editor extends React.Component {
         this.state = {
             rerender: false,
             selectedItems: [],
-            hoveredAnimation: {},
-            selectedAnimation: {},
+            hoveredAnimation: null,
+            selectedAnimation: null,
             graph: this.jsxData.jsxs,
             refGraph: this.jsxData.refs,
-            backgroundGraph: this.backgroundData.jsxs,
-            refBackgroundGraph: this.backgroundData.refs,
+            backgrounGraph: this.backgroundData.jsxs,
+            refScenePropsGraph: this.backgroundData.refs,
             animations: props.initData.animations,
             transformMode: 0,
             editorMode: 0,
@@ -93,7 +93,7 @@ export default class Editor extends React.Component {
 
         this.loadInitialObjectFiles(this.props);
         // this.backgroundTexture = null
-        // this.testBackgroundTexture()
+        // this.testScenePropsTexture()
 
 
     }
@@ -235,10 +235,16 @@ export default class Editor extends React.Component {
 
             case EDITOR_OPS.ADD_BACKGROUND:
                 // FIX: 3
-                app.onBackgroundAdded({prop_type, op_type, val})
+                app.onScenePropsAdded({prop_type, op_type, val})
                 break;
+            case EDITOR_OPS.UPDATE_BACKGROUND:
+                app.onScenePropsUpdated({prop_type, op_type, val})
+                break
+            case EDITOR_OPS.DELETE_BACKGROUND:
+                app.onScenePropsDeleted({prop_type})
+                break
             // console.log('editor operations add background')
-            //app.onBackgroundChanged({ op_type })
+            //app.onScenePropsChanged({ op_type })
 
             default:
                 console.error("No such operation is defined in editor: ", type)
@@ -268,9 +274,9 @@ export default class Editor extends React.Component {
     // add the local changes here.
     // in the ref to the scene add a star object then convert it to jsx.
     // FIX: 2
-    insertBackground = ({prop_type, op_type, val}, notify = true) => {
-        switch (op_type) {
-            case 'star':
+    insertSceneProps = ({prop_type, op_type, val}, notify = true) => {
+        switch (prop_type) {
+            case 'background':
                 console.log('op_type', op_type);
                 console.log('val', val);
                 const {jsxs: localJsxs, refs: localRefs} = toSceneJSX({prop_type, op_type, val})
@@ -278,8 +284,8 @@ export default class Editor extends React.Component {
                 // add to the object.
                 // perhaps we don't need the prev state
                 this.setState({
-                    backgroundGraph: {...localJsxs},
-                    backgroundRefGraph: {...localRefs}
+                    scenePropsGraph: {...localJsxs},
+                    scenePropsRefGraph: {...localRefs}
                 })
                 break
         }
@@ -423,6 +429,29 @@ export default class Editor extends React.Component {
         this.notifyApp({type: EDITOR_OPS.DELETE_ANIMATION, data: {uuid}}, notify)
 
     }
+    // editing the background type of scene prop
+    updateSceneProps = ({prop_type, op_type, val}, notify = true) => {
+        this.setState((state) => {
+            scenePropsGraph: {...state.scenePropsGraph, [prop_type]: {op_type, val}}
+        })
+        this.notifyApp({type: EDITOR_OPS.UPDATE_BACKGROUND, data: {prop_type, op_type, val}}, notify)
+    }
+    deleteSceneProps = ({prop_type}, notify = true) => {
+        this.setState((state) => {
+            const scenePropsGraph = state.scenePropsGraph;
+            const scenePropsRefGraph = state.scenePropsRefGraph;
+
+            delete scenePropsGraph[prop_type];
+            delete scenePropsRefGraph[prop_type];
+            return ({
+                scenePropsGraph: {...scenePropsGraph},
+                scenePropsRefGraph: {...scenePropsRefGraph}
+            })
+
+        })
+        this.notifyApp({type: EDITOR_OPS.DELETE_BACKGROUND, data: {prop_type}}, notify)
+    }
+
 
     // onSelect
     onSelect = ({uuid, object}) => {
@@ -491,17 +520,17 @@ export default class Editor extends React.Component {
     onAddGroupSelected = (id) => {
         const {uuid, val} = BASIC_LIGHTS[id];
     }
-    // set a selected type then call something like insertBackground
+    // set a selected type then call something like insertSceneProps
     // here we need to set params as well. Or we can set the default params and then change it as done in the mesh implementations.
     //FIX: 1
-    onAddBackgroundSelected = (id) => {
+    onAddScenePropsSelected = (id) => {
         console.log('id', id)
         const {prop_type, op_type, val} = BACKGROUND_TYPES[id];
         console.log(prop_type, op_type, val)
-        this.insertBackground({prop_type, op_type, val});
+        this.insertSceneProps({prop_type, op_type, val});
     }
 
-    onBackgroundColorChange = ({color}) => {
+    onScenePropsColorChange = ({color}) => {
         //TODO: handle scene background color change
         console.log('background color changed: ')
     }
@@ -735,7 +764,7 @@ export default class Editor extends React.Component {
         //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
     onUnhoverOnAnimation(){
-        this.setState({hoveredAnimation: {}})
+        this.setState({hoveredAnimation: null})
     }
     onSelectOnAnimation({uuid, val}){
         this.setState({selectedAnimation: {uuid, val}})
@@ -753,7 +782,7 @@ export default class Editor extends React.Component {
             rerender,
             transformMode,
             editorMode,
-            backgroundGraph,
+            scenePropsGraph,
             hoveredAnimation,
             selectedAnimation,
             selectedItem
@@ -762,11 +791,11 @@ export default class Editor extends React.Component {
         return (
             <div style={{display: "flex"}}>
             <div>
-                <Menu onModelUpload={onModelUpload} 
+                <Menu onModelUpload={onModelUpload}
                     onLightSelected={this.onAddLightSelected}
                     onMeshSelected={this.onAddMeshSelected}
                     onGroupSelected={this.onAddGroupSelected}
-                    onBackgroundSelected={this.onAddBackgroundSelected}
+                    onScenePropsSelected={this.onAddScenePropsSelected}
                     isXR={false}
                     selectedItems={selectedItems}
                     enterAnimationMode={this.enterAnimationMode.bind(this)}
@@ -775,7 +804,7 @@ export default class Editor extends React.Component {
                     onSelectOnAnimation={this.onSelectOnAnimation.bind(this)}
                     onUnhoverOnAnimation={this.onUnhoverOnAnimation.bind(this)}
                 />
-            
+
 
 
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
@@ -791,16 +820,16 @@ export default class Editor extends React.Component {
                             {/*<MenuBar onLightSelected={this.onAddLightSelected}*/}
                             {/*         onMeshSelected={this.onAddMeshSelected}*/}
                             {/*         onGroupSelected={this.onAddGroupSelected}*/}
-                            {/*         onBackgroundSelected={this.onAddBackgroundSelected}*/}
+                            {/*         onScenePropsSelected={this.onAddScenePropsSelected}*/}
                             {/*         isXR={false}*/}
                             {/*/>*/}
                             {/*<input type="file" onChange={this.onModelUpload}/>*/}
                         </div>
                         <PropsEditor rerender={rerender} isXR={false} selectedItems={selectedItems} refs={refGraph}
                                      animations={animations}
-                                     sceneBackgroundColor={'#000'}
-                                     onBackgroundSelected={this.onAddBackgroundSelected}
-                                     onBackgroundColorChange={this.onBackgroundColorChange}
+                                     sceneScenePropsColor={'#000'}
+                                     onScenePropsSelected={this.onAddScenePropsSelected}
+                                     onScenePropsColorChange={this.onBackgroundColorChange}
                                      updateAnimation={this.updateAnimation}
                                      onAnimationDelete={this.onDeleteAnimationClicked}
                                      onMaterialPropsChanged={this.onMaterialPropsChanged}
@@ -866,7 +895,7 @@ export default class Editor extends React.Component {
                             {isXR && <MenuBar onLightSelected={this.onAddLightSelected}
                                               onMeshSelected={this.onAddMeshSelected}
                                               onGroupSelected={this.onAddGroupSelected}
-                                              onBackgroundChanged={this.onAddBackgroundSelected}
+                                              onScenePropsChanged={this.onAddScenePropsSelected}
                                               isXR={true}
                             />}
 
@@ -907,7 +936,7 @@ export default class Editor extends React.Component {
                                 })
                             }
                             {
-                                backgroundGraph && Object.entries(backgroundGraph).map(([uuid, val]) => {
+                                scenePropsGraph && Object.entries(scenePropsGraph).map(([uuid, val]) => {
                                     console.log(uuid, val)
                                     return (
                                         val
@@ -934,4 +963,4 @@ export default class Editor extends React.Component {
 
     }
 
-}
+

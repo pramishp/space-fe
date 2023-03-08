@@ -19,12 +19,13 @@ export default function AnimationPreview({hoveredAnimation, selectedAnimation, r
     
     useEffect(() => {
     //hoveredAnimation
+    console.log(hoveredAnimation)
     hoveredAnimation && onItemHovered({val:hoveredAnimation.val})
     }, [hoveredAnimation, selectedAnimation])
     
 
     const onItemHovered = ({uuid, val}) => {
-        console.log('uuid and val', uuid, val)
+        console.log(val)
         if (val.type !== ANIMATION_TYPES.KEYFRAME){
             return
         }
