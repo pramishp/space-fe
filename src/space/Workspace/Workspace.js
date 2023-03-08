@@ -362,7 +362,6 @@ function Workspace({roomId, user}) {
                 />}
                 {mode === 1 && <PresentationWrapper workspaceId={roomId} type={PRESENTATION_TYPES["2D_INTERACTIVE"]} fromNavigator={false}/>}
 
-
                 {/*<MyComponent/>*/}
                 {/*<XRApp/>*/}
             </div>

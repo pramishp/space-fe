@@ -2,9 +2,11 @@
 
 ##Useful commands
 
-`adb devices`
-`adb reverse tcp:3000 tcp:3000`
-`HOST=localhost PORT=1234 npx y-websocket`
+1. `adb devices`<br>
+2. `adb reverse tcp:3000 tcp:3000`<br>
+3. `HOST=localhost PORT=1234 npx y-websocket`<br>
+4. `HOST=localhost PORT=1234 YPERSISTENCE=./storage npx y-websocket`<br>
+
 # Getting Started with Create React Workspace
 
 This project was bootstrapped with [Create React Workspace](https://github.com/facebook/create-react-app).
