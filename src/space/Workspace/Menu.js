@@ -42,7 +42,7 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
                 handleAnimationsClick={handleAnimationsClick}
             />
             {modelView && (
-                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200'>
+                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200' style={{position:'absolute', left:98, top:0, backdropFilter:'blur(10px)', zIndex:100}}>
                     <div className='w-5/6 max-w-lg'>
                         <SearchModel onModelUpload={handleModelUpload} />
                         <FileUpload onModelUpload={handleModelUpload} />
@@ -62,7 +62,7 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
                 </div>
             }
             {animationsView &&
-                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200'>
+                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200' style={{position:'absolute', left:98, top:0, backdropFilter:'blur(10px)', zIndex:100}}>
                     <div className='w-5/6 max-w-lg'>
                         <AnimationMenu isXR={isXR}
                             selectedItems={selectedItems}

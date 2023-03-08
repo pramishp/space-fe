@@ -36,6 +36,8 @@ export const EDITOR_OPS = {
     DELETE_ANIMATION: "DELETE_ANIMATION",
     UPDATE_ANIMATION: "UPDATE_ANIMATION",
     ADD_BACKGROUND: 'ADD_BACKGROUND',
+    DELETE_BACKGROUND: 'DELETE_BACKGROUND',
+    UPDATE_BACKGROUND: 'UPDATE_BACKGROUND',
 }
 
 function three2spaceJSON(jsonData) {
@@ -227,7 +229,7 @@ export const BACKGROUND_TYPES = {
       prop_type: 'background',
       op_type: 'color',
       val: {
-          args: "#000000"
+          args: "#ff0000"
       }
   },
 // pass the image for the six sides.
@@ -249,5 +251,6 @@ export const TYPES = {
     MESH: 'Mesh',
     GEOMETRY: 'Gemometry',
     MATERIAL: 'Material',
-    ANIMATION: "Animation"
+    ANIMATION: "Animation",
+    SCENE: "Scene"
 }
