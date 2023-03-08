@@ -8,13 +8,14 @@ import {useMultiplayerState} from "../hooks/useMultiplayerState";
 import {FILE_TYPES, TYPES} from "../Editor/constants";
 import {IMPORT_MESH_TYPES} from "../../common/consts";
 import TestCanvas from "../Editor/Editor";
-import {VRButton} from "@react-three/xr";
+import {VRButton, useXR} from "@react-three/xr";
 import * as React from "react";
 import PresentationWrapper, {PRESENTATION_TYPES} from "../PresentationWrapper";
 
 
 function Workspace({roomId, user}) {
     const editorRef = useRef();
+    const isXRSupported  = "xr" in navigator;
     const [otherUsers, setOtherUsers] = useState([]);
     /*
     * mode 0 : editor
@@ -355,8 +356,11 @@ function Workspace({roomId, user}) {
                 {/*<TestCanvas/>*/}
 
 
-                {mode === 0 && <Editor ref={editorRef} app={app} initData={initData} otherUsers={otherUsers}onModelUpload={onModelUpload} />}
-                {mode === 1 && <PresentationWrapper workspaceId={roomId} type={PRESENTATION_TYPES["2D_INTERACTIVE"]}/>}
+                {mode === 0 && <Editor ref={editorRef} app={app} initData={initData}
+                                       otherUsers={otherUsers} onModelUpload={onModelUpload}
+                                       XRSupported={isXRSupported}
+                />}
+                {mode === 1 && <PresentationWrapper workspaceId={roomId} type={PRESENTATION_TYPES["2D_INTERACTIVE"]} fromNavigator={false}/>}
 
 
                 {/*<MyComponent/>*/}
