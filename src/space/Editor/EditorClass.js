@@ -732,7 +732,7 @@ export default class Editor extends React.Component {
 
     onHoverOnAnimation({uuid, val}) {
         this.setState({hoveredAnimation: {uuid, val}})
-        AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
+        //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
 
     onUnhoverOnAnimation() {
@@ -741,7 +741,7 @@ export default class Editor extends React.Component {
 
     onSelectOnAnimation({uuid, val}) {
         this.setState({selectedAnimation: {uuid, val}})
-        AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
+        //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
 
 
@@ -755,31 +755,36 @@ export default class Editor extends React.Component {
             rerender,
             transformMode,
             editorMode,
-            backgroundGraph
+            backgroundGraph,
+            hoveredAnimation,
+            selectedAnimation,
+            selectedItem
         } = this.state;
         const {onModelUpload, otherUsers, XRSupported} = this.props;
         return (
             <div style={{display: "flex"}}>
-                <div>
-                    <Menu onModelUpload={onModelUpload}
-                          onLightSelected={this.onAddLightSelected}
-                          onMeshSelected={this.onAddMeshSelected}
-                          onGroupSelected={this.onAddGroupSelected}
-                          onBackgroundSelected={this.onAddBackgroundSelected}
-                          isXR={false}
-                          selectedItems={selectedItems}
-                          enterAnimationMode={this.enterAnimationMode.bind(this)}
-                          onClick={this.onAnimationListClicked}
-                          onHoverOnAnimation={this.onHoverOnAnimation}
-                          onSelectOnAnimation={this.onSelectOnAnimation}
-                          onUnhoverOnAnimation={this.onUnhoverOnAnimation}
-                    />
+            <div>
+                <Menu onModelUpload={onModelUpload} 
+                    onLightSelected={this.onAddLightSelected}
+                    onMeshSelected={this.onAddMeshSelected}
+                    onGroupSelected={this.onAddGroupSelected}
+                    onBackgroundSelected={this.onAddBackgroundSelected}
+                    isXR={false}
+                    selectedItems={selectedItems}
+                    enterAnimationMode={this.enterAnimationMode.bind(this)}
+                    onClick={this.onAnimationListClicked}
+                    onHoverOnAnimation={this.onHoverOnAnimation.bind(this)}
+                    onSelectOnAnimation={this.onSelectOnAnimation.bind(this)}
+                    onUnhoverOnAnimation={this.onUnhoverOnAnimation.bind(this)}
+                />
+            
 
 
                     <DisplayUsers otherUsers={otherUsers} isXR={false}/>
-                </div>
+            </div>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
+
                 {/*//TODO: if XR support, then only show*/}
                 {XRSupported && <VRButton/>}
 
@@ -823,6 +828,7 @@ export default class Editor extends React.Component {
                             {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
                             {/*<SideMenu />*/}
                             {/* FOr the XR controllers ray visibility */}
+                            <AnimationPreview hoveredAnimation={hoveredAnimation} selectedAnimation={selectedAnimation} refs={refGraph} selectedItems={selectedItems} />
                             <Controllers
                                 /** Optional material props to pass to controllers' ray indicators */
                                 rayMaterial={{color: 'blue'}}
