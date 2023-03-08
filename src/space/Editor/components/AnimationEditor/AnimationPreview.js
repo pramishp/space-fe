@@ -19,6 +19,7 @@ export default function AnimationPreview({hoveredAnimation, selectedAnimation, r
     
     useEffect(() => {
     //hoveredAnimation
+    console.log(hoveredAnimation)
     hoveredAnimation && onItemHovered({val:hoveredAnimation.val})
     }, [hoveredAnimation, selectedAnimation])
     
