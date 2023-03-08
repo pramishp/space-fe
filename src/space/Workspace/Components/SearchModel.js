@@ -2,7 +2,6 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 function SearchModel({onModelUpload}) {
-  console.log('models')
   const [objects, setObjects] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
 
