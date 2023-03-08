@@ -261,7 +261,7 @@ export default class Editor extends React.Component {
             graph: {...prevState.graph, ...localJsxs},
             refGraph: {...prevState.refGraph, ...localRefs}
         }))
-        console.log('localjsxs, localrefs', localJsxs, localRefs)
+        // console.log('localjsxs, localrefs', localJsxs, localRefs)
         // // if same user insert a mesh, select inserted mesh
         // if (notify) {
         //     this.setState(prevState => ({selectedItems: [uuid]}))
@@ -274,6 +274,7 @@ export default class Editor extends React.Component {
     // add the local changes here.
     // in the ref to the scene add a star object then convert it to jsx.
     // FIX: 2
+
     insertSceneProps = ({prop_type, op_type, val}, notify = true) => {
         switch (prop_type) {
             case 'background':

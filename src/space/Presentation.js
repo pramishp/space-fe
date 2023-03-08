@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {toJSX} from "../common/loaders/loader";
+import {toJSX, toSceneJSX} from "../common/loaders/loader";
 import {useFrame} from "@react-three/fiber";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES} from "../common/consts";
 import AnimationSequence from "./AnimationSequence";
 
 function Presentation({data}) {
     const {scene:sceneProps} = data;
+    const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({prop_type: 'background', ...sceneProps.background})
     const {jsxs, refs} = toJSX(data);
     const [graph, setGraph] = useState(jsxs);
     const [refGraph, setRefGraph] = useState(refs);
@@ -74,8 +75,16 @@ function Presentation({data}) {
 
     })
 
+
     return (
         <>
+            {
+                sceneJsxs && Object.entries(sceneJsxs).map(([uuid, val]) => {
+                    return (
+                        val
+                    )
+                })
+            }
             {Object.entries(graph).map(([uuid, item]) => {
                 return (
                     <>

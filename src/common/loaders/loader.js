@@ -218,7 +218,9 @@ export const sampleJson = {
     }
 
 }
+
 export function toSceneJSX({prop_type, op_type, val}) {
+    console.log(prop_type, op_type, val)
     const data = {...val}
     // console.log('data',data)
     const jsxs = {};
