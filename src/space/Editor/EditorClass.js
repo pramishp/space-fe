@@ -15,7 +15,7 @@ import {
   BASIC_OBJECTS,
   EDITOR_OPS,
   FILE_TYPES,
-  BACKGROUND_TYPES,
+  SCENE_PROPS_TYPES,
   gltf2json,
   mesh2json,
   TYPES,
@@ -90,6 +90,7 @@ export default class Editor extends React.Component {
      * 1: animation
      * in the animation mode, the transform control is disabled
      * */
+    // TODO: add background on initialization and also on functions like didComponentMount and componentDidUpdate
     this.state = {
       rerender: false,
       selectedItems: [],
@@ -261,14 +262,14 @@ export default class Editor extends React.Component {
         app.onUpdateAnimation({ uuid, key, val })
         break
 
-      case EDITOR_OPS.ADD_BACKGROUND:
+      case EDITOR_OPS.ADD_SCENE_PROPS:
         // FIX: 3
         app.onScenePropsAdded({ prop_type, op_type, val })
         break
-      case EDITOR_OPS.UPDATE_BACKGROUND:
+      case EDITOR_OPS.UPDATE_SCENE_PROPS:
         app.onScenePropsUpdated({ prop_type, op_type, val })
         break
-      case EDITOR_OPS.DELETE_BACKGROUND:
+      case EDITOR_OPS.DELETE_SCENE_PROPS:
         app.onScenePropsDeleted({ prop_type })
         break
       // console.log('editor operations add background')
@@ -325,7 +326,7 @@ export default class Editor extends React.Component {
         break
     }
     this.notifyApp(
-      { type: EDITOR_OPS.ADD_BACKGROUND, data: { prop_type, op_type, val } },
+      { type: EDITOR_OPS.ADD_SCENE_PROPS, data: { prop_type, op_type, val } },
       notify
     )
   }
@@ -481,8 +482,12 @@ export default class Editor extends React.Component {
         [prop_type]: { op_type, val },
       },
     }))
+    this.rerender()
     this.notifyApp(
-      { type: EDITOR_OPS.UPDATE_BACKGROUND, data: { prop_type, op_type, val } },
+      {
+        type: EDITOR_OPS.UPDATE_SCENE_PROPS,
+        data: { prop_type, op_type, val },
+      },
       notify
     )
   }
@@ -499,7 +504,7 @@ export default class Editor extends React.Component {
       }
     })
     this.notifyApp(
-      { type: EDITOR_OPS.DELETE_BACKGROUND, data: { prop_type } },
+      { type: EDITOR_OPS.DELETE_SCENE_PROPS, data: { prop_type } },
       notify
     )
   }
@@ -575,18 +580,17 @@ export default class Editor extends React.Component {
   //FIX: 1
   onAddScenePropsSelected = (id) => {
     console.log('id', id)
-    const { prop_type, op_type, val } = BACKGROUND_TYPES[id]
+    const { prop_type, op_type, val } = SCENE_PROPS_TYPES[id]
     console.log(prop_type, op_type, val)
     this.insertSceneProps({ prop_type, op_type, val })
   }
-
-  onScenePropsColorChange = ({ color }) => {
-    //TODO: handle scene background color change
-    console.log('background color changed: ')
+  onChangeScenePropsSelected = ({ prop_type, op_type, val }) => {
+    this.updateSceneProps({ prop_type, op_type, val })
   }
 
   // upload model
   // NOTE: thrrejs gtlf loader
+
   onModelUpload = (url) => {
     console.log(url)
     // const {app} = this.props;
@@ -711,6 +715,7 @@ export default class Editor extends React.Component {
       case 'geometry':
         break
       case 'material':
+          <Canvas
         break
       default:
         if (object.type.indexOf('Light') !== -1) {
@@ -847,6 +852,7 @@ export default class Editor extends React.Component {
       transformMode,
       editorMode,
       scenePropsGraph,
+      scenePropsRefGraph,
       hoveredAnimation,
       selectedAnimation,
       selectedItem,
@@ -896,15 +902,17 @@ export default class Editor extends React.Component {
               {/*/>*/}
               {/*<input type="file" onChange={this.onModelUpload}/>*/}
             </div>
+            {/* here on addition only the light property needs to be changed,*/}
             <PropsEditor
               rerender={rerender}
               isXR={false}
               selectedItems={selectedItems}
               refs={refGraph}
+              scenePropsRefGraph={scenePropsRefGraph}
               animations={animations}
-              scenePropsColor={['#000000']}
-              onScenePropsSelected={this.onAddScenePropsSelected}
-              onScenePropsColorChange={this.onScenePropsColorChange}
+              onChangeScenePropsSelected={this.onChangeScenePropsSelected.bind(
+                this
+              )}
               updateAnimation={this.updateAnimation}
               onAnimationDelete={this.onDeleteAnimationClicked}
               onMaterialPropsChanged={this.onMaterialPropsChanged}
@@ -912,9 +920,8 @@ export default class Editor extends React.Component {
               setAnimationSidebar={this.setAnimationSidebar.bind(this)}
               animationSidebar={animationSidebar}
             />
-          </div>
+
           <Canvas
-            legacy={false}
             camera={{
               fov: 50,
               aspect: 1,
@@ -960,7 +967,7 @@ export default class Editor extends React.Component {
                                 { this.backgroundTexture && (
                                     <primitive attach="background" object={this.backgroundTexture}/>
                                 )} */}
-              <ambientLight intensity={2} />
+              {/*<ambientLight intensity={2} />*/}
               {/* <color attach="background" args={["#000000"]}/> */}
               {/* {<><color attach="background" args={["#000000"]} /><Stars /></>} */}
               {/*<pointLight position={[20, 10, -10]} intensity={2}/>*/}

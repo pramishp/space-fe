@@ -105,8 +105,6 @@ export function AnimationEditor({
   if (animationList.length === 0) {
     return Empty
   }
-  console.log('animaiton', animationList)
-  console.log('selected', selectedObjectUUID)
   // the animations on a object if the previous two condition are met then render the right sidebar.
   // console.log('something has been selected along with some animation.')
   const heading = isXR ? <Heading6>Animations:</Heading6> : <h6>Animations:</h6>
