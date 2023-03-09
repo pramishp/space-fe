@@ -4,7 +4,7 @@ import SearchModel from './Components/SearchModel.js'
 import FileUpload from './Components/FileUpload.js'
 import MenuBar from '../Editor/components/MenuBar'
 import AnimationMenu from '../Editor/components/AnimationEditor/AnimationMenu.js'
-function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected, onBackgroundSelected, isXR, selectedItems, enterAnimationMode, onClick , onHoverOnAnimation, onSelectOnAnimation, onUnhoverOnAnimation }) {
+function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected, onScenePropsSelected, isXR, selectedItems, enterAnimationMode, onClick , onHoverOnAnimation, onSelectOnAnimation, onUnhoverOnAnimation }) {
     const [modelView, setModelView] = useState(false)
     const [optionsView, setOptionsView] = useState(false)
     const [animationsView, setAnimationsView] = useState(false)
@@ -22,7 +22,7 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
         optionsView && setOptionsView((prevState) => !prevState)
         animationsView && setAnimationsView((prevState) => !prevState)
     }
-    
+
     const handleAnimationsClick = (e) => {
         e.stopPropagation()
         setAnimationsView((prevState) => !prevState)
@@ -55,7 +55,7 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
                     <MenuBar onLightSelected={onLightSelected}
                                  onMeshSelected={onMeshSelected}
                                  onGroupSelected={onGroupSelected}
-                                 onBackgroundSelected={onBackgroundSelected}
+                                 onScenePropsSelected={onScenePropsSelected}
                                  isXR={false}
                         />
                     </div>

@@ -5,7 +5,7 @@
 *  */
 import * as THREE from 'three';
 import * as React from 'react';
-import {AnimationClip, DirectionalLightHelper} from "three";
+import {AmbientLight, AnimationClip, DirectionalLightHelper} from "three";
 import {ANIMATION_TRIGGERS, ANIMATION_LIFE_TYPES, IMPORT_MESH_TYPES} from "../consts";
 import {Environment, Stars, Sky} from "@react-three/drei";
 import {GltfModel} from "../../space/Gltf";
@@ -221,8 +221,6 @@ export const sampleJson = {
 }
 
 export function toSceneJSX({prop_type, op_type, val}) {
-    const data = {...val}
-    // console.log('data',data)
     const jsxs = {};
     let refs = {};
     let ref = React.createRef()
@@ -254,6 +252,9 @@ export function toSceneJSX({prop_type, op_type, val}) {
             default:
                 break;
         }
+    }
+    else if (prop_type === 'light') {
+        object = (<AmbientLight ref={ref} {...val} />)
     }
     // console.log('to background jsx data', data)
     jsxs[prop_type] = object
