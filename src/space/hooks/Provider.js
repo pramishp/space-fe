@@ -4,7 +4,7 @@ import * as Y from "yjs";
 let singleProvider = null;
 let singleDoc = null;
 
-const HOST = '192.168.1.69'
+const HOST = '0.0.0.0'
 const WS = `ws://${HOST}:1234`
 export default class SingletonSocketProvider {
     getProvider(roomId) {

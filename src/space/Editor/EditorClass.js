@@ -228,6 +228,69 @@ export default class Editor extends React.Component {
     if (!notify) {
       return
     }
+    // add the local changes here.
+    // in the ref to the scene add a star object then convert it to jsx.
+    // FIX: 2
+
+    insertSceneProps = ({prop_type, op_type, val}, notify = true) => {
+        switch (prop_type) {
+            case 'background':
+                console.log('op_type', op_type);
+                console.log('val', val);
+                const {jsxs: localJsxs, refs: localRefs} = toSceneJSX({prop_type, op_type, val})
+                console.log(localJsxs, localRefs)
+                // add to the object.
+                // perhaps we don't need the prev state
+                this.setState({
+                    scenePropsGraph: {...localJsxs},
+                    scenePropsRefGraph: {...localRefs}
+                })
+                break
+        }
+        this.notifyApp({type: EDITOR_OPS.ADD_BACKGROUND, data: {prop_type, op_type, val}}, notify)
+    }
+
+    insertMeshFile = ({uuid, val}, notify = true) => {
+        const keys = ['position', 'quaternion', 'scale']
+
+        let ref = React.createRef();
+        const {url, type} = val;
+        switch (type) {
+            case FILE_TYPES.GLTF:
+
+                //load file from url and insert primitive in scene
+            function onLoad(gltf) {
+                console.log('gltf', uuid, val, this.state)
+                const {scene, animations} = gltf;
+                scene.uuid = uuid;
+
+                scene.traverse((object) => {
+                    object.uuid = uuid; // Set a custom UUID for each object
+                });
+
+                const props = {};
+                // if key exists, add those props to primitive
+                keys.forEach(key => {
+                    if (val[key]) {
+                        props[key] = val[key]
+                    } else {
+                        // set default props of gltf to val
+                        val[key] = scene[key].toArray();
+                        props[key] = scene[key].toArray();
+                    }
+                })
+
+                Object.entries(this.clickCallbacks).forEach(([id, callback]) => {
+                    props[id] = (e) => callback(e, uuid)
+                })
+
+                const object = (<primitive ref={ref} object={scene} {...props} />)
+                this.setState(prevState => ({
+                    graph: {...prevState.graph, [uuid]: object},
+                    refGraph: {...prevState.refGraph, [uuid]: ref}
+                }))
+            }
+
 
     switch (type) {
       case EDITOR_OPS.INSERT_OBJECT:
@@ -547,10 +610,32 @@ export default class Editor extends React.Component {
     this.setState((prevState) => ({ selectedItems: [] }))
   }
 
-  // onMeshSelected, onLightSelected, onGroupSelected
-  onAddMeshSelected = (id) => {
-    if (!Object.keys(BASIC_OBJECTS).includes(id)) {
-      console.error(`No ${id} in BASIC_OBJECTS`)
+
+    // onAnimation clicked
+
+    /* A function that is called when an animation is clicked in the animation list. */
+    onAnimationListClicked = ({uuid, val}) => {
+        // obtained uuid is of the animation that is clicked
+
+        // generate unique uuid
+        const id_ = generateUniqueId();
+        const {selectedItems} = this.state;
+        const mesh_uuid = selectedItems.length > 0 ? selectedItems[0] : null;
+        if (mesh_uuid) {
+            //TODO: determine order, triggers
+            const data = {
+                uuid: id_,
+                type: ANIMATION_LIFE_TYPES.INFINITY,
+                trigger: ANIMATION_TRIGGERS.ON_SLIDE_CHANGE,
+                object_uuid: mesh_uuid,
+                order: 0,
+                name: val.name,
+                animationType: ANIMATION_TYPES.KEYFRAME,
+                keyframe_animation: val,
+                timeScale: 1
+            }
+            this.addAnimation({uuid: id_, val: data})
+        }
     }
 
     const { uuid, val } = BASIC_OBJECTS[id].get()

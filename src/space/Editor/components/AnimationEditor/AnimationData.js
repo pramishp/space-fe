@@ -7,7 +7,7 @@ import pathImg from '../../../../assets/path_animation.png'
 export const animations = {
     'd7fbf2ba-b04c-4f59-acbd-6c5563d8b53d': {
         name: 'position',
-        duration: 3,
+        duration: -1,
         type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
@@ -26,7 +26,7 @@ export const animations = {
     },
     'd77c5fc4-f70b-4ec3-ace7-3dd187185451': {
         name: 'scale',
-        duration: 3,
+        duration: -1,
         type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
@@ -46,16 +46,18 @@ export const animations = {
     },
     "fc0a8baa-2226-49b9-989b-3ddfc3051a84": {
         name: 'rotation y',
-        duration: 3,
+        duration: -1,
         type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
                 name: '.quaternion',
-                "times": [0, 0.5, 1],
+                "times": [0, 0.25, 0.5, 0.75, 1],
                 "values": [
-                    0,0,0,1, // Start at zero rotation
-                    0,0.7071,0,0.7071, // Rotate 90 degrees
-                    0,1,0,0 // Rotate 180 degrees
+                    0, 0, 0, 1,      // Start at zero rotation
+                    0, 0.7071, 0, 0.7071,  // Rotate 90 degrees
+                    0, 1, 0, 0,      // Rotate 180 degrees
+                    0, 0.7071, 0, -0.7071, // Rotate 270 degrees
+                    0, 0, 0, 1       // Back to zero rotation (360 degrees)
                 ],
                 type: 'quaternion'
             }
@@ -63,12 +65,12 @@ export const animations = {
         ],
         uuid: 'fc0a8baa-2226-49b9-989b-3ddfc3051a84',
         img: rotateImg,
-        clampWhenFinished: true,
+        clampWhenFinished: false,
         blendMode: 2500
     },
     "xd0a8baa-2226-49b9-989b-3ddfc3051a85": {
         name: 'rotation x',
-        duration: 3,
+        duration: -1,
         type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
@@ -83,12 +85,12 @@ export const animations = {
             }
         ],
         uuid: 'xd0a8baa-2226-49b9-989b-3ddfc3051a85',
-        clampWhenFinished: true,
+        clampWhenFinished: false,
         blendMode: 2500
     },
     "zd0a8baa-2226-49b9-989b-3ddfc3051a85": {
         name: 'rotation z',
-        duration: 3,
+        duration: -1,
         type: ANIMATION_TYPES.KEYFRAME,
         tracks: [
             {
@@ -103,7 +105,7 @@ export const animations = {
             }
         ],
         uuid: 'zd0a8baa-2226-49b9-989b-3ddfc3051a85',
-        clampWhenFinished: true,
+        clampWhenFinished: false,
         blendMode: 2500
     },
     "765258bb-cb65-4107-9f3c-b3ac3a36d8b6":{

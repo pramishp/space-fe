@@ -19,6 +19,7 @@ function AnimationEditItem({ item, onDelete, isXR, updateAnimation }) {
     const value = e.target.value
     if (updateAnimation) {
       updateAnimation({ uuid: item.uuid, key: 'timeScale', val: value })
+
     }
   }
   const tmin = 1,

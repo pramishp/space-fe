@@ -81,7 +81,7 @@ function Workspace({ roomId, user }) {
             onRedo()
         } else if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
             onUndo()
-        } else if (event.key === 'Delete' || event.key === 'Backspace') {
+        } else if ((event.ctrlKey || event.metaKey) && (event.key === 'Delete' || event.key === 'Backspace')) {
             // delete the selected item
             if (editorRef && editorRef.current) {
                 const editor = editorRef.current
@@ -350,6 +350,7 @@ function Workspace({ roomId, user }) {
     const onModelUpload = (url) => {
         app.onModelUpload(url)
     }
+
     const initData = getInitData()
     //TODO: Why console.log(initData) here is called 8 times ?
 
@@ -384,6 +385,7 @@ function Workspace({ roomId, user }) {
             </div>
         </>
     )
+
 }
 
 export default Workspace

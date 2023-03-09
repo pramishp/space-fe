@@ -89,13 +89,12 @@ export default class AnimationSequence {
         const uniqueMeshes = new Set(allMeshes);
         uniqueMeshes.forEach((uuid) => {
             const meshRef = meshRefs[uuid]
-            if((!meshRef) || (!meshRef.current))console.error('meshRef is null')
+            if((!meshRef.current))console.error('meshRef is null')
             mixers[uuid] = new THREE.AnimationMixer(meshRef.current)
         })
         return mixers
 
     }
-
 
     /**
      * creates Threejs clipActions for each item in slideAnimations
@@ -203,6 +202,7 @@ export default class AnimationSequence {
                 const trackName = '.position'; // name of the property to animate
                 const track = new THREE.VectorKeyframeTrack(trackName, keyframeTimes , positionArray); // create a track
                 const clip = new THREE.AnimationClip('positionChange', -1 , [track]);
+
                 // clip.timeScale = -2.0;
                 // console.log('keyframe animation', clip)
                 parsedAnimations[uuid] = clip
@@ -232,7 +232,7 @@ export default class AnimationSequence {
         // play each animation of that index/order
         animations_seq[index].forEach(animation => {
             let action = clipActions[animation.uuid];
-            action.clampWhenFinished = true;
+            // action.clampWhenFinished = true;
             action.slide_animation_uuid = animation.uuid;
             action.type = animation.type;
             action.trigger = animation.trigger;
@@ -242,6 +242,7 @@ export default class AnimationSequence {
             }
             if (animation.type === ANIMATION_LIFE_TYPES.INFINITY) {
                 action.loop = THREE.LoopRepeat;
+                // action.setLoop(THREE.LoopRepeat, Infinity)
             }
             action.reset();
             action.play();
