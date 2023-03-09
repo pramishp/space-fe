@@ -36,17 +36,17 @@ function MenuBar({
   ]
 
   const lightOptions = [
-    { name: 'Ambient', id: 'ambient' },
-    { name: 'Directional', id: 'directional' },
-    { name: 'Point', id: 'point' },
+    { name: 'Ambient', id: 'ambient', img:''},
+    { name: 'Directional', id: 'directional', img: '' },
+    { name: 'Point', id: 'point', img: '' },
   ]
-  const groupOptions = [{ name: 'Group', id: 'group' }]
+  const groupOptions = [{ name: 'Group', id: 'group', img:''}]
 
   const backgroundOptions = [
-    { name: 'Stars', id: 'stars' },
-    { name: 'Sky', id: 'sky' },
-    { name: 'Color', id: 'color' },
-    { name: 'Environment', id: 'environment' },
+    { name: 'Stars', id: 'stars' , img:''},
+    { name: 'Sky', id: 'sky', img:'' },
+    { name: 'Color', id: 'color', img:'' },
+    { name: 'Environment', id: 'environment', img:'' },
   ]
 
   const handleMeshSelected = (id) => {

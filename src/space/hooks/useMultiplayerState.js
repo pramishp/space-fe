@@ -28,6 +28,7 @@ export function useMultiplayerState(roomId, appInit) {
   const yMaterial = doc.getMap('materials')
   const yAnimation = doc.getMap('animations')
   const yScene = doc.getMap('scene')
+  // add the light prop here so that it can be passed to the init data.
   // const yScene = doc.getMap("scene")
   const { undoManager } = useMemo(() => {
     //TODO: undo manager for geometry, materials
@@ -39,11 +40,11 @@ export function useMultiplayerState(roomId, appInit) {
   const instanceId = room.awareness.clientID
 
   /*
-            *   app.loadRoom(roomId, room);
-                app.setInstanceId(room.awareness.clientID);
-                app.setOtherUsers(joinedUsers)
-                app.setInitData(doc.toJSON())
-            * */
+              *   app.loadRoom(roomId, room);
+                  app.setInstanceId(room.awareness.clientID);
+                  app.setOtherUsers(joinedUsers)
+                  app.setInitData(doc.toJSON())
+              * */
 
   const onMount = useCallback(
     (app_local) => {
@@ -537,7 +538,7 @@ export function useMultiplayerState(roomId, appInit) {
               // app.updateSceneProps()
               break
             case 'delete':
-                app.deleteSceneProps({prop_type, ...genericProps})
+              app.deleteSceneProps({ prop_type, ...genericProps })
               break
 
             default:
