@@ -545,7 +545,6 @@ export default class Editor extends React.Component {
         [prop_type]: { op_type, val },
       },
     }))
-    this.rerender()
     this.notifyApp(
       {
         type: EDITOR_OPS.UPDATE_SCENE_PROPS,
@@ -800,7 +799,6 @@ export default class Editor extends React.Component {
       case 'geometry':
         break
       case 'material':
-          <Canvas
         break
       default:
         if (object.type.indexOf('Light') !== -1) {
@@ -1005,8 +1003,9 @@ export default class Editor extends React.Component {
               setAnimationSidebar={this.setAnimationSidebar.bind(this)}
               animationSidebar={animationSidebar}
             />
-
+          </div>
           <Canvas
+            legacy={false}
             camera={{
               fov: 50,
               aspect: 1,

@@ -150,7 +150,8 @@ export function PropsEditor(props) {
   const Empty = isXR ? <></> : <div style={{ margin: '40px' }} />
   if (selectedItems.length === 0) {
     // bgMode is not called here
-    return <ScenePropsEditor {...props} />
+    // return <ScenePropsEditor {...props} />
+    return Empty
   }
   // handling single item selection only
   const selectedItemUUID = selectedItems[0]
