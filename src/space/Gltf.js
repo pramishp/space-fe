@@ -7,7 +7,8 @@ const keys = ['position', 'quaternion', 'scale']
 
 export const GltfModel =  React.forwardRef(({val, uuid, clickCallbacks}, ref)=> {
     const {url} = val
-    const gltf = useGLTF(url)
+
+    const gltf = useGLTF(url, true)
     const {scene, animations} = gltf;
 
     // set uuid

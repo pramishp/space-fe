@@ -1,11 +1,11 @@
-import {useContext, useEffect, useState} from "react"
-import {useLocation, useParams, matchPath} from "react-router-dom"
-import AuthContext from "./Workspace/Context/AuthContext"
-import Workspace from "./Workspace/Workspace"
+import {useState} from "react"
+import {useParams} from "react-router-dom"
 import Presentation from "./Presentation";
 import {usePresentationData} from "./hooks/usePresentationData";
 import {Canvas} from "@react-three/fiber";
 import Controls from "./Editor/Controls";
+import {FirstPersonControls} from "@react-three/drei";
+
 import * as React from "react";
 import {ARButton, VRButton, XR, XRButton} from "@react-three/xr";
 import {Box} from "@react-three/drei";
@@ -59,21 +59,9 @@ const PresentationWrapper = (props) => {
     }
     const presentationData = getData();
 
-    const MainPresentation = <Presentation data={presentationData}/>
+    const MainPresentation = <Presentation data={presentationData} type={type}/>
 
-    const OrbitControls = <Controls makeDefault/>
-    return <div style={{height: window.innerHeight}}>
-        {type === PRESENTATION_TYPES.VR? <VRButton/>: null}
-        {type === PRESENTATION_TYPES.AR? <ARButton/>: null}
-        <Canvas onCreated={({ gl }) => {
-            setGl(gl)
-        }} >
-            <XR referenceSpace="local-floor">
-                {MainPresentation}
-            </XR>
-            {type !== PRESENTATION_TYPES["2D"] ? OrbitControls : null}
-        </Canvas>
-    </div>
+    return MainPresentation
 }
 
 PresentationWrapper.props = {

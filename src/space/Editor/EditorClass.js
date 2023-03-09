@@ -116,9 +116,9 @@ export default class Editor extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-
         const shouldUpdate = nextProps.initData !== this.props.initData;
         if (shouldUpdate) {
+            console.log('should update', this.props.initData, nextProps.initData)
             this.jsxData = toJSX(nextProps.initData, this.clickCallbacks);
             this.setState({
                 graph: this.jsxData.jsxs,
@@ -303,7 +303,7 @@ export default class Editor extends React.Component {
 
                 //load file from url and insert primitive in scene
             function onLoad(gltf) {
-
+                console.log('gltf', uuid, val, this.state)
                 const {scene, animations} = gltf;
                 scene.uuid = uuid;
 
@@ -351,7 +351,6 @@ export default class Editor extends React.Component {
 
     deleteMesh = ({uuid}, notify = true) => {
         const {app} = this.props;
-
         // perform mesh deletion
         this.setState(prevState => {
             const graph = prevState.graph;
@@ -567,7 +566,8 @@ export default class Editor extends React.Component {
                 order: 0,
                 name: val.name,
                 animationType: ANIMATION_TYPES.KEYFRAME,
-                keyframe_animation: val
+                keyframe_animation: val,
+                timeScale: 1
             }
             this.addAnimation({uuid: id_, val: data})
         }
@@ -810,7 +810,7 @@ export default class Editor extends React.Component {
                     />
 
 
-                    <DisplayUsers otherUsers={otherUsers} isXR={false}/>
+                    {/*<DisplayUsers otherUsers={otherUsers} isXR={false}/>*/}
                 </div>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}

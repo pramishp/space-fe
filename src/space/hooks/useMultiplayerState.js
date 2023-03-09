@@ -159,7 +159,12 @@ export function useMultiplayerState(roomId, appInit) {
     doc.transact(() => {
       switch (type) {
         case TYPES.MESH:
+          //TODO: delete associated geometry, materials
           yMeshes.delete(uuid)
+          const animationList = _.filter(yAnimation.toJSON(), {object_uuid: uuid})
+          if (animationList){
+            animationList.forEach(item=>{yAnimation.delete(item.uuid)})
+          }
           break
         case TYPES.ANIMATION:
           yAnimation.delete(uuid)
@@ -179,7 +184,7 @@ export function useMultiplayerState(roomId, appInit) {
     })
   })
 
-  const onUpdate = useCallback(
+  const onUpdate =
     ({ uuid, key, val, type, prop_type, op_type }) => {
       undoManager.stopCapturing()
       doc.transact(() => {
@@ -188,6 +193,8 @@ export function useMultiplayerState(roomId, appInit) {
             yMaterial.get(uuid).set(key, val)
             break
           case TYPES.MESH:
+            console.log(yMeshes.toJSON())
+            console.log(uuid)
             yMeshes.get(uuid).set(key, val)
             break
           case TYPES.ANIMATION:
@@ -203,7 +210,7 @@ export function useMultiplayerState(roomId, appInit) {
         }
       })
     }
-  )
+
 
   // maybe we can map the op_type with the associated parameters.
   // FIX: 5
@@ -502,8 +509,6 @@ export function useMultiplayerState(roomId, appInit) {
     }
 
     function handleSceneChanges(events) {
-      console.log('here')
-      console.log('events', events)
       events.forEach((event) => {
         const parents = Array.from(event.transaction.changedParentTypes)
         const origin = event.transaction.origin
@@ -539,6 +544,7 @@ export function useMultiplayerState(roomId, appInit) {
         })
       })
     }
+
     async function setup() {
       yMeshes.observeDeep(handleMeshChanges)
       yMaterial.observeDeep(handleMaterialChanges)
@@ -553,12 +559,15 @@ export function useMultiplayerState(roomId, appInit) {
     return () => {
       window.removeEventListener('beforeunload', handleDisconnect)
       yMeshes.unobserveDeep(handleMeshChanges)
+      yMaterial.unobserveDeep(handleMaterialChanges)
+      yAnimation.unobserveDeep(handleAnimationChanges)
+      yScene.unobserveDeep(handleSceneChanges)
     }
   }, [app, doc, yMeshes])
 
   const getInitData = useCallback(() => {
     if (doc) {
-      return doc.toJSON()
+      return provider.doc.toJSON()
     }
     //empty object
     return {}

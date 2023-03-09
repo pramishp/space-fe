@@ -16,8 +16,10 @@ const _ = require("lodash")
 function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
     const {timeScale} = item;
     const onValueChange = (e)=>{
+
         const value = e.target.value
-        if (updateAnimation){
+
+        if ((updateAnimation)){
             updateAnimation({uuid: item.uuid, key: "timeScale", val: value})
         }
     }

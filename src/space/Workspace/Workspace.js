@@ -81,7 +81,7 @@ function Workspace({ roomId, user }) {
       onRedo()
     } else if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       onUndo()
-    } else if (event.key === 'Delete' || event.key === 'Backspace') {
+    } else if ((event.ctrlKey || event.metaKey) && (event.key === 'Delete' || event.key === 'Backspace')) {
       // delete the selected item
       if (editorRef && editorRef.current) {
         const editor = editorRef.current
@@ -331,7 +331,6 @@ function Workspace({ roomId, user }) {
   if (loading) {
     return <div>Loading Data</div>
   }
-
 
   app.onModelUpload = (url) => {
     console.log(url)
