@@ -42,9 +42,10 @@ function MenuBar({
     { name: 'Directional', id: 'directional', img: 'menu/lights/directional' },
     { name: 'Point', id: 'point', img: 'menu/lights/point' },
   ]
-  const groupOptions = [{ name: 'Group', id: 'group', img:''}]
+  const groupOptions = [{ name: 'Group', id: 'group', img: '' }]
 
   const backgroundOptions = [
+
     { name: 'Stars', id: 'stars' , img:'menu/background/stars'},
     { name: 'Sky', id: 'sky', img: 'menu/background/sky' },
     // { name: 'Color', id: 'color', img:'' },
@@ -115,22 +116,11 @@ function MenuBar({
       <div className='text-left'>
         <h5 className='mb-2'>Add</h5>
       </div>
-      /* <h5>Group</h5>
-      <select
-        className='w-full px-4 py-2 rounded-md border border-gray-300 mt-2 mb-4'
-        onChange={handleGroupSelected}
-      >
-        {groupOptions.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.name}
-          </option>
-        ))}
-      </select>{' '}
-      */
       <div className='text-left'>
         <h5 className='mb-2'>Mesh</h5>
       </div>
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='h-5vh overflow-y-scroll'>
+        <div className='grid grid-cols-2 gap-4'>
         {meshOptions.map((option) => (
           <div key={option.id}>
               <Icon
@@ -140,6 +130,7 @@ function MenuBar({
               />
           </div>
         ))}
+      </div>
       </div>
       <div className='text-left'>
         <h5 className='mb-2'>Light</h5>

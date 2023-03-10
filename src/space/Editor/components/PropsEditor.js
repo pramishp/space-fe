@@ -155,22 +155,24 @@ export function AnimationEditor({
 }
 
 export function PropsEditor(props) {
-    const {isXR, selectedItems, refs} = props
-    // console.log('isXR', isXR)
-    const Empty = isXR ? <></> : <div style={{margin: '40px'}}/>
-    if (selectedItems.length === 0) {
-        // bgMode is not called here
-        // return <ScenePropsEditor {...props} />
-        return Empty
-    }
-    // handling single item selection only
-    const selectedItemUUID = selectedItems[0]
-    // in case the ref.current is null , return null
+  const { isXR, selectedItems, refs } = props
+  // console.log('isXR', isXR)
+  const Empty = isXR ? <></> : <div style={{ margin: '40px' }} />
+  if (selectedItems.length === 0) {
+    // bgMode is not called here
+    return <ScenePropsEditor {...props} />
+    // return Empty
+  }
+  // handling single item selection only
+  const selectedItemUUID = selectedItems[0]
+  // in case the ref.current is null , return null
 
-    if (!(refs[selectedItemUUID] && refs[selectedItemUUID].current)) {
-        return Empty
-    }
-    const object = refs[selectedItemUUID].current
+  if (!(refs[selectedItemUUID] && refs[selectedItemUUID].current)) {
+    return Empty
+  }
+// changes are made directly to the ref when the properties of mesh are changed so 
+//that you dont have to set state in the updataMaterial function of the EditorClass
+  const object = refs[selectedItemUUID].current
 
     return (
         <>

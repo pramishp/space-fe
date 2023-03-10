@@ -47,8 +47,8 @@ function UpdateMixers({seq}) {
 function Presentation({data, type}) {
     const {scene: sceneProps} = data;
     const {jsxs: gltfJsxs, refs: gltfRefs} = getGltfJsx(data);
-
-    const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({prop_type: 'background', ...sceneProps.background})
+    // scene also has ambient light does that need to be added here.
+    const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({uuid: 'background', ...sceneProps.background})
     let {jsxs, refs} = toJSX(data);
 
     jsxs = {...jsxs, ...gltfJsxs}

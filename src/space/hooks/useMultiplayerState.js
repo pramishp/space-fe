@@ -9,7 +9,7 @@ import { UndoManager } from 'yjs'
 import { TYPES } from '../Editor/constants'
 import { IMPORT_MESH_TYPES } from '../../common/consts'
 import { keys } from 'lodash'
-
+import { SCENE_PROPS_TYPES } from '../Editor/constants'
 const _ = require('lodash')
 
 export function useMultiplayerState(roomId, appInit) {
@@ -28,7 +28,12 @@ export function useMultiplayerState(roomId, appInit) {
   const yMaterial = doc.getMap('materials')
   const yAnimation = doc.getMap('animations')
   const yScene = doc.getMap('scene')
+  const [uuid, val] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
+  const ambientLight = objectToYMap(val)
+  yScene.set(uuid, ambientLight)
+  console.log(yScene)
   // add the light prop here so that it can be passed to the init data.
+  // The data to be initialized is inside the constants file in the id light.
   // const yScene = doc.getMap("scene")
   const { undoManager } = useMemo(() => {
     //TODO: undo manager for geometry, materials
@@ -40,11 +45,11 @@ export function useMultiplayerState(roomId, appInit) {
   const instanceId = room.awareness.clientID
 
   /*
-              *   app.loadRoom(roomId, room);
-                  app.setInstanceId(room.awareness.clientID);
-                  app.setOtherUsers(joinedUsers)
-                  app.setInitData(doc.toJSON())
-              * */
+                          *   app.loadRoom(roomId, room);
+                              app.setInstanceId(room.awareness.clientID);
+                              app.setOtherUsers(joinedUsers)
+                              app.setInitData(doc.toJSON())
+                          * */
 
   const onMount = useCallback(
     (app_local) => {
@@ -138,7 +143,6 @@ export function useMultiplayerState(roomId, appInit) {
       const props = {}
       props.parent = group_id
       const [key, value] = Object.entries(props)[0]
-      console.log(key, value, children_id)
       children_id.forEach((item) => {
         yMeshes.get(item).set(key, value)
       })
@@ -155,16 +159,21 @@ export function useMultiplayerState(roomId, appInit) {
   })
 
   // there is no dependency array added here. Perhaps the dependency array to be used is the app as well. Just like in the insert method.
-  const onDelete = useCallback(({ uuid, type, prop_type }) => {
+  const onDelete = useCallback(({ uuid, type }) => {
     undoManager.stopCapturing()
     doc.transact(() => {
       switch (type) {
         case TYPES.MESH:
           //TODO: delete associated geometry, materials
+
           yMeshes.delete(uuid)
-          const animationList = _.filter(yAnimation.toJSON(), {object_uuid: uuid})
-          if (animationList){
-            animationList.forEach(item=>{yAnimation.delete(item.uuid)})
+          const animationList = _.filter(yAnimation.toJSON(), {
+            object_uuid: uuid,
+          })
+          if (animationList) {
+            animationList.forEach((item) => {
+              yAnimation.delete(item.uuid)
+            })
           }
           break
         case TYPES.ANIMATION:
@@ -177,7 +186,7 @@ export function useMultiplayerState(roomId, appInit) {
           yGeometry.delete(uuid)
           break
         case TYPES.SCENE:
-          yScene.delete(prop_type)
+          yScene.delete(uuid)
           break
         default:
           console.error(`No ${type} type found for onDelete`)
@@ -185,48 +194,42 @@ export function useMultiplayerState(roomId, appInit) {
     })
   })
 
-  const onUpdate =
-    ({ uuid, key, val, type, prop_type, op_type }) => {
-      undoManager.stopCapturing()
-      doc.transact(() => {
-        switch (type) {
-          case TYPES.MATERIAL:
-            yMaterial.get(uuid).set(key, val)
-            break
-          case TYPES.MESH:
-            console.log(yMeshes.toJSON())
-            console.log(uuid)
-            yMeshes.get(uuid).set(key, val)
-            break
-          case TYPES.ANIMATION:
-            yAnimation.get(uuid).set(key, val)
-            break
-          case TYPES.SCENE:
-            // in the background of a scene for the op type star or something else values are set.
-            // TODO: while creating the scene the op_type and val are entered into the map together so the structure needs to change either here or in the initial addition.
-            yScene.get(prop_type).set(op_type, val)
-            break
-          default:
-            console.error('No case handled for ', type, 'onUpdate')
-        }
-      })
-    }
-
+  const onUpdate = ({ uuid, key, val, type }) => {
+    undoManager.stopCapturing()
+    doc.transact(() => {
+      switch (type) {
+        case TYPES.MATERIAL:
+          yMaterial.get(uuid).set(key, val)
+          break
+        case TYPES.MESH:
+          console.log(yMeshes.toJSON())
+          console.log(uuid)
+          yMeshes.get(uuid).set(key, val)
+          break
+        case TYPES.ANIMATION:
+          yAnimation.get(uuid).set(key, val)
+          break
+        case TYPES.SCENE:
+          // in the background of a scene for the op type star or something else values are set.
+          // TODO: while creating the scene the op_type and val are entered into the map together so the structure needs to change either here or in the initial addition.
+          yScene.get(uuid).set(val)
+          break
+        default:
+          console.error('No case handled for ', type, 'onUpdate')
+      }
+    })
+  }
 
   // maybe we can map the op_type with the associated parameters.
   // FIX: 5
-  const onInsertSceneProps = useCallback(({ prop_type, op_type, val }) => {
-    console.log('onInsertScenePropsd')
+  const onInsertSceneProps = useCallback(({ uuid, val }) => {
     undoManager.stopCapturing()
     doc.transact(() => {
       // const params to Yjs map
-      console.log(val)
-      const backgroundMap = objectToYMap({ op_type, val })
-      console.log(backgroundMap)
+      const backgroundMap = objectToYMap({val})
       // insert into yjs
       // ySence.set(background, backgroundMap)
-      yScene.set(prop_type, backgroundMap)
-      console.log('yScene', yScene)
+      yScene.set(uuid, backgroundMap)
       //yScene.set(background, )
       //scene: {background:{ op_type: {} , val: {}}}
     })
@@ -519,31 +522,29 @@ export function useMultiplayerState(roomId, appInit) {
         const level = parents.length
         const genericProps = { isFromUndoManager, isMyEvent }
 
-        event.changes.keys.forEach((val, key, prop_type) => {
+        event.changes.keys.forEach((val, key) => {
           console.log(val, key)
           const data = yScene.get(key).toJSON()
           switch (val.action) {
             case 'add':
               console.log(data)
               app.addSceneProps({
-                prop_type: key,
-                op_type: data.op_type,
-                val: data.val,
+                uuid: key,
+                val: data,
                 ...genericProps,
               })
               break
             case 'update':
               console.log(data)
               app.updateSceneProps({
-                prop_type: key,
-                op_type: data.op_type,
-                val: data.val,
+                uuid: key,
+                val: data,
                 ...genericProps,
               })
               // app.updateSceneProps()
               break
             case 'delete':
-              app.deleteSceneProps({ prop_type, ...genericProps })
+              app.deleteSceneProps({ uuid:key, ...genericProps })
               break
 
             default:
