@@ -10,27 +10,60 @@ import React from 'react'
 export default function ScenePropsEditor({
     scenePropsRefGraph,
     onChangeScenePropsSelected,
+    onAddScenePropsSelected
 }) {
     // based on the scenePropsRefGraph we can determine whether we are to update or add the ref properties.
-    console.log(scenePropsRefGraph)
+    // console.log(scenePropsRefGraph)
+    // console.log(scenePropsRefGraph['background'])
+    // console.log(scenePropsRefGraph['background'].current)
     let lightProps, backgroundProps
-    if (scenePropsRefGraph['light'].current) {
+
+    if (scenePropsRefGraph && scenePropsRefGraph['light'] && scenePropsRefGraph['light'].current) {
         lightProps = scenePropsRefGraph['light'].current
     }
-    if (scenePropsRefGraph['background'].current) {
+    if (scenePropsRefGraph && scenePropsRefGraph['background'] && scenePropsRefGraph['background'].current) {
         backgroundProps = scenePropsRefGraph['background'].current
     }
+    // TODO: give backgr
+    // here if nothing has been set then change the code so that the oAddScenePropsSelected is called.
     const handleBackgroundColorChange = (e) => {
-        backgroundProps['val'] = e.target.value
-        onChangeScenePropsSelected({prop_type: 'background', op_type: 'color', val: backgroundProps['val'] })
+        console.log(backgroundProps)
+        if (backgroundProps) {
+            // backgroundProps['val'] = [e.target.value]
+            // no need to set the background prop here as it will get updated later on.
+            console.log('event after picked using target value', e.target.value)
+            const args = [e.target.value]
+            const val = {}
+            val.op_type = 'color'
+            val.val = {args}
+            onChangeScenePropsSelected({uuid: 'background', val: val})
+        } else {
+            const args = [e.target.value]
+            const val = {}
+            val.op_type = 'color'
+            val.val = {args}
+            const id = {}
+            id.uuid = 'background'
+            id.val = val
+           onAddScenePropsSelected(id)
+        }
+
+
     }
     const handleLightColorChange = (e) => {
         lightProps['val']['color'] = e.target.value
-        onChangeScenePropsSelected({prop_type: 'light', op_type: 'light', val: {...lightProps} })
+        const val = {}
+        val.op_type = 'light'
+        val.val = {...lightProps}
+        onChangeScenePropsSelected({uuid: 'light', val: val })
     }
     const handleLightIntensityChange = (e) => {
         lightProps['val']['intensity'] = e.target.value
-        onChangeScenePropsSelected({prop_type: 'light', op_type: 'light', val: {...lightProps}})
+        console.log(lightProps['val'])
+        const val = {}
+        val.op_type = 'light'
+        val.val = {...lightProps}
+        onChangeScenePropsSelected({uuid: 'light', val: val})
 
     }
     // set these three as state.
@@ -41,7 +74,7 @@ export default function ScenePropsEditor({
     return (
         <div className='flex items-center h-12 bg-gray-100 border-b border-gray-300 px-4'>
             <div className='ml-4'>
-                <label for='color' className='font-medium'>
+                <label htmlFor='color' className='font-medium'>
                     Background Color:
                 </label>
                 <input
@@ -53,7 +86,7 @@ export default function ScenePropsEditor({
                 />
             </div>
             <div className='ml-4'>
-                <label for='color' className='font-medium'>
+                <label htmlFor='color' className='font-medium'>
                     Light Color:
                 </label>
                 <input

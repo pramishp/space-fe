@@ -38,14 +38,14 @@ function LoginPage() {
               />
             </div>
           </form>
-          <div className='text-center mt-12'>
+          <div className='text-center mt-12 flex flex-col justify-center items-center'>
             <span>Don't have an account?</span>
-            <h5
-              onClikck = {handleClick}
-              className='font-light text-md text-indigo-600 underline font-semibold hover:text-indigo-800'
+            <div
+              onClick = {handleClick}
+              className='font-light cursor-pointer text-md text-indigo-600 underline font-semibold hover:text-indigo-800'
             >
               Create One
-            </h5>
+            </div>
           </div>
         </div>
       </div>

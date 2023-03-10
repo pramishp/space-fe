@@ -36,17 +36,17 @@ function MenuBar({
   ]
 
   const lightOptions = [
-    { name: 'Ambient', id: 'ambient', img:''},
+    { name: 'Ambient', id: 'ambient', img: '' },
     { name: 'Directional', id: 'directional', img: '' },
     { name: 'Point', id: 'point', img: '' },
   ]
-  const groupOptions = [{ name: 'Group', id: 'group', img:''}]
+  const groupOptions = [{ name: 'Group', id: 'group', img: '' }]
 
   const backgroundOptions = [
-    { name: 'Stars', id: 'stars' , img:''},
-    { name: 'Sky', id: 'sky', img:'' },
-    { name: 'Color', id: 'color', img:'' },
-    { name: 'Environment', id: 'environment', img:'' },
+    { name: 'Stars', id: 'stars', img: '' },
+    { name: 'Sky', id: 'sky', img: '' },
+    { name: 'Color', id: 'color', img: '' },
+    { name: 'Environment', id: 'environment', img: '' },
   ]
 
   const handleMeshSelected = (id) => {
@@ -113,31 +113,21 @@ function MenuBar({
       <div className='text-left'>
         <h5 className='mb-2'>Add</h5>
       </div>
-      /* <h5>Group</h5>
-      <select
-        className='w-full px-4 py-2 rounded-md border border-gray-300 mt-2 mb-4'
-        onChange={handleGroupSelected}
-      >
-        {groupOptions.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.name}
-          </option>
-        ))}
-      </select>{' '}
-      */
       <div className='text-left'>
         <h5 className='mb-2'>Mesh</h5>
       </div>
-      <div className='grid grid-cols-2 gap-4'>
-        {meshOptions.map((option) => (
-          <div key={option.id}>
-            <img
-              src={option.img}
-              className='w-24 h-24 cursor-pointer'
-              onClick={() => handleMeshSelected(option.id)}
-            />
-          </div>
-        ))}
+      <div className='h-5vh overflow-y-scroll'>
+        <div className='grid grid-cols-2 gap-4'>
+          {meshOptions.map((option) => (
+            <div key={option.id}>
+              <img
+                src={option.img}
+                className='w-24 h-24 cursor-pointer'
+                onClick={() => handleMeshSelected(option.id)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div className='text-left'>
         <h5 className='mb-2'>Light</h5>

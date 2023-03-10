@@ -17,8 +17,8 @@ export const AuthProvider = ({ children }) => {
       ? jwt_decode(localStorage.getItem('authTokens'))
       : null
   )
+  console.log(user)
   let [loading, setLoading] = useState(true)
-
   const navigate = useNavigate()
   let loginUser = async (e) => {
     e.preventDefault()
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
     navigate('/login')
   }
   let updateToken = async () => {
-    console.log('update token is getting called.')
+    //console.log('update token is getting called.')
     let response = await fetch('http://127.0.0.1:8000/app/token/refresh/', {
       method: 'POST',
       headers: {
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     if (loading) {
       updateToken()
     }
-    let timeInterval = 1000 * 60 * 4
+    let timeInterval = 1000 * 60 * 30
     let interval = setInterval(() => {
       if (authTokens) {
         updateToken()
