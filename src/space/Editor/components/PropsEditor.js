@@ -150,8 +150,8 @@ export function PropsEditor(props) {
   const Empty = isXR ? <></> : <div style={{ margin: '40px' }} />
   if (selectedItems.length === 0) {
     // bgMode is not called here
-    // return <ScenePropsEditor {...props} />
-    return Empty
+    return <ScenePropsEditor {...props} />
+    // return Empty
   }
   // handling single item selection only
   const selectedItemUUID = selectedItems[0]
@@ -160,6 +160,8 @@ export function PropsEditor(props) {
   if (!(refs[selectedItemUUID] && refs[selectedItemUUID].current)) {
     return Empty
   }
+// changes are made directly to the ref when the properties of mesh are changed so 
+//that you dont have to set state in the updataMaterial function of the EditorClass
   const object = refs[selectedItemUUID].current
 
   return (

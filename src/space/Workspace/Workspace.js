@@ -142,13 +142,12 @@ function Workspace({ roomId, user }) {
     }
     // might not need switch here
     // FIX: 4
-    app.onScenePropsAdded = ({ prop_type, op_type, val }) => {
-        onInsertSceneProps({ prop_type, op_type, val })
+    app.onScenePropsAdded = ({ uuid, val }) => {
+        onInsertSceneProps({ uuid, val })
     }
 
     app.addSceneProps = ({
-        prop_type,
-        op_type,
+        uuid,
         val,
         isFromUndoManager,
         isMyEvent,
@@ -156,31 +155,31 @@ function Workspace({ roomId, user }) {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current
             if (!isMyEvent || isFromUndoManager) {
-                editor.insertSceneProps({ prop_type, op_type, val }, false)
+                editor.insertSceneProps({ uuid, val }, false)
             }
         }
     }
 
-    app.onScenePropsUpdated = ({ prop_type, op_type, val }) => {
-        onUpdate({ prop_type, op_type, val, type: TYPES.SCENE })
+    app.onScenePropsUpdated = ({ uuid, val }) => {
+        onUpdate({ uuid, val, type: TYPES.SCENE })
     }
-    app.updateSceneProps = ({ prop_type, op_type, val, isFromUndoManager, isMyEvent }) => {
+    app.updateSceneProps = ({ uuid, val, isFromUndoManager, isMyEvent }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current
             if (!isMyEvent || isFromUndoManager) {
-                editor.updateSceneProps({ prop_type, op_type, val }, false)
+                editor.updateSceneProps({ uuid, val }, false)
             }
         }
 
     }
-    app.onScenePropsDeleted = ({ prop_type }) => {
-        onDelete({ prop_type, type: TYPES.SCENE })
+    app.onScenePropsDeleted = ({ uuid }) => {
+        onDelete({ uuid, type: TYPES.SCENE })
     }
-    app.deleteSceneProps = ({ prop_type, isFromUndoManager, isMyEvent }) => {
+    app.deleteSceneProps = ({ uuid, isFromUndoManager, isMyEvent }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current
             if (!isMyEvent || isFromUndoManager) {
-                editor.deleteSceneProps({ prop_type }, false)
+                editor.deleteSceneProps({ uuid }, false)
             }
         }
     }
