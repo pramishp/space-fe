@@ -1,49 +1,52 @@
-function Sidebar({ handleModelsClick, handleOptionsClick, handleAnimationsClick }) {
-  return (
-    <div className='flex flex-col items-center w-24 h-screen overflow-hidden text-indigo-300 bg-indigo-900 rounded'>
-      <div className='flex flex-col items-center mt-3 border-t border-gray-700'>
-        <div className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700' onClick={handleModelsClick}>
-          <svg
-            className='w-10 h-10'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              className='fill-current'
-              d='M12.75 13.81v7.44a.75.75 0 1 1-1.5 0v-7.4L9.49 15.6a.75.75 0 1 1-1.06-1.06l2.35-2.36c.68-.68 1.8-.68 2.48 0l2.35 2.36a.75.75 0 1 1-1.06 1.06l-1.8-1.8zM9 18v1.5H6.75v-.01A5.63 5.63 0 0 1 5.01 8.66a6 6 0 0 1 11.94-.4 5.63 5.63 0 0 1 .3 11.23v.01H15V18h1.88a4.12 4.12 0 1 0-1.5-7.97A4.51 4.51 0 0 0 11 4.5a4.5 4.5 0 0 0-4.43 5.29 4.13 4.13 0 0 0 .68 8.2V18H9z'
-            />
-          </svg>
-          <span className='text-base font-semibold leading-6'>Models</span>
+import {useContext} from "react";
+import AuthContext from "../Context/AuthContext";
+
+function Sidebar({handleModelsClick, handleOptionsClick, handleAnimationsClick}) {
+    let {user, logoutUser} = useContext(AuthContext)
+    return (
+        <div className='flex flex-col items-center h-full overflow-hidden text-black justify-between'
+             style={{backgroundColor: '#eaeaea', width:160}}>
+            <div className='flex flex-col items-center mt-3 p-2'>
+                <div
+                    className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white'
+                    onClick={handleModelsClick}>
+                    <div style={{padding: '10px 0'}}>
+                        <i className="fa fa-coffee" style={{fontSize: 30}}></i>
+                    </div>
+                    <span className='text-sm leading-6'>Models</span>
+                </div>
+                <div
+                    className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white'
+                    onClick={handleOptionsClick}>
+                    <div style={{padding: '10px 0'}}>
+                        <i className="fa fa-gear" style={{fontSize: 30}}></i>
+                    </div>
+                    <span className='text-sm leading-6'>Options</span>
+                </div>
+                <div
+                    className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white'
+                    onClick={handleAnimationsClick}>
+                    <div style={{padding: '10px 0'}}>
+                        <i className="fa fa-diamond" style={{fontSize: 30}}></i>
+                    </div>
+                    <span className='text-sm  leading-6'>Animations</span>
+                </div>
+            </div>
+            <div className='flex flex-col items-center mt-3 p-2'>
+                {user ?
+                    <div
+                        className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-red-100 hover:border-red-500 border-transparent border-2'
+                        onClick={logoutUser}>
+                        <div style={{padding: '10px 0'}}>
+                            <i className="fa fa-sign-out text-red-500" style={{fontSize: 20}}></i>
+                        </div>
+                        <span className='text-xs leading-6 text-red-500'>Logout</span>
+                    </div>
+                    : <></>
+                }
+            </div>
         </div>
-        <div className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700' onClick={handleOptionsClick}>
-          <svg
-            className='w-10 h-10'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              className='fill-current'
-              d='M12.75 13.81v7.44a.75.75 0 1 1-1.5 0v-7.4L9.49 15.6a.75.75 0 1 1-1.06-1.06l2.35-2.36c.68-.68 1.8-.68 2.48 0l2.35 2.36a.75.75 0 1 1-1.06 1.06l-1.8-1.8zM9 18v1.5H6.75v-.01A5.63 5.63 0 0 1 5.01 8.66a6 6 0 0 1 11.94-.4 5.63 5.63 0 0 1 .3 11.23v.01H15V18h1.88a4.12 4.12 0 1 0-1.5-7.97A4.51 4.51 0 0 0 11 4.5a4.5 4.5 0 0 0-4.43 5.29 4.13 4.13 0 0 0 .68 8.2V18H9z'
-            />
-          </svg>
-          <span className='text-base font-semibold leading-6'>Options</span>
-        </div>
-        <div className='flex flex-col items-center justify-center w-full h-full mt-3 p-3 rounded-lg hover:bg-indigo-700' onClick={handleAnimationsClick}>
-          <svg
-            className='w-10 h-10'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              className='fill-current'
-              d='M12.75 13.81v7.44a.75.75 0 1 1-1.5 0v-7.4L9.49 15.6a.75.75 0 1 1-1.06-1.06l2.35-2.36c.68-.68 1.8-.68 2.48 0l2.35 2.36a.75.75 0 1 1-1.06 1.06l-1.8-1.8zM9 18v1.5H6.75v-.01A5.63 5.63 0 0 1 5.01 8.66a6 6 0 0 1 11.94-.4 5.63 5.63 0 0 1 .3 11.23v.01H15V18h1.88a4.12 4.12 0 1 0-1.5-7.97A4.51 4.51 0 0 0 11 4.5a4.5 4.5 0 0 0-4.43 5.29 4.13 4.13 0 0 0 .68 8.2V18H9z'
-            />
-          </svg>
-          <span className='text-base font-semibold leading-6'>Animations</span>
-        </div>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default Sidebar

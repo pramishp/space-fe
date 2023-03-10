@@ -45,6 +45,11 @@
   vertical-align: middle;
 }
 
+
+.icon-sm {
+  height: 0.8rem !important;
+  width: 0.8rem !important;
+}
 .icon-large {
   height: 2em;
   width: 2em;

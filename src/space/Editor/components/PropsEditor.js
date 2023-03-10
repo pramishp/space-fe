@@ -49,14 +49,16 @@ function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
     }
 
     return (
-        <div>
-            <h6 class='text-lg font-medium mb-4 justify-start'>{item.name}</h6>
-            <div class='justify-between mb-4'>
-                <label for='timeScale' class='text-gray-700 justify-start'>
+        <div className={"relative"}>
+            <h6 class='text-lg font-medium justify-start py-2 text-left'>{item.name}</h6>
+            <hr/>
+            <br/>
+            <div class='flex gap-2 items-center justify-between'>
+                <label for='timeScale' class='text-gray-700 justify-start text-left'>
                     TimeScale
                 </label>
                 <div className="flex">
-                    <div className='relative flex items-center'>
+                    <div className='relative flex'>
                         <input
                             type='range'
                             id='timescale'
@@ -74,15 +76,18 @@ function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
                             }}
                         />
                     </div>
-                    <button
-                        className=''
-                        style={{height: 55, width: 55, borderRadius: 55}}
-                        onClick={() => {
-                            onDelete(item)
-                        }}
-                    >
-                        <i className="fa fa-close"></i>
-                    </button>
+                    <div className="absolute top-1 right-1">
+                        <button
+                            className=''
+                            style={{height: 55, width: 55, borderRadius: 55}}
+                            onClick={() => {
+                                onDelete(item)
+                            }}
+                        >
+                            <i className="fa fa-close"></i>
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
@@ -114,7 +119,7 @@ export function AnimationEditor({
     }
     // the animations on a object if the previous two condition are met then render the right sidebar.
     // console.log('something has been selected along with some animation.')
-    const heading = isXR ? <Heading6>Animations:</Heading6> : <h6>Animations:</h6>
+    const heading = isXR ? <Heading6>Animations</Heading6> : <h1 style={{fontSize:18, fontWeight:'bold'}}>Animations</h1>
     if (isXR) {
         return (
             <VRUIContainer position={[1, 4, 0]}>
@@ -135,44 +140,50 @@ export function AnimationEditor({
     }
     return (
         <div className='flex flex-col'>
-            {heading}
-            {animationList.map((item) => {
-                return (
-                    <div className='shadow-lg rounded-lg p-6'
-                         style={{backgroundColor: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(4px)'}}>
-                        <AnimationEditItem
-                            isXR={isXR}
-                            item={item}
-                            onDelete={() => onAnimationDelete({uuid: item.uuid})}
-                            updateAnimation={updateAnimation}
-                        />
-                        <br/>
-                    </div>
-                )
-            })}
+            <div style={{backgroundColor:'#eaeaea', borderRadius:10, padding:'8px 16px'}}>
+                {heading}
+            </div>
+            <br/>
+
+            <div className='shadow-lg rounded-lg py-2 px-4'
+                 style={{backgroundColor: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(4px)'}}>
+                {animationList.map((item) => {
+                    return (
+                        <div>
+                            <AnimationEditItem
+                                isXR={isXR}
+                                item={item}
+                                onDelete={() => onAnimationDelete({uuid: item.uuid})}
+                                updateAnimation={updateAnimation}
+                            />
+                            <br/>
+                        </div>
+                    )
+                })}
+            </div>
         </div>
     )
 }
 
 export function PropsEditor(props) {
-  const { isXR, selectedItems, refs } = props
-  // console.log('isXR', isXR)
-  const Empty = isXR ? <></> : <div style={{ margin: '40px' }} />
-  if (selectedItems.length === 0) {
-    // bgMode is not called here
-    return <ScenePropsEditor {...props} />
-    // return Empty
-  }
-  // handling single item selection only
-  const selectedItemUUID = selectedItems[0]
-  // in case the ref.current is null , return null
+    const {isXR, selectedItems, refs} = props
+    // console.log('isXR', isXR)
+    const Empty = isXR ? <></> : <div style={{margin: '40px'}}/>
+    if (selectedItems.length === 0) {
+        // bgMode is not called here
+        return <ScenePropsEditor {...props} />
+        // return Empty
+    }
+    // handling single item selection only
+    const selectedItemUUID = selectedItems[0]
+    // in case the ref.current is null , return null
 
-  if (!(refs[selectedItemUUID] && refs[selectedItemUUID].current)) {
-    return Empty
-  }
+    if (!(refs[selectedItemUUID] && refs[selectedItemUUID].current)) {
+        return Empty
+    }
 // changes are made directly to the ref when the properties of mesh are changed so 
 //that you dont have to set state in the updataMaterial function of the EditorClass
-  const object = refs[selectedItemUUID].current
+    const object = refs[selectedItemUUID].current
 
     return (
         <>

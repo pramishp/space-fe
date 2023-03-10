@@ -924,7 +924,7 @@ export default class Editor extends React.Component {
         {/*//TODO: if XR support, then only show*/}
         {XRSupported && <VRButton />}
 
-        <div style={{ height: window.innerHeight, width: '80%' }}>
+        <div style={{ height: window.innerHeight, width: '100%'}}>
           <div>
             <div
               style={{
@@ -1105,15 +1105,17 @@ export default class Editor extends React.Component {
             </XR>
           </Canvas>
         </div>
-        <AnimationEditor
-          animations={animations}
-          selectedItems={selectedItems}
-          onAnimationDelete={this.onDeleteAnimationClicked}
-          updateAnimation={this.updateAnimation}
-          isXR={false}
-          setAnimationSidebar={this.setAnimationSidebar.bind(this)}
-          animationSidebar={animationSidebar}
-        />
+        <div style={{position:'absolute', right:10, top:80}}>
+            <AnimationEditor
+              animations={animations}
+              selectedItems={selectedItems}
+              onAnimationDelete={this.onDeleteAnimationClicked}
+              updateAnimation={this.updateAnimation}
+              isXR={false}
+              setAnimationSidebar={this.setAnimationSidebar.bind(this)}
+              animationSidebar={animationSidebar}
+            />
+        </div>
       </div>
     )
   }
