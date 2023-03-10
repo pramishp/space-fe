@@ -22,8 +22,8 @@ import {
 } from './constants'
 
 import MenuBar from './components/MenuBar'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, VRButton, Controllers } from '@react-three/xr'
+import {Canvas, useFrame} from '@react-three/fiber'
+import {XR, VRButton, Controllers} from '@react-three/xr'
 import {
   gltf2JSX,
   sampleJson,
@@ -36,11 +36,11 @@ import {
   GizmoHelper,
   GizmoViewport,
 } from '@react-three/drei'
-import { Selection } from './Selection'
+import {Selection} from './Selection'
 import Controls from './Controls'
 import Ground from './components/Ground'
 
-import { loadGltf, loadGltfFromUrl } from '../../common/loaders/FileLoaders'
+import {loadGltf, loadGltfFromUrl} from '../../common/loaders/FileLoaders'
 import {
   ANIMATION_TRIGGERS,
   ANIMATION_LIFE_TYPES,
@@ -48,26 +48,26 @@ import {
 } from '../../common/consts'
 
 import Helpers from './Helpers'
-import { PropsEditor, AnimationEditor } from './components/PropsEditor'
+import {PropsEditor, AnimationEditor} from './components/PropsEditor'
 import AnimationPreview from './components/AnimationEditor/AnimationPreview'
 import AnimationMenu from './components/AnimationEditor/AnimationMenu'
-import { AnimationTree } from './components/AnimationEditor/AnimationSequenceEditor'
+import {AnimationTree} from './components/AnimationEditor/AnimationSequenceEditor'
 import DisplayUsers from './components/DisplayUsers'
 
-import { generateUniqueId } from '../../utils'
+import {generateUniqueId} from '../../utils'
 
 import MeshMenuBar from './components/VRMenuBar/MeshMenuBar'
 import LightMenuBar from './components/VRMenuBar/LightMenuBar'
 
 import VRItem from './components/VRItem'
-import { Quaternion, Scene, ShaderMaterial } from 'three'
+import {Quaternion, Scene, ShaderMaterial} from 'three'
 import SideMenu from './SideMenu'
 
 import Menu from '../Workspace/Menu'
-import { Stars } from '@react-three/drei'
-import { valuesIn } from 'lodash'
-import { XRButtonStatus } from '@react-three/xr/dist/XR'
-import { ThreeSixty } from '@mui/icons-material'
+import {Stars} from '@react-three/drei'
+import {valuesIn} from 'lodash'
+import {XRButtonStatus} from '@react-three/xr/dist/XR'
+import {ThreeSixty} from '@mui/icons-material'
 
 export default class Editor extends React.Component {
   constructor(props) {
@@ -322,7 +322,6 @@ export default class Editor extends React.Component {
           refScenePropsGraph: { ...prevState.refScenePropsGraph, ...localRefs },
         }))
 
-
     this.notifyApp(
       { type: EDITOR_OPS.ADD_SCENE_PROPS, data: {uuid, val } },
       notify
@@ -357,6 +356,7 @@ export default class Editor extends React.Component {
             }
           })
 
+
           Object.entries(this.clickCallbacks).forEach(([id, callback]) => {
             props[id] = (e) => callback(e, uuid)
           })
@@ -371,7 +371,6 @@ export default class Editor extends React.Component {
         function onError(e) {
           console.error('Error occured while loading gltf: ', e)
         }
-
         loadGltfFromUrl(url, onLoad.bind(this), onError)
         break
       default:

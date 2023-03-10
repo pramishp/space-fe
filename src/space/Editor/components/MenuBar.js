@@ -7,6 +7,8 @@ import { Box, Text } from '@react-three/drei'
 import { Button } from './VRUIs/Button'
 import VRUIContainer from './VRUIs/VRUIContainer'
 import { Heading6 } from './VRUIs/Headings'
+import Icon from "../../../common/components/Icon";
+
 
 function VRMenuItem({ menuItem, handleButtonSelect, isXR }) {
   //onCli(ck, onHover, title, isXR
@@ -27,26 +29,27 @@ function MenuBar({
   onScenePropsSelected,
 }) {
   const meshOptions = [
-    { name: 'Sphere', id: 'sphere', img: sphereImage },
-    { name: 'Box', id: 'box', img: cubeImage },
-    { name: 'Cylinder', id: 'cylinder', img: sphereImage },
-    { name: 'Plane', id: 'plane', img: sphereImage },
-    { name: 'Ellipse', id: 'ellipse', img: sphereImage },
-    { name: 'Line', id: 'line', img: sphereImage },
+    { name: 'Sphere', id: 'sphere', img: 'menu/mesh/sphere' },
+    { name: 'Box', id: 'box', img: 'menu/mesh/box' },
+    { name: 'Cylinder', id: 'cylinder', img: 'menu/mesh/cylinder' },
+    { name: 'Plane', id: 'plane', img: 'menu/mesh/plane' },
+    { name: 'Ellipse', id: 'ellipse', img: 'menu/line/ellipse' },
+    { name: 'Line', id: 'line', img: 'menu/line/line' },
   ]
 
   const lightOptions = [
-    { name: 'Ambient', id: 'ambient', img: '' },
-    { name: 'Directional', id: 'directional', img: '' },
-    { name: 'Point', id: 'point', img: '' },
+    // { name: 'Ambient', id: 'ambient', img:''},
+    { name: 'Directional', id: 'directional', img: 'menu/lights/directional' },
+    { name: 'Point', id: 'point', img: 'menu/lights/point' },
   ]
   const groupOptions = [{ name: 'Group', id: 'group', img: '' }]
 
   const backgroundOptions = [
-    { name: 'Stars', id: 'stars', img: '' },
-    { name: 'Sky', id: 'sky', img: '' },
-    { name: 'Color', id: 'color', img: '' },
-    { name: 'Environment', id: 'environment', img: '' },
+
+    { name: 'Stars', id: 'stars' , img:'menu/background/stars'},
+    { name: 'Sky', id: 'sky', img: 'menu/background/sky' },
+    // { name: 'Color', id: 'color', img:'' },
+    // { name: 'Environment', id: 'environment', img:'' },
   ]
 
   const handleMeshSelected = (id) => {
@@ -118,16 +121,16 @@ function MenuBar({
       </div>
       <div className='h-5vh overflow-y-scroll'>
         <div className='grid grid-cols-2 gap-4'>
-          {meshOptions.map((option) => (
-            <div key={option.id}>
-              <img
-                src={option.img}
-                className='w-24 h-24 cursor-pointer'
-                onClick={() => handleMeshSelected(option.id)}
+        {meshOptions.map((option) => (
+          <div key={option.id}>
+              <Icon
+                  name={option.img}
+                  className='w-24 h-24 cursor-pointer'
+                  onClick={() => handleMeshSelected(option.id)}
               />
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
       </div>
       <div className='text-left'>
         <h5 className='mb-2'>Light</h5>
@@ -135,11 +138,11 @@ function MenuBar({
       <div className='grid grid-cols-2 gap-4'>
         {lightOptions.map((option) => (
           <div key={option.id}>
-            <img
-              src={option.img}
-              className='w-24 h-24 cursor-pointer'
-              onClick={() => handleLightSelected(option.id)}
-            />
+              <Icon
+                  name={option.img}
+                  className='w-24 h-24 cursor-pointer'
+                  onClick={() => handleLightSelected(option.id)}
+              />
           </div>
         ))}
       </div>
@@ -149,8 +152,8 @@ function MenuBar({
       <div className='grid grid-cols-2 gap-4'>
         {backgroundOptions.map((option) => (
           <div key={option.id}>
-            <img
-              src={option.img}
+            <Icon
+              name={option.img}
               className='w-24 h-24 cursor-pointer'
               onClick={() => handleBackgroundSelected(option.id)}
             />
