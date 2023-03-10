@@ -11,19 +11,26 @@ import VRUIContainer from "../VRUIs/VRUIContainer";
 import Icon from "../../../../common/components/Icon";
 
 
-export default function AnimationMenu({isXR, onClick, enterAnimationMode, onHoverOnAnimation, onSelectOnAnimation, onUnhoverOnAnimation}) {
+export default function AnimationMenu({
+                                          isXR,
+                                          onClick,
+                                          enterAnimationMode,
+                                          onHoverOnAnimation,
+                                          onSelectOnAnimation,
+                                          onUnhoverOnAnimation
+                                      }) {
 
     // the mesh to be selected is handled in the editor class.
     const onItemClicked = ({uuid, val}) => {
         onSelectOnAnimation({uuid, val})
-        switch (val.type){
+        switch (val.type) {
             case ANIMATION_TYPES.KEYFRAME:
                 if (onClick) {
                     onClick({uuid, val});
                 }
                 break
             case ANIMATION_TYPES.PATH:
-                if(enterAnimationMode){
+                if (enterAnimationMode) {
                     enterAnimationMode()
                 }
                 break
@@ -44,16 +51,15 @@ export default function AnimationMenu({isXR, onClick, enterAnimationMode, onHove
         onUnhoverOnAnimation()
     }
 
-    
 
     if (isXR) {
         return (
             <VRUIContainer position={[-4, 1, 1]} title={"Animations"}>
                 {Object.entries(animations).map(([uuid, item]) => {
                     return (
-                            <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
-                                    onHover={() => onItemHovered({uuid, val: item})}
-                                    title={item.name}/>
+                        <Button key={`button-${uuid}`} isXR={isXR} onClick={() => onItemClicked({uuid, val: item})}
+                                onHover={() => onItemHovered({uuid, val: item})}
+                                title={item.name}/>
 
                     )
                 })}
@@ -62,24 +68,26 @@ export default function AnimationMenu({isXR, onClick, enterAnimationMode, onHove
     } else {
         // conditionally call on the onMouseEnter?
         return (
-            <div className="grid grid-cols-2 gap-4">
-            {/* loop through each animation object */}
-            {Object.values(animations).map((animation) => (
-              <div key={animation.uuid}>
-                <Icon
-                  name={animation.img}
-                  alt={animation.name}
-                  className="w-24 h-24 cursor-pointer"
-                  onClick={() => onItemClicked({uuid: animation.uuid, val: {...animation}})}
-                  onMouseEnter={() => onItemHovered({uuid: animation.uuid, val: {...animation}})}
-                  onMouseLeave={() => onItemUnhovered()}
-                />
-                <div className="text-center font-bold">{animation.name}</div>
-              </div>
-            ))}
-          </div>           
-        ) 
+            <div className="flex flex-col gap-3">
+                <br/>
+                {/* loop through each animation object */}
+                {Object.values(animations).map((animation) => (
+                    <div key={animation.uuid}
+                         className={"flex items-center cursor-pointer rounded-full px-3 py-2 gap-2 hover:bg-blue-500 hover:text-white"}>
+                        <Icon
+                            name={animation.img}
+                            alt={animation.name}
+                            className="w-12 h-12 cursor-pointer icon-sm"
+                            onClick={() => onItemClicked({uuid: animation.uuid, val: {...animation}})}
+                            onMouseEnter={() => onItemHovered({uuid: animation.uuid, val: {...animation}})}
+                            onMouseLeave={() => onItemUnhovered()}
+                        />
+                        <div className="text-sm">{animation.name}</div>
+                    </div>
+                ))}
+            </div>
+        )
     }
-    
+
 
 }

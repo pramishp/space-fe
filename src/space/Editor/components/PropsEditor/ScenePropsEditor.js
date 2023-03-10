@@ -8,10 +8,10 @@ import React from 'react'
 // import the scene Props ref then extract the props from there, from the extracted values determine the previous versions of the val and update accordingly.
 //    (e) => {event.target.value}
 export default function ScenePropsEditor({
-    scenePropsRefGraph,
-    onChangeScenePropsSelected,
-    onAddScenePropsSelected
-}) {
+                                             scenePropsRefGraph,
+                                             onChangeScenePropsSelected,
+                                             onAddScenePropsSelected
+                                         }) {
     // based on the scenePropsRefGraph we can determine whether we are to update or add the ref properties.
     // console.log(scenePropsRefGraph)
     // console.log(scenePropsRefGraph['background'])
@@ -45,7 +45,7 @@ export default function ScenePropsEditor({
             const id = {}
             id.uuid = 'background'
             id.val = val
-           onAddScenePropsSelected(id)
+            onAddScenePropsSelected(id)
         }
 
 
@@ -55,7 +55,7 @@ export default function ScenePropsEditor({
         const val = {}
         val.op_type = 'light'
         val.val = {...lightProps}
-        onChangeScenePropsSelected({uuid: 'light', val: val })
+        onChangeScenePropsSelected({uuid: 'light', val: val})
     }
     const handleLightIntensityChange = (e) => {
         lightProps['val']['intensity'] = e.target.value
@@ -72,10 +72,10 @@ export default function ScenePropsEditor({
         lmax = 10
 
     return (
-        <div className='flex items-center h-12 bg-gray-100 border-b border-gray-300 px-4'>
-            <div className='ml-4'>
+        <div className='flex items-center gap-3 bg-gray-100 border-b border-gray-300 px-4'>
+            <div className='ml-4 rounded my-2 px-4  py-2 flex items-center hover:bg-blue-100 hover:border-blue-500 border-2'>
                 <label htmlFor='color' className='font-medium'>
-                    Background Color:
+                    Background Color
                 </label>
                 <input
                     type='color'
@@ -85,42 +85,45 @@ export default function ScenePropsEditor({
                     className='ml-2 w-8 h-8 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500'
                 />
             </div>
-            <div className='ml-4'>
+            <div className='ml-4 rounded my-2 px-4  py-2 flex items-center hover:bg-blue-100 hover:border-blue-500 border-2'>
                 <label htmlFor='color' className='font-medium'>
-                    Light Color:
+                    Light Color
                 </label>
+                <div className="w-2"></div>
                 <input
                     type='color'
                     id='color'
                     value={lgColor}
                     onChange={handleLightColorChange}
-                    className='ml-2 w-8 h-8 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='ml-2 w-8 h-8 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden'
                 />
             </div>
-            <label
-                htmlFor='widthSegments'
-                className='text-sm uppercase text-gray-600'
-            >
-                Light Intensity:
-            </label>
-            <div className='relative flex items-center'>
-                <input
-                    type='range'
-                    id='widthSegments'
-                    min={lmin}
-                    max={lmax}
-                    step='1'
-                    value={lightIntensity}
-                    onChange={handleLightIntensityChange}
-                    className='w-48 h-4 appearance-none bg-gray-300 rounded-full focus:outline-none focus:ring-2'
-                    style={{
-                        background: `linear-gradient(to right, #7F00FF 0%, #7F00FF
+            <div className='ml-4 rounded my-2 px-4  py-2 flex items-center hover:bg-blue-100 hover:border-blue-500 border-2'>
+                <label
+                    htmlFor='widthSegments'
+                    className='text-sm uppercase text-gray-600'
+                >
+                    Light Intensity
+                </label>
+                <div>
+                    <input
+                        type='range'
+                        id='widthSegments'
+                        min={lmin}
+                        max={lmax}
+                        step='1'
+                        value={lightIntensity}
+                        onChange={handleLightIntensityChange}
+                        className='w-48 h-4 appearance-none bg-gray-300 rounded-full focus:outline-none focus:ring-2'
+                        style={{
+                            background: `linear-gradient(to right, #7F00FF 0%, #7F00FF
             ${((lightIntensity - 1) / (lmax - lmin)) * 100}%,
             #D5D5D5 ${((lightIntensity - 1) / (lmax - lmin)) * 100}%,
             #D5D5D5 100%)`,
-                    }}
-                />
-                {/*<output className='ml-2 text-gray-600'>{widthSegments}</output>*/}
+                        }}
+                    />
+                    {/*<output className='ml-2 text-gray-600'>{widthSegments}</output>*/}
+                </div>
             </div>
         </div>
     )

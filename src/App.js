@@ -23,7 +23,7 @@ export const Navigator = () => {
     <div className='App'>
       <Router>
         <AuthProvider>
-          <Navbar />
+          {/*<Navbar />*/}
           <Routes>
             <Route path='/' element={<App />} />
             <Route path='/register' element={<Register />} />

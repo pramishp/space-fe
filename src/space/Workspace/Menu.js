@@ -35,23 +35,23 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
     }
 
     return (
-        <div className='flex flex-row'>
+        <div className='flex flex-row h-full'>
             <Sidebar
                 handleModelsClick={handleModelsClick}
                 handleOptionsClick={handleOptionsClick}
                 handleAnimationsClick={handleAnimationsClick}
             />
             {modelView && (
-                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200' style={{position:'absolute', left:98, top:0, backdropFilter:'blur(10px)', zIndex:100}}>
+                <div className='flex flex-col items-center backdrop-blur-xl backdrop-filter  w-96 h-full overflow-auto' style={{position:'absolute', left:160, top:0, backdropFilter:'blur(4px)', zIndex:100, backgroundColor:'rgba(255,255,255,0.4)'}}>
                     <div className='w-5/6 max-w-lg'>
-                        <SearchModel onModelUpload={handleModelUpload} />
                         <FileUpload onModelUpload={handleModelUpload} />
+                        <SearchModel onModelUpload={handleModelUpload} />
                     </div>
                 </div>
             )}
             {optionsView &&
-                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200' style={{position:'absolute', left:98, top:0, backdropFilter:'blur(10px)', zIndex:100}}>
-                    <div className='w-5/6 max-w-lg'>
+                <div className='flex flex-col items-center backdrop-blur-xl backdrop-filter  w-1/5 h-full overflow-auto' style={{position:'absolute', left:160, top:0, backdropFilter:'blur(4px)', zIndex:100, backgroundColor:'rgba(255,255,255,0.4)'}}>
+                    <div className='w-full'>
                     <MenuBar onLightSelected={onLightSelected}
                                  onMeshSelected={onMeshSelected}
                                  onGroupSelected={onGroupSelected}
@@ -62,8 +62,8 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
                 </div>
             }
             {animationsView &&
-                <div className='flex flex-col items-center  w-1/5 min-h-screen bg-indigo-200' style={{position:'absolute', left:98, top:0, backdropFilter:'blur(10px)', zIndex:100}}>
-                    <div className='w-5/6 max-w-lg'>
+                <div className='flex flex-col items-center backdrop-blur-xl backdrop-filter  w-36 h-full overflow-auto' style={{position:'absolute', left:160, top:0, backdropFilter:'blur(4px)', zIndex:100, backgroundColor:'rgba(255,255,255,0.4)'}}>
+                    <div className='w-full p-2'>
                         <AnimationMenu isXR={isXR}
                             selectedItems={selectedItems}
                         enterAnimationMode={enterAnimationMode}
@@ -75,6 +75,8 @@ function Menu({ onModelUpload, onLightSelected, onMeshSelected, onGroupSelected,
                     </div>
                 </div>
             }
+            <div>
+            </div>
         </div>
     )
 }
