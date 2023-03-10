@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.icon {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+  vertical-align: middle;
+}
+
+.icon-large {
+  height: 2em;
+  width: 2em;
+}

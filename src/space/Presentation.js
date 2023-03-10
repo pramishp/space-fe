@@ -12,10 +12,10 @@ import {ARButton, VRButton, XR} from "@react-three/xr";
 import {PRESENTATION_TYPES} from "./PresentationWrapper";
 
 
-function getGltfJsx({objects}){
+function getGltfJsx({objects}) {
     const jsxs = {}
     const refs = {}
-    Object.entries(objects).forEach(([uuid, val])=>{
+    Object.entries(objects).forEach(([uuid, val]) => {
         if (val.isFile) {
             const ref = React.createRef();
             const {uuid} = val;
@@ -31,7 +31,7 @@ function getGltfJsx({objects}){
 
 }
 
-function UpdateMixers({seq}){
+function UpdateMixers({seq}) {
     useFrame((state, delta) => {
 
         if (seq.mixers) {
@@ -45,7 +45,7 @@ function UpdateMixers({seq}){
 }
 
 function Presentation({data, type}) {
-    const {scene:sceneProps} = data;
+    const {scene: sceneProps} = data;
     const {jsxs: gltfJsxs, refs: gltfRefs} = getGltfJsx(data);
 
     const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({prop_type: 'background', ...sceneProps.background})
@@ -64,9 +64,9 @@ function Presentation({data, type}) {
         animations: data.animations
     }, onAnimationEnd);
 
-    function onAnimationEnd(e, index, subIndex){
+    function onAnimationEnd(e, index, subIndex) {
         if (index < seq.length - 1) {
-            if (seq.getNextActionTrigger() === ANIMATION_TRIGGERS.ON_ANIMATION_END){
+            if (seq.getNextActionTrigger() === ANIMATION_TRIGGERS.ON_ANIMATION_END) {
                 seq.playAnimations(index + 1)
             }
             //TODO: on slide change
@@ -74,17 +74,17 @@ function Presentation({data, type}) {
     }
 
     useEffect(() => {
-        if (play){
+        if (play) {
             if (!seq.initialized) {
                 seq.init(refGraph);
-                if (seq.length > 0){
+                if (seq.length > 0) {
                     seq.playAnimations(0);
                 }
             }
         }
         return () => {
             // remove all event listeners
-            if (seq.mixers){
+            if (seq.mixers) {
                 Object.entries(seq.mixers).forEach(([uuid, val]) => {
                     val.removeEventListener('finished', seq.listeners[uuid])
                 })
@@ -95,11 +95,11 @@ function Presentation({data, type}) {
     }, [data, play])
 
 
-    function handleKeyDown(event){
+    function handleKeyDown(event) {
         if (event.key === "ArrowLeft") {
             //TODO: handle back pressed
         } else if (event.key === "ArrowRight") {
-            if (seq.getNextActionTrigger() === ANIMATION_TRIGGERS.ON_KEY_PRESSED){
+            if (seq.getNextActionTrigger() === ANIMATION_TRIGGERS.ON_KEY_PRESSED) {
                 seq.playNextAnimations()
             }
         }
@@ -113,7 +113,7 @@ function Presentation({data, type}) {
     }, []);
 
 
-    const playAnimations = ()=>{
+    const playAnimations = () => {
 
         setPlay(true);
 
@@ -128,7 +128,7 @@ function Presentation({data, type}) {
                     </>
                 )
             })}
-            {gltfJsxs && Object.entries(gltfJsxs).map(([uuid, val])=>val)}
+            {gltfJsxs && Object.entries(gltfJsxs).map(([uuid, val]) => val)}
             {
                 sceneJsxs && Object.entries(sceneJsxs).map(([uuid, val]) => {
                     return (
@@ -143,9 +143,12 @@ function Presentation({data, type}) {
 
     const OrbitControls = <Controls makeDefault/>
     const app = <div style={{height: window.innerHeight}}>
-        <button style={{alignSelf: "right"}} onClick={playAnimations}>Play</button>
-        {type === PRESENTATION_TYPES.VR? <VRButton/>: null}
-        {type === PRESENTATION_TYPES.AR? <ARButton/>: null}
+        <div className="action-buttons" style={{ position:'absolute', zIndex:200, bottom:20, display:'flex', alignItems:'center', justifyContent:'center', width:'100%'}}>
+            <button style={{alignSelf: "right"}} onClick={playAnimations}><i className="fa fa-play"></i></button>
+        </div>
+
+        {type === PRESENTATION_TYPES.VR ? <VRButton/> : null}
+        {type === PRESENTATION_TYPES.AR ? <ARButton/> : null}
         <Canvas>
             <XR referenceSpace="local-floor">
                 {MainPresentation}

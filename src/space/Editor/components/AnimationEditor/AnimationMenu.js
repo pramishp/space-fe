@@ -8,6 +8,7 @@ import * as THREE from "three";
 import {useEffect} from "react";
 import {ANIMATION_TYPES} from "../../constants";
 import VRUIContainer from "../VRUIs/VRUIContainer";
+import Icon from "../../../../common/components/Icon";
 
 
 export default function AnimationMenu({isXR, onClick, enterAnimationMode, onHoverOnAnimation, onSelectOnAnimation, onUnhoverOnAnimation}) {
@@ -65,8 +66,8 @@ export default function AnimationMenu({isXR, onClick, enterAnimationMode, onHove
             {/* loop through each animation object */}
             {Object.values(animations).map((animation) => (
               <div key={animation.uuid}>
-                <img
-                  src={animation.img}
+                <Icon
+                  name={animation.img}
                   alt={animation.name}
                   className="w-24 h-24 cursor-pointer"
                   onClick={() => onItemClicked({uuid: animation.uuid, val: {...animation}})}

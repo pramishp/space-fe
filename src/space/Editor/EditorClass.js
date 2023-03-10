@@ -22,8 +22,8 @@ import {
 } from './constants'
 
 import MenuBar from './components/MenuBar'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { XR, VRButton, Controllers } from '@react-three/xr'
+import {Canvas, useFrame} from '@react-three/fiber'
+import {XR, VRButton, Controllers} from '@react-three/xr'
 import {
     gltf2JSX,
     sampleJson,
@@ -36,11 +36,11 @@ import {
     GizmoHelper,
     GizmoViewport,
 } from '@react-three/drei'
-import { Selection } from './Selection'
+import {Selection} from './Selection'
 import Controls from './Controls'
 import Ground from './components/Ground'
 
-import { loadGltf, loadGltfFromUrl } from '../../common/loaders/FileLoaders'
+import {loadGltf, loadGltfFromUrl} from '../../common/loaders/FileLoaders'
 import {
     ANIMATION_TRIGGERS,
     ANIMATION_LIFE_TYPES,
@@ -48,26 +48,26 @@ import {
 } from '../../common/consts'
 
 import Helpers from './Helpers'
-import { PropsEditor, AnimationEditor } from './components/PropsEditor'
+import {PropsEditor, AnimationEditor} from './components/PropsEditor'
 import AnimationPreview from './components/AnimationEditor/AnimationPreview'
 import AnimationMenu from './components/AnimationEditor/AnimationMenu'
-import { AnimationTree } from './components/AnimationEditor/AnimationSequenceEditor'
+import {AnimationTree} from './components/AnimationEditor/AnimationSequenceEditor'
 import DisplayUsers from './components/DisplayUsers'
 
-import { generateUniqueId } from '../../utils'
+import {generateUniqueId} from '../../utils'
 
 import MeshMenuBar from './components/VRMenuBar/MeshMenuBar'
 import LightMenuBar from './components/VRMenuBar/LightMenuBar'
 
 import VRItem from './components/VRItem'
-import { Quaternion, Scene, ShaderMaterial } from 'three'
+import {Quaternion, Scene, ShaderMaterial} from 'three'
 import SideMenu from './SideMenu'
 
 import Menu from '../Workspace/Menu'
-import { Stars } from '@react-three/drei'
-import { valuesIn } from 'lodash'
-import { XRButtonStatus } from '@react-three/xr/dist/XR'
-import { ThreeSixty } from '@mui/icons-material'
+import {Stars} from '@react-three/drei'
+import {valuesIn} from 'lodash'
+import {XRButtonStatus} from '@react-three/xr/dist/XR'
+import {ThreeSixty} from '@mui/icons-material'
 
 export default class Editor extends React.Component {
     constructor(props) {
@@ -83,7 +83,7 @@ export default class Editor extends React.Component {
             onContextMenu: this.onMeshContextMenu,
         }
         this.jsxData = toJSX(props.initData, this.clickCallbacks)
-        this.backgroundData = { jsxs: {}, refs: {} }
+        this.backgroundData = {jsxs: {}, refs: {}}
         /*
          * editorModes
          * 0: edit
@@ -115,20 +115,20 @@ export default class Editor extends React.Component {
     }
 
     loadInitialObjectFiles = (props) => {
-        const { initData } = props
+        const {initData} = props
         if (!initData.objects) {
             return
         }
         Object.values(initData.objects).forEach((item) => {
             if (item.isFile) {
-                const { uuid } = item
-                this.insertMeshFile({ uuid, val: item }, false)
+                const {uuid} = item
+                this.insertMeshFile({uuid, val: item}, false)
             }
         })
     }
 
     rerender = () => {
-        this.setState((state) => ({ rerender: !state.rerender }))
+        this.setState((state) => ({rerender: !state.rerender}))
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -182,7 +182,7 @@ export default class Editor extends React.Component {
         }
 
         //dispose primitive objects
-        const { graph, refGraph } = this.state
+        const {graph, refGraph} = this.state
         Object.entries(graph).forEach(([uuid, val]) => {
             if (val.type === 'primitive') {
                 const uuid = val.props.object.uuid
@@ -197,7 +197,7 @@ export default class Editor extends React.Component {
 
     // set jsx and refs as states variables
     onMeshClickCallback = (e, uuid) => {
-        this.onSelect({ uuid, object: e.object })
+        this.onSelect({uuid, object: e.object})
     }
 
     onMeshDoubleClick = (e, uuid) => {
@@ -205,9 +205,9 @@ export default class Editor extends React.Component {
     }
 
     onMeshContextMenu = (e) => {
-        const { transformMode } = this.state
+        const {transformMode} = this.state
         const newMode = (transformMode + 1) % this.transformModes.length
-        this.setState({ transformMode: newMode })
+        this.setState({transformMode: newMode})
     }
 
     // event handler when click is not over any meshes
@@ -216,9 +216,9 @@ export default class Editor extends React.Component {
     }
 
     // editor operational methods
-    notifyApp = ({ type, data }, notify = true) => {
-        const { app } = this.props
-        const { val, uuid, key, op_type, prop_type, extra } = data
+    notifyApp = ({type, data}, notify = true) => {
+        const {app} = this.props
+        const {val, uuid, key, op_type, prop_type, extra} = data
 
         if (!app) {
             console.error('app is undefined/null ', app)
@@ -231,46 +231,46 @@ export default class Editor extends React.Component {
 
         switch (type) {
             case EDITOR_OPS.INSERT_OBJECT:
-                app.onMeshInserted({ uuid, val })
+                app.onMeshInserted({uuid, val})
                 break
 
             case EDITOR_OPS.INSERT_OBJECT_FILE:
-                app.onMeshFileInserted({ uuid, val: data })
+                app.onMeshFileInserted({uuid, val: data})
                 break
 
             case EDITOR_OPS.DELETE_MESH:
-                app.onDeleteMesh({ uuid })
+                app.onDeleteMesh({uuid})
                 break
 
             case EDITOR_OPS.UPDATE_MESH:
-                app.onUpdateObject({ uuid, key, val })
+                app.onUpdateObject({uuid, key, val})
                 break
 
             case EDITOR_OPS.UPDATE_MATERIAL:
-                app.onUpdateMaterial({ uuid, key, val })
+                app.onUpdateMaterial({uuid, key, val})
                 break
 
             case EDITOR_OPS.ADD_ANIMATION:
-                app.onAddAnimation({ uuid, val })
+                app.onAddAnimation({uuid, val})
                 break
 
             case EDITOR_OPS.DELETE_ANIMATION:
-                app.onDeleteAnimation({ uuid })
+                app.onDeleteAnimation({uuid})
                 break
 
             case EDITOR_OPS.UPDATE_ANIMATION:
-                app.onUpdateAnimation({ uuid, key, val })
+                app.onUpdateAnimation({uuid, key, val})
                 break
 
             case EDITOR_OPS.ADD_SCENE_PROPS:
                 // FIX: 3
-                app.onScenePropsAdded({ prop_type, op_type, val })
+                app.onScenePropsAdded({prop_type, op_type, val})
                 break
             case EDITOR_OPS.UPDATE_SCENE_PROPS:
-                app.onScenePropsUpdated({ prop_type, op_type, val })
+                app.onScenePropsUpdated({prop_type, op_type, val})
                 break
             case EDITOR_OPS.DELETE_SCENE_PROPS:
-                app.onScenePropsDeleted({ prop_type })
+                app.onScenePropsDeleted({prop_type})
                 break
             // console.log('editor operations add background')
             //app.onScenePropsChanged({ op_type })
@@ -282,13 +282,13 @@ export default class Editor extends React.Component {
 
     // insertMesh in the editor
 
-    insertMesh = ({ uuid, val }, notify = true) => {
-        const { jsxs: localJsxs, refs: localRefs } = toJSX(val, this.clickCallbacks)
+    insertMesh = ({uuid, val}, notify = true) => {
+        const {jsxs: localJsxs, refs: localRefs} = toJSX(val, this.clickCallbacks)
         // console.log('gltf jsx', localJsxs)
 
         this.setState((prevState) => ({
-            graph: { ...prevState.graph, ...localJsxs },
-            refGraph: { ...prevState.refGraph, ...localRefs },
+            graph: {...prevState.graph, ...localJsxs},
+            refGraph: {...prevState.refGraph, ...localRefs},
         }))
         console.log('localjsxs, localrefs', localJsxs, localRefs)
         // // if same user insert a mesh, select inserted mesh
@@ -299,19 +299,19 @@ export default class Editor extends React.Component {
 
         // notify app
         this.notifyApp(
-            { type: EDITOR_OPS.INSERT_OBJECT, data: { val, uuid } },
+            {type: EDITOR_OPS.INSERT_OBJECT, data: {val, uuid}},
             notify
         )
     }
     // add the local changes here.
     // in the ref to the scene add a star object then convert it to jsx.
     // FIX: 2
-    insertSceneProps = ({ prop_type, op_type, val }, notify = true) => {
+    insertSceneProps = ({prop_type, op_type, val}, notify = true) => {
         switch (prop_type) {
             case 'background':
                 console.log('op_type', op_type)
                 console.log('val', val)
-                const { jsxs: localJsxs, refs: localRefs } = toSceneJSX({
+                const {jsxs: localJsxs, refs: localRefs} = toSceneJSX({
                     prop_type,
                     op_type,
                     val,
@@ -320,27 +320,28 @@ export default class Editor extends React.Component {
                 // add to the object.
                 // perhaps we don't need the prev state
                 this.setState({
-                    scenePropsGraph: { ...localJsxs },
-                    scenePropsRefGraph: { ...localRefs },
+                    scenePropsGraph: {...localJsxs},
+                    scenePropsRefGraph: {...localRefs},
                 })
                 break
         }
         this.notifyApp(
-            { type: EDITOR_OPS.ADD_SCENE_PROPS, data: { prop_type, op_type, val } },
+            {type: EDITOR_OPS.ADD_SCENE_PROPS, data: {prop_type, op_type, val}},
             notify
         )
     }
 
-    insertMeshFile = ({ uuid, val }, notify = true) => {
+    insertMeshFile = ({uuid, val}, notify = true) => {
         const keys = ['position', 'quaternion', 'scale']
 
         let ref = React.createRef()
-        const { url, type } = val
+        const {url, type} = val
         switch (type) {
             case FILE_TYPES.GLTF:
+
                 //load file from url and insert primitive in scene
             function onLoad(gltf) {
-                const { scene, animations } = gltf
+                const {scene, animations} = gltf
                 scene.uuid = uuid
 
                 scene.traverse((object) => {
@@ -365,8 +366,8 @@ export default class Editor extends React.Component {
 
                 const object = <primitive ref={ref} object={scene} {...props} />
                 this.setState((prevState) => ({
-                    graph: { ...prevState.graph, [uuid]: object },
-                    refGraph: { ...prevState.refGraph, [uuid]: ref },
+                    graph: {...prevState.graph, [uuid]: object},
+                    refGraph: {...prevState.refGraph, [uuid]: ref},
                 }))
             }
 
@@ -381,11 +382,11 @@ export default class Editor extends React.Component {
         }
 
         // notify app
-        this.notifyApp({ type: EDITOR_OPS.INSERT_OBJECT_FILE, data: val }, notify)
+        this.notifyApp({type: EDITOR_OPS.INSERT_OBJECT_FILE, data: val}, notify)
     }
 
-    deleteMesh = ({ uuid }, notify = true) => {
-        const { app } = this.props
+    deleteMesh = ({uuid}, notify = true) => {
+        const {app} = this.props
 
         // perform mesh deletion
         this.setState((prevState) => {
@@ -396,24 +397,24 @@ export default class Editor extends React.Component {
             delete refGraph[uuid]
 
             return {
-                graph: { ...graph },
-                refGraph: { ...refGraph },
+                graph: {...graph},
+                refGraph: {...refGraph},
             }
         })
 
         // deselect the current selection on deletion
-        const { selectedItems } = this.state
+        const {selectedItems} = this.state
         if (selectedItems.length > 0 && uuid === selectedItems[0]) {
             this.onDeselect()
         }
 
         // notify app
-        this.notifyApp({ type: EDITOR_OPS.DELETE_MESH, data: { uuid } }, notify)
+        this.notifyApp({type: EDITOR_OPS.DELETE_MESH, data: {uuid}}, notify)
     }
 
     onPositionChange = (e) => {
         //TODO: listen to release then only sync the changes
-        const { selectedItems, refGraph } = this.state
+        const {selectedItems, refGraph} = this.state
         if (selectedItems.length === 1) {
             const uuid = selectedItems[0]
             //TODO: debug meshRef is undefined
@@ -424,8 +425,8 @@ export default class Editor extends React.Component {
         }
     }
 
-    updateMaterial = ({ uuid, key, val, object_uuid }) => {
-        const { refGraph } = this.state
+    updateMaterial = ({uuid, key, val, object_uuid}) => {
+        const {refGraph} = this.state
         const meshRef = refGraph[object_uuid]
         if (meshRef && meshRef.current) {
             const mesh = meshRef.current
@@ -440,57 +441,57 @@ export default class Editor extends React.Component {
         }
     }
 
-    addAnimation = ({ uuid, val }, notify = true) => {
+    addAnimation = ({uuid, val}, notify = true) => {
         this.setState((state) => ({
-            animations: { ...state.animations, [uuid]: val },
+            animations: {...state.animations, [uuid]: val},
         }))
         this.notifyApp(
-            { type: EDITOR_OPS.ADD_ANIMATION, data: { val, uuid } },
+            {type: EDITOR_OPS.ADD_ANIMATION, data: {val, uuid}},
             notify
         )
     }
 
-    updateAnimation = ({ uuid, key, val }, notify = true) => {
+    updateAnimation = ({uuid, key, val}, notify = true) => {
         this.setState((state) => ({
             animations: {
                 ...state.animations,
-                [uuid]: { ...state.animations[uuid], [key]: val },
+                [uuid]: {...state.animations[uuid], [key]: val},
             },
         }))
         this.notifyApp(
-            { type: EDITOR_OPS.UPDATE_ANIMATION, data: { key, val, uuid } },
+            {type: EDITOR_OPS.UPDATE_ANIMATION, data: {key, val, uuid}},
             notify
         )
     }
 
-    deleteAnimation = ({ uuid }, notify = true) => {
+    deleteAnimation = ({uuid}, notify = true) => {
         this.setState((state) => {
             const animations = state.animations
             delete animations[uuid]
-            return { ...animations }
+            return {...animations}
         })
         this.notifyApp(
-            { type: EDITOR_OPS.DELETE_ANIMATION, data: { uuid } },
+            {type: EDITOR_OPS.DELETE_ANIMATION, data: {uuid}},
             notify
         )
     }
     // editing the background type of scene prop
-    updateSceneProps = ({ prop_type, op_type, val }, notify = true) => {
+    updateSceneProps = ({prop_type, op_type, val}, notify = true) => {
         this.setState((state) => ({
             scenePropsGraph: {
                 ...state.scenePropsGraph,
-                [prop_type]: { op_type, val },
+                [prop_type]: {op_type, val},
             },
         }))
         this.notifyApp(
             {
                 type: EDITOR_OPS.UPDATE_SCENE_PROPS,
-                data: { prop_type, op_type, val },
+                data: {prop_type, op_type, val},
             },
             notify
         )
     }
-    deleteSceneProps = ({ prop_type }, notify = true) => {
+    deleteSceneProps = ({prop_type}, notify = true) => {
         this.setState((state) => {
             const scenePropsGraph = state.scenePropsGraph
             const scenePropsRefGraph = state.scenePropsRefGraph
@@ -498,26 +499,26 @@ export default class Editor extends React.Component {
             delete scenePropsGraph[prop_type]
             delete scenePropsRefGraph[prop_type]
             return {
-                scenePropsGraph: { ...scenePropsGraph },
-                scenePropsRefGraph: { ...scenePropsRefGraph },
+                scenePropsGraph: {...scenePropsGraph},
+                scenePropsRefGraph: {...scenePropsRefGraph},
             }
         })
         this.notifyApp(
-            { type: EDITOR_OPS.DELETE_SCENE_PROPS, data: { prop_type } },
+            {type: EDITOR_OPS.DELETE_SCENE_PROPS, data: {prop_type}},
             notify
         )
     }
 
     // onSelect
-    onSelect = ({ uuid, object }) => {
+    onSelect = ({uuid, object}) => {
         const mesh = object
-        const { selectedItems, editorMode, itemToBeAnimated } = this.state
-        const { transformRef } = this
+        const {selectedItems, editorMode, itemToBeAnimated} = this.state
+        const {transformRef} = this
         if (editorMode === 1) {
             // this is animation mode
 
             // set animation path
-            this.setPathAnimation({ uuid: itemToBeAnimated, path_uuid: uuid })
+            this.setPathAnimation({uuid: itemToBeAnimated, path_uuid: uuid})
 
             //go back to editor mode
             this.enterEditorMode()
@@ -532,18 +533,18 @@ export default class Editor extends React.Component {
                 transformRef.current.attach(mesh)
                 // also set rotation
             }
-            this.setState((prevState) => ({ selectedItems: [uuid] }))
+            this.setState((prevState) => ({selectedItems: [uuid]}))
         }
     }
 
     onDeselect = () => {
-        const { transformRef } = this
+        const {transformRef} = this
 
         // hide transform Control
         if (transformRef.current) {
             transformRef.current.detach()
         }
-        this.setState((prevState) => ({ selectedItems: [] }))
+        this.setState((prevState) => ({selectedItems: []}))
     }
 
     // onMeshSelected, onLightSelected, onGroupSelected
@@ -552,12 +553,12 @@ export default class Editor extends React.Component {
             console.error(`No ${id} in BASIC_OBJECTS`)
         }
 
-        const { uuid, val } = BASIC_OBJECTS[id].get()
-        this.insertMesh({ uuid, val })
+        const {uuid, val} = BASIC_OBJECTS[id].get()
+        this.insertMesh({uuid, val})
     }
 
     onAddLightSelected = (id) => {
-        const { uuid, val } = BASIC_LIGHTS[id].get()
+        const {uuid, val} = BASIC_LIGHTS[id].get()
 
         const jsonData = {
             [uuid]: {
@@ -568,23 +569,23 @@ export default class Editor extends React.Component {
             objects: jsonData,
         }
 
-        this.insertMesh({ uuid, val: fullData })
+        this.insertMesh({uuid, val: fullData})
     }
 
     onAddGroupSelected = (id) => {
-        const { uuid, val } = BASIC_LIGHTS[id]
+        const {uuid, val} = BASIC_LIGHTS[id]
     }
     // set a selected type then call something like insertSceneProps
     // here we need to set params as well. Or we can set the default params and then change it as done in the mesh implementations.
     //FIX: 1
     onAddScenePropsSelected = (id) => {
         console.log('id', id)
-        const { prop_type, op_type, val } = SCENE_PROPS_TYPES[id]
+        const {prop_type, op_type, val} = SCENE_PROPS_TYPES[id]
         console.log(prop_type, op_type, val)
-        this.insertSceneProps({ prop_type, op_type, val })
+        this.insertSceneProps({prop_type, op_type, val})
     }
-    onChangeScenePropsSelected = ({ prop_type, op_type, val }) => {
-        this.updateSceneProps({ prop_type, op_type, val })
+    onChangeScenePropsSelected = ({prop_type, op_type, val}) => {
+        this.updateSceneProps({prop_type, op_type, val})
     }
 
     // upload model
@@ -595,18 +596,18 @@ export default class Editor extends React.Component {
         // const {app} = this.props;
         // const file = e.target.files[0];
         const uuid = THREE.MathUtils.generateUUID()
-        this.insertMeshFile({ uuid, val: { type: FILE_TYPES.GLTF, url, uuid } })
+        this.insertMeshFile({uuid, val: {type: FILE_TYPES.GLTF, url, uuid}})
     }
 
     // onAnimation clicked
 
     /* A function that is called when an animation is clicked in the animation list. */
-    onAnimationListClicked = ({ uuid, val }) => {
+    onAnimationListClicked = ({uuid, val}) => {
         // obtained uuid is of the animation that is clicked
 
         // generate unique uuid
         const id_ = generateUniqueId()
-        const { selectedItems } = this.state
+        const {selectedItems} = this.state
         const mesh_uuid = selectedItems.length > 0 ? selectedItems[0] : null
         if (mesh_uuid) {
             //TODO: determine order, triggers
@@ -620,12 +621,12 @@ export default class Editor extends React.Component {
                 animationType: ANIMATION_TYPES.KEYFRAME,
                 keyframe_animation: val,
             }
-            this.addAnimation({ uuid: id_, val: data })
+            this.addAnimation({uuid: id_, val: data})
         }
     }
 
-    setPathAnimation({ uuid, path_uuid }) {
-        const { refGraph } = this.state
+    setPathAnimation({uuid, path_uuid}) {
+        const {refGraph} = this.state
         const meshRef = refGraph[uuid]
         const pathRef = refGraph[path_uuid]
 
@@ -651,13 +652,13 @@ export default class Editor extends React.Component {
             },
         }
 
-        this.addAnimation({ uuid: animationUUID, val })
+        this.addAnimation({uuid: animationUUID, val})
     }
 
     //TODO: updateAnimation method
 
-    onAnimationTimeScaleChange = ({ uuid, timeScale }) => {
-        this.updateAnimation({ uuid, key: 'timeScale', val: timeScale })
+    onAnimationTimeScaleChange = ({uuid, timeScale}) => {
+        this.updateAnimation({uuid, key: 'timeScale', val: timeScale})
     }
 
     /**
@@ -666,30 +667,30 @@ export default class Editor extends React.Component {
      * nothing
      */
 
-    onAnimationTimelineDragNDrop = ({ uuid, to }) => {
-        const { app } = this.prop
-        app.onAnimationOrderChanged({ uuid, to })
+    onAnimationTimelineDragNDrop = ({uuid, to}) => {
+        const {app} = this.prop
+        app.onAnimationOrderChanged({uuid, to})
     }
 
-    onObjectPropsChanged = ({ uuid, key, val }) => {
-        this.updateObject({ uuid, key, val })
-        this.notifyApp({ type: EDITOR_OPS.UPDATE_MESH, data: { uuid, key, val } })
+    onObjectPropsChanged = ({uuid, key, val}) => {
+        this.updateObject({uuid, key, val})
+        this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid, key, val}})
     }
 
-    onMaterialPropsChanged = ({ uuid, object_uuid, key, val }) => {
-        this.updateMaterial({ uuid, object_uuid, key, val })
+    onMaterialPropsChanged = ({uuid, object_uuid, key, val}) => {
+        this.updateMaterial({uuid, object_uuid, key, val})
         this.notifyApp({
             type: EDITOR_OPS.UPDATE_MATERIAL,
-            data: { uuid, key, object_uuid, val },
+            data: {uuid, key, object_uuid, val},
         })
     }
 
-    onDeleteAnimationClicked = ({ uuid }) => {
-        this.deleteAnimation({ uuid })
+    onDeleteAnimationClicked = ({uuid}) => {
+        this.deleteAnimation({uuid})
     }
 
-    updateObject = ({ uuid, key, val }) => {
-        const { refGraph } = this.state
+    updateObject = ({uuid, key, val}) => {
+        const {refGraph} = this.state
         if (!(refGraph[uuid] && refGraph[uuid].current)) {
             console.error(`Object of uuid - ${uuid} not found to update the mesh`)
         }
@@ -729,7 +730,7 @@ export default class Editor extends React.Component {
         }
     }
 
-    onTransformReleased({ mode, target }) {
+    onTransformReleased({mode, target}) {
         if (!target.object) {
             console.error('no object selected to transform')
         }
@@ -750,20 +751,20 @@ export default class Editor extends React.Component {
             case 'translate':
                 this.notifyApp({
                     type: EDITOR_OPS.UPDATE_MESH,
-                    data: { uuid: selectedItem, key: 'position', val: position },
+                    data: {uuid: selectedItem, key: 'position', val: position},
                 })
                 break
             case 'rotate':
                 this.notifyApp({
                     type: EDITOR_OPS.UPDATE_MESH,
-                    data: { uuid: selectedItem, key: 'quaternion', val: quaternion },
+                    data: {uuid: selectedItem, key: 'quaternion', val: quaternion},
                 })
                 // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "rotation", val: rotation}})
                 break
             case 'scale':
                 this.notifyApp({
                     type: EDITOR_OPS.UPDATE_MESH,
-                    data: { uuid: selectedItem, key: 'scale', val: scale },
+                    data: {uuid: selectedItem, key: 'scale', val: scale},
                 })
                 break
             default:
@@ -787,14 +788,14 @@ export default class Editor extends React.Component {
 
         this.notifyApp({
             type: EDITOR_OPS.UPDATE_MESH,
-            data: { uuid: selectedItem, key: 'position', val: position },
+            data: {uuid: selectedItem, key: 'position', val: position},
         })
         // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "quaternion", val: quaternion}})
         // this.notifyApp({type: EDITOR_OPS.UPDATE_MESH, data: {uuid: selectedItem, key: "rotation", val: rotation}})
     }
 
     enterAnimationMode() {
-        const { selectedItems } = this.state
+        const {selectedItems} = this.state
         if (selectedItems.length > 0) {
             this.setState((state) => ({
                 editorMode: 1,
@@ -804,38 +805,39 @@ export default class Editor extends React.Component {
     }
 
     enterEditorMode() {
-        this.setState({ editorMode: 0, itemToBeAnimated: null })
+        this.setState({editorMode: 0, itemToBeAnimated: null})
     }
 
     onXRSessionChange(e) {
-        const { type } = e.nativeEvent
+        const {type} = e.nativeEvent
         if (type === 'sessionstart') {
-            this.setState({ isXR: true })
+            this.setState({isXR: true})
         } else if (type === 'sessionend') {
-            this.setState({ isXR: false })
+            this.setState({isXR: false})
         } else {
             console.error('Unknown type of XR session', type)
         }
     }
 
-    onHoverOnAnimation({ uuid, val }) {
-        this.setState({ hoveredAnimation: { uuid, val } })
+    onHoverOnAnimation({uuid, val}) {
+        this.setState({hoveredAnimation: {uuid, val}})
         //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
 
     onUnhoverOnAnimation() {
-        this.setState({ hoveredAnimation: null })
+        this.setState({hoveredAnimation: null})
     }
 
-    onSelectOnAnimation({ uuid, val }) {
-        this.setState({ selectedAnimation: { uuid, val } })
+    onSelectOnAnimation({uuid, val}) {
+        this.setState({selectedAnimation: {uuid, val}})
         //AnimationPreview(this.state.hoveredAnimation, this.state.selectedAnimation, this.refGraph, this.state.selectedItems)
     }
+
     // check if the provided value is a bool or not.
     setAnimationSidebar(val) {
         if (typeof val == 'boolean') {
             console.log(val)
-            this.setState({ animationSidebar: val })
+            this.setState({animationSidebar: val})
         }
     }
 
@@ -856,9 +858,9 @@ export default class Editor extends React.Component {
             selectedItem,
             animationSidebar,
         } = this.state
-        const { onModelUpload, otherUsers, XRSupported } = this.props
+        const {onModelUpload, otherUsers, XRSupported} = this.props
         return (
-            <div style={{ display: 'flex' }}>
+            <div style={{display: 'flex'}}>
                 <div>
                     <Menu
                         onModelUpload={onModelUpload}
@@ -875,15 +877,15 @@ export default class Editor extends React.Component {
                         onUnhoverOnAnimation={this.onUnhoverOnAnimation.bind(this)}
                     />
 
-                    <DisplayUsers otherUsers={otherUsers} isXR={false} />
+                    <DisplayUsers otherUsers={otherUsers} isXR={false}/>
                 </div>
 
                 {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
 
                 {/*//TODO: if XR support, then only show*/}
-                {XRSupported && <VRButton />}
+                {XRSupported && <VRButton/>}
 
-                <div style={{ height: window.innerHeight, width: '80%' }}>
+                <div style={{height: window.innerHeight, width: '100%'}}>
                     <div>
                         <div
                             style={{
@@ -954,7 +956,7 @@ export default class Editor extends React.Component {
                             />
                             <Controllers
                                 /** Optional material props to pass to controllers' ray indicators */
-                                rayMaterial={{ color: 'blue' }}
+                                rayMaterial={{color: 'blue'}}
                                 /** Whether to hide controllers' rays on blur. Default is `false` */
                                 hideRaysOnBlur={false}
                             />
@@ -1012,9 +1014,9 @@ export default class Editor extends React.Component {
                                 />
                             )}
 
-                            {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR} />}
+                            {isXR && <DisplayUsers otherUsers={otherUsers} isXR={isXR}/>}
 
-                            <Ground />
+                            <Ground/>
 
                             {/*{*/}
                             {/*    !isXR &&*/}
@@ -1058,19 +1060,22 @@ export default class Editor extends React.Component {
                             {/*<>*/}
                             {/*    <ambientLight ref={directionalLightRef} args={[0x505050]}/>*/}
                             {/*</>*/}
-                            <Controls makeDefault />
+                            <Controls makeDefault/>
                         </XR>
                     </Canvas>
                 </div>
-                <AnimationEditor
-                    animations={animations}
-                    selectedItems={selectedItems}
-                    onAnimationDelete={this.onDeleteAnimationClicked}
-                    updateAnimation={this.updateAnimation}
-                    isXR={false}
-                    setAnimationSidebar={this.setAnimationSidebar.bind(this)}
-                    animationSidebar={animationSidebar}
-                />
+                <div style={{position:'absolute', right:10, top:100}}>
+                    <AnimationEditor
+                        animations={animations}
+                        selectedItems={selectedItems}
+                        onAnimationDelete={this.onDeleteAnimationClicked}
+                        updateAnimation={this.updateAnimation}
+                        isXR={false}
+                        setAnimationSidebar={this.setAnimationSidebar.bind(this)}
+                        animationSidebar={animationSidebar}
+                    />
+                </div>
+
             </div>
         )
     }
