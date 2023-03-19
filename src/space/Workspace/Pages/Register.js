@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import axiosInstance from '../utils/axiosInstance'
 
 //TODO: notify the user in the frontend that the registration has been successful
 function Register() {
@@ -9,10 +9,11 @@ function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+
   function handleSubmit(event) {
     event.preventDefault()
 
-    axios
+    axiosInstance
       .post('http://127.0.0.1:8000/app/register/', {
         username: username,
         firstname: firstname,
