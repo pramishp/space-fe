@@ -2,6 +2,7 @@ import {UploadFileOutlined} from '@mui/icons-material'
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import AuthContext from '../Context/AuthContext'
 import axios from 'axios'
+import useAxios from '../utils/useAxios.js'
 
 function FileUpload({onModelUpload}) {
     const {authTokens} = useContext(AuthContext)
@@ -9,6 +10,7 @@ function FileUpload({onModelUpload}) {
     const [files, setFiles] = useState([])
     const [uploadProgress, setUploadProgress] = useState()
     const [uploadingFile, setUploadingFile] = useState(false)
+    const api = useAxios()
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0])
@@ -21,8 +23,8 @@ function FileUpload({onModelUpload}) {
         const formData = new FormData()
         formData.append('file', selectedFile)
         try {
-            const response = await axios.post(
-                'http://127.0.0.1:8000/app/file-upload/',
+            const response = await api.post(
+                '/app/file-upload/',
                 formData,
                 {
                     headers: {
