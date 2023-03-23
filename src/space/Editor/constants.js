@@ -235,11 +235,9 @@ export const SCENE_PROPS_TYPES = {
         },
     },
     color: {
-        color: {
-            uuid: 'color',
-            op_type: 'color',
-            args: ['#ffccff'], 
-        },
+        uuid: 'color',
+        op_type: 'color',
+        args: ['#ffccff'],
 
     },
     environment: {
@@ -261,7 +259,6 @@ export const SCENE_PROPS_TYPES = {
         uuid: 'light',
         intensity: 10,
         color: '#0000ff',
-
 
     },
 };

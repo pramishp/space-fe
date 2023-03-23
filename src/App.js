@@ -48,7 +48,7 @@ export const Navigator = () => {
 function App() {
 
     const user = {id: "aadsd345-khajs43", "name": {"first": "Anubhav", "last": "Khanal"} }
-    const roomId = "1234-v2.15"
+    const roomId = "1234-v2.16"
 
   return (<><Workspace roomId={roomId} user={user}/></>)
 }
