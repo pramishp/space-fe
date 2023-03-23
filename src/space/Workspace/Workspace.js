@@ -365,6 +365,7 @@ function Workspace({ roomId, user }) {
         // write this to yjs
         onInsertSceneProps({uuid:"light", val: scene['light']})
         onInsertSceneProps({uuid:"color", val: scene['color']})
+
     }
 
     return (
