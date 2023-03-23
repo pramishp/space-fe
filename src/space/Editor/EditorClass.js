@@ -84,20 +84,20 @@ export default class Editor extends React.Component {
     }
     // check sceneProps in initData
     if (Object.keys(props.initData.scene).length === 0){
+      //TODO: set proper light and color
       const scene = {}
-      const [uuid_l, val_l] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
-      const ambientLight = objectToYMap(val_l)
-      scene.set(uuid_l, ambientLight)
 
-      const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
-      const backgroundMap = objectToYMap(val_b)
-      scene.set(uuid_b, backgroundMap)
+      scene['light'] =  SCENE_PROPS_TYPES['light']
+
+      scene['color'] = SCENE_PROPS_TYPES['color']
+
       props.initData.scene = scene;
     }
+
     this.jsxData = toJSX(props.initData, this.clickCallbacks)
-    console.log(props.initData.scene)
+
     this.scenePropsData = toSceneJSX(props.initData.scene)
-    console.log(this.scenePropsData.jsxs)
+    console.log('jsx scene props', this.scenePropsData.jsxs)
     console.log(this.scenePropsData.refs)
     const data = Object.entries(this.scenePropsData.refs)
     console.log(data)

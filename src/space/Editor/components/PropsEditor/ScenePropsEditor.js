@@ -35,7 +35,7 @@ export default function ScenePropsEditor({
             setBgColor(e.target.value)
 
             const key = 'args'
-            const val = e.target.value
+            const val = [e.target.value]
             onChangeScenePropsSelected({uuid: 'background', val: val, key:key})
     }
     const handleLightColorChange = (e) => {

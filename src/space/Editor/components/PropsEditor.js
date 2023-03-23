@@ -170,7 +170,7 @@ export function PropsEditor(props) {
     // console.log('isXR', isXR)
     const Empty = isXR ? <></> : <div style={{margin: '40px'}}/>
     if (selectedItems.length === 0) {
-        if (props.refScenePropsGraph.light.current === null || props.refScenePropsGraph.background.current === null) {
+        if (props.refScenePropsGraph && props.refScenePropsGraph.light && (props.refScenePropsGraph.light.current === null || props.refScenePropsGraph.background.current === null)) {
             console.log('isNull')
             return (
                 <></>
