@@ -357,13 +357,13 @@ function Workspace({ roomId, user }) {
     //TODO: Why console.log(initData) here is called 8 times ?
 
     // check sceneProps in initData
-    // if (Object.keys(initData.scene).length === 0){
-    //
-    //     const scene = {}
-    //     scene['light'] =  SCENE_PROPS_TYPES['light']
-    //     scene['color'] = SCENE_PROPS_TYPES['color']
-    //     initData.scene = scene;
-    // }
+    if (Object.keys(initData.scene).length === 0){
+    
+        const scene = {}
+        scene['light'] =  SCENE_PROPS_TYPES['light']
+        scene['color'] = SCENE_PROPS_TYPES['color']
+        initData.scene = scene;
+    }
 
     return (
         <>
