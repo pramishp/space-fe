@@ -54,7 +54,7 @@ import AnimationMenu from './components/AnimationEditor/AnimationMenu'
 import {AnimationTree} from './components/AnimationEditor/AnimationSequenceEditor'
 import DisplayUsers from './components/DisplayUsers'
 
-import {generateUniqueId} from '../../utils'
+import {generateUniqueId, objectToYMap} from '../../utils'
 
 import MeshMenuBar from './components/VRMenuBar/MeshMenuBar'
 import LightMenuBar from './components/VRMenuBar/LightMenuBar'
@@ -82,10 +82,22 @@ export default class Editor extends React.Component {
       onDoubleClick: this.onMeshDoubleClick,
       onContextMenu: this.onMeshContextMenu,
     }
+    // check sceneProps in initData
+    if (Object.keys(props.initData.scene).length === 0){
+      //TODO: set proper light and color
+      const scene = {}
+
+      scene['light'] =  SCENE_PROPS_TYPES['light']
+
+      scene['color'] = SCENE_PROPS_TYPES['color']
+
+      props.initData.scene = scene;
+    }
+
     this.jsxData = toJSX(props.initData, this.clickCallbacks)
-    console.log(props.initData.scene)
+
     this.scenePropsData = toSceneJSX(props.initData.scene)
-    console.log(this.scenePropsData.jsxs)
+    console.log('jsx scene props', this.scenePropsData.jsxs)
     console.log(this.scenePropsData.refs)
     const data = Object.entries(this.scenePropsData.refs)
     console.log(data)
