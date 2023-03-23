@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
             const data = response.data
             setAuthTokens(data)
             setUser(jwt_decode(data.access))
+            console.log(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
             navigate('/dashboard')
         } else {
@@ -107,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     * */
 
     let contextData = {
-    user: user ? {id: user.id, name: {first: user.first_name, last: user.last_name}}: null,
+    user: user ? {id: user.id, username:user.username, name: {first: user.first_name, last: user.last_name}}: null,
     loginUser: loginUser,
     logoutUser: logoutUser,
     authTokens: authTokens,

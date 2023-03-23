@@ -1,27 +1,35 @@
 import { useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import AuthContext from "../Context/AuthContext"
+import useAxios from "../utils/useAxios"
 const AddProject = (props) => {
     let { authTokens } = useContext(AuthContext)
     let [newProject, setNewProject] = useState({ name: '', title: '' })
     const navigate = useNavigate()
+    const api = useAxios()
     let handleFormSubmit = async (e) => {
       e.preventDefault()
-      let response = await fetch('http://127.0.0.1:8000/app/project-add/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization : 'Bearer ' + String(authTokens.access),
-        },
-        body: JSON.stringify(newProject)
-      })
-      let data = await response.json()
-      if (response.status === 201) {
-        console.log(data)
-        //setNewProject({ name: '', title: '' })
-        //props.setProjects([...props.projects, data])
-        navigate(`/workspace/${data.id}`)
+      try {
+        const response = await api.post('/app/project-add/')
+        navigate(`/workspace/${response.data.id}`)
+      } catch (error) {
+        console.log(error)
       }
+      // let response = await fetch('http://127.0.0.1:8000/app/project-add/', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authorization : 'Bearer ' + String(authTokens.access),
+      //   },
+      //   body: JSON.stringify(newProject)
+      // })
+      // let data = await response.json()
+      // if (response.status === 201) {
+      //   console.log(data)
+      //   //setNewProject({ name: '', title: '' })
+      //   //props.setProjects([...props.projects, data])
+      //   navigate(`/workspace/${data.id}`)
+      // }
       props.setDisplayAdd(false)
     }
 

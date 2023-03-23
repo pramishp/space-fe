@@ -57,6 +57,7 @@ function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
                 <label for='timeScale' class='text-gray-700 justify-start text-left'>
                     TimeScale
                 </label>
+                <div>{timeScale}</div>
                 <div className="flex">
                     <div className='relative flex'>
                         <input
@@ -75,6 +76,16 @@ function AnimationEditItem({item, onDelete, isXR, updateAnimation}) {
             #D5D5D5 100%)`,
                             }}
                         />
+                                        <input
+                    type='number'
+                    id='timescale-input'
+                    min={tmin}
+                    max={tmax}
+                    step='0.01'
+                    value={timeScale}
+                    onChange={onValueChange}
+                    className='w-16 h-8 ml-2 text-center text-gray-700 focus:outline-none focus:ring-2'
+                />
                     </div>
                     <div className="absolute top-1 right-1">
                         <button
