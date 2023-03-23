@@ -165,7 +165,7 @@ function Workspace({ roomId, user }) {
         onUpdate({ uuid, val, key, type: TYPES.SCENE })
     }
 
-    app.updateSceneProps = ({ uuid, val, isFromUndoManager, isMyEvent }) => {
+    app.updateSceneProps = ({ uuid, key, val, isFromUndoManager, isMyEvent }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current
             if (!isMyEvent || isFromUndoManager) {

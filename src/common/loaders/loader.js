@@ -229,7 +229,6 @@ export function toSceneJSX(val) {
     let object;
     // here the uuid is not stored in the item so use entries
     Object.entries(data).forEach(([uuid, val]) => {
-        console.log(uuid, val)
         let ref = React.createRef()
         if (uuid === 'background') {
             switch (val.op_type) {

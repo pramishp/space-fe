@@ -19,12 +19,12 @@ root.render(
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>
 );
-var log = console.log
-console.log = function () {
-  log.apply (console, arguments);
-  // Print the stack trace
-  console.trace ();
-};
+// var log = console.log
+// console.log = function () {
+//   log.apply (console, arguments);
+//   // Print the stack trace
+//   console.trace ();
+// };
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

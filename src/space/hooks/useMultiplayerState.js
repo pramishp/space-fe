@@ -30,14 +30,13 @@ export function useMultiplayerState(roomId, appInit) {
   const yAnimation = doc.getMap('animations')
   const yScene = doc.getMap('scene')
 
-  const [uuid_l, val_l] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
-  const ambientLight = objectToYMap(val_l)
-  yScene.set(uuid_l, ambientLight)
-
-  const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
-  const backgroundMap = objectToYMap(val_b)
-  yScene.set(uuid_b, backgroundMap)
-  console.log(yScene)
+  // const [uuid_l, val_l] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
+  // const ambientLight = objectToYMap(val_l)
+  // yScene.set(uuid_l, ambientLight)
+  //
+  // const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
+  // const backgroundMap = objectToYMap(val_b)
+  // yScene.set(uuid_b, backgroundMap)
   // add the light prop here so that it can be passed to the init data.
   // The data to be initialized is inside the constants file in the id light.
   // const yScene = doc.getMap("scene")
@@ -534,7 +533,7 @@ export function useMultiplayerState(roomId, appInit) {
               break
             case 'update':
               const sceneProps = event.target.toJSON()
-              // console.log(sceneProps)
+              console.log('update', sceneProps)
               app.updateSceneProps({
                 uuid: sceneProps.uuid,
                 key : key,

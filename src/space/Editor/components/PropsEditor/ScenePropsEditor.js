@@ -21,13 +21,7 @@ export default function ScenePropsEditor({
         // console.log(`#${red}${green}${blue}`)
         return `#${red}${green}${blue}`;
       }
-      console.log(refScenePropsGraph.color)
-    if (refScenePropsGraph.light.current === null || refScenePropsGraph.color.current === null) {
-        // console.log('isNull')
-        return (
-            <></>
-        )
-    }
+
 
     const lightProps = refScenePropsGraph.light.current
     const backgroundProps = refScenePropsGraph.color.current
@@ -42,8 +36,9 @@ export default function ScenePropsEditor({
             setBgColor(e.target.value)
 
             const key = 'args'
-            const val = e.target.value
-            onChangeScenePropsSelected({uuid: 'color', val: val, key:key})
+
+            const val = [e.target.value]
+            onChangeScenePropsSelected({uuid: 'background', val: val, key:key})
     }
     const handleLightColorChange = (e) => {
         console.log('handleLightColorChange called')
