@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 //TODO: we might have a potential error if this component is used to update color when it is only component around.
 
@@ -7,67 +7,59 @@ import React from 'react'
 // send the function that updates the scene props here and let it do its magic
 // import the scene Props ref then extract the props from there, from the extracted values determine the previous versions of the val and update accordingly.
 //    (e) => {event.target.value}
+
 export default function ScenePropsEditor({
-                                             scenePropsRefGraph,
+                                             refScenePropsGraph,
                                              onChangeScenePropsSelected,
-                                             onAddScenePropsSelected
-                                         }) {
-    // based on the scenePropsRefGraph we can determine whether we are to update or add the ref properties.
-    // console.log(scenePropsRefGraph)
-    // console.log(scenePropsRefGraph['background'])
-    // console.log(scenePropsRefGraph['background'].current)
-    let lightProps, backgroundProps
+                                         })
+{
+    function rgbToHex({ r, g, b }) {
+        console.log(r, g, b)
+        const red = (r*255).toString(16).padStart(2, '0');
+        const green = (g*255).toString(16).padStart(2, '0');
+        const blue = (b*255).toString(16).padStart(2, '0');
+        console.log(`#${red}${green}${blue}`)
+        return `#${red}${green}${blue}`;
+      }
+      console.log(refScenePropsGraph)
+    if (refScenePropsGraph.light.current === null || refScenePropsGraph.background.current === null) {
+        console.log('isNull')
+        return (
+            <></>
+        )
+    }
 
-    if (scenePropsRefGraph && scenePropsRefGraph['light'] && scenePropsRefGraph['light'].current) {
-        lightProps = scenePropsRefGraph['light'].current
-    }
-    if (scenePropsRefGraph && scenePropsRefGraph['background'] && scenePropsRefGraph['background'].current) {
-        backgroundProps = scenePropsRefGraph['background'].current
-    }
-    // TODO: give backgr
-    // here if nothing has been set then change the code so that the oAddScenePropsSelected is called.
+    const lightProps = refScenePropsGraph.light.current
+    const backgroundProps = refScenePropsGraph.background.current
+
+    const [bgColor, setBgColor] = useState(rgbToHex(backgroundProps))
+    const [lgColor, setLgColor] = useState(rgbToHex(lightProps.color))
+    const [lightIntensity, setLightIntensity] = useState(lightProps.intensity)
+
     const handleBackgroundColorChange = (e) => {
-        console.log(backgroundProps)
-        if (backgroundProps) {
-            // backgroundProps['val'] = [e.target.value]
-            // no need to set the background prop here as it will get updated later on.
             console.log('event after picked using target value', e.target.value)
-            const args = [e.target.value]
-            const val = {}
-            val.op_type = 'color'
-            val.val = {args}
-            onChangeScenePropsSelected({uuid: 'background', val: val})
-        } else {
-            const args = [e.target.value]
-            const val = {}
-            val.op_type = 'color'
-            val.val = {args}
-            const id = {}
-            id.uuid = 'background'
-            id.val = val
-            onAddScenePropsSelected(id)
-        }
+            setBgColor(e.target.value)
 
-
+            const key = 'args'
+            const val = e.target.value
+            onChangeScenePropsSelected({uuid: 'background', val: val, key:key})
     }
     const handleLightColorChange = (e) => {
-        lightProps['val']['color'] = e.target.value
-        const val = {}
-        val.op_type = 'light'
-        val.val = {...lightProps}
-        onChangeScenePropsSelected({uuid: 'light', val: val})
+        console.log('handleLightColorChange called')
+        setLgColor(e.target.value)
+
+        const key = 'color'
+        const val = e.target.value
+        onChangeScenePropsSelected({uuid: 'light', val: val, key:key})
     }
     const handleLightIntensityChange = (e) => {
-        lightProps['val']['intensity'] = e.target.value
-        console.log(lightProps['val'])
-        const val = {}
-        val.op_type = 'light'
-        val.val = {...lightProps}
-        onChangeScenePropsSelected({uuid: 'light', val: val})
+        setLightIntensity(e.target.value)
+
+        const key = 'intensity'
+        const val = e.target.value
+        onChangeScenePropsSelected({uuid: 'light', val: val, key:key})
 
     }
-    // set these three as state.
-    let bgColor, lgColor, lightIntensity
     const lmin = 1,
         lmax = 10
 

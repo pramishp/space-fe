@@ -214,7 +214,7 @@ export const SCENE_PROPS_TYPES = {
     stars:{
         background: {
             op_type: 'star',
-            val: {
+            uuid: 'background',
                 radius: 100,
                 depth: 50,
                 count: 5000,
@@ -222,58 +222,47 @@ export const SCENE_PROPS_TYPES = {
                 saturation: 0,
                 speed: 1,
                 fade: true,
-            },
         },
     },
     sky: {
         background: {
             op_type: 'sky',
-            val: {
+            uuid: 'background',
                 distance: 450000,
                 sunPosition: [0, 1, 0],
                 inclination: 0,
                 azimuth: 0.25,
-            },
         },
     },
     color: {
         background: {
+            uuid: 'background',
             op_type: 'color',
-            val: {
-                args: ['#f0f000'],
-            }
+            args: ['#ff0000'], 
         },
     },
     environment: {
         background: {
            op_type: 'environment',
-            val: {
+           uuid: 'background',
                 background: false,
                 blur: 0,
                 files: ['', '', '', '', '', ''],
                 path: '',
                 scene: undefined,
                 encoding: undefined,
-            },
+         
         },
     },
     light: {
         light: {
             op_type: 'light',
-            val: {
-                intensity: 2,
-                color: ['#ff00ff'],
-            },
+            uuid: 'light',
+                intensity: 10,
+                color: '#0000ff',
+
         },
     },
-    lighttest:{
-        prop_type:'light',
-        op_type:'light',
-        value:{
-            intensity:10,
-            color: ['#ff0000'],
-        }
-    }
 };
 
 

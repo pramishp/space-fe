@@ -19,6 +19,7 @@ export const PRESENTATION_TYPES = {
 
 // go to this link after the fetch of workspaceId from the presentation link is completed
 const PresentationWrapper = (props) => {
+    
     let {workspaceId, type} = useParams();
     let [rerender, setRerender] = useState(false);
     let [gl, setGl] = useState(null);

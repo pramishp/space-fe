@@ -6,7 +6,6 @@ import App, {Navigator} from "./App";
 import PresentationWrapper, {PRESENTATION_TYPES} from "./space/PresentationWrapper";
 import TestCanvasUI from "./space/Editor/components/xruitest";
 
-
 // WARNING: Memory Leak Detected.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -20,6 +19,12 @@ root.render(
     {/*  <TestCanvasUI/>*/}
   </React.StrictMode>
 );
+var log = console.log
+console.log = function () {
+  log.apply (console, arguments);
+  // Print the stack trace
+  console.trace ();
+};
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

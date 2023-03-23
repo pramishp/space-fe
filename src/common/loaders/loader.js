@@ -229,28 +229,29 @@ export function toSceneJSX(val) {
     let object;
     // here the uuid is not stored in the item so use entries
     Object.entries(data).forEach(([uuid, val]) => {
-        console.log(uuid, val.val)
+        console.log(uuid, val)
         let ref = React.createRef()
         if (uuid === 'background') {
             switch (val.op_type) {
                 case 'star':
                     object = (
-                        <Stars ref={ref} {...val.val} />
+                        <Stars ref={ref} {...val} />
                     )
                     break;
                 case 'sky':
                     object = (
-                        <Sky ref={ref} {...val.val} />
+                        <Sky ref={ref} {...val} />
                     )
                     break;
                 case 'color':
+                    console.log(val)
                     object = (
-                        <color attach="background" ref={ref} {...val.val} />
+                        <color attach="background" ref={ref} {...val} />
                     )
                     break;
                 case 'environment':
                     object = (
-                        <Environment ref={ref} {...val.val} />
+                        <Environment ref={ref} {...val} />
                     )
                     break;
 
@@ -258,7 +259,7 @@ export function toSceneJSX(val) {
                     break;
             }
         } else if (uuid === 'light') {
-            object = (<ambientLight ref={ref} {...val.val} />)
+            object = (<ambientLight ref={ref} {...val} />)
         }
         jsxs[uuid] = object
         refs[uuid] = ref

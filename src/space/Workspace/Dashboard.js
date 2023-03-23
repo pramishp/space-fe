@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [displayAdd, setDisplayAdd] = useState(false)
   const [displayCollab, setDisplayCollab] = useState(false)
   const [presentOptions, setPresentOptions] = useState(false)
+  const [presentOptions2, setPresentOptions2] = useState(false)
   useEffect(() => {
     getProjects()
     getCollaborations()
@@ -35,6 +36,7 @@ const Dashboard = () => {
                                 } */
     try {
       const response = await api.get('/app/project-list/')
+      console.log(response.data)
       setProjects(response.data)
     } catch (error) {
       console.log(error)
@@ -63,7 +65,6 @@ const Dashboard = () => {
   // authencate
   // TODO: list of users who are authenticated for a project.
   const handleClick = (projectId) => {
-    console.log(projectId)
     navigate(`/workspace/${projectId}`)
   }
 
@@ -76,6 +77,18 @@ const Dashboard = () => {
   }
   const handleDropDownOption = () => {
     setPresentOptions((prevState) => !prevState)
+  }
+  const handleDropDownOption2 = () => {
+    setPresentOptions2((prevState) => !prevState)
+  }
+  const handle2dClicked = (workspaceId) => {
+    navigate(`presentation/${workspaceId}/2d_interactive`)
+  }
+  const handleVRClicked = (workspaceId) => {
+    navigate(`presentation/${workspaceId}/vr`)
+  }
+  const handleARClicked = (workspaceId) => {
+    navigate(`presentation/${workspaceId}/ar`)
   }
   // get information about every project
   console.log(projects)
@@ -145,7 +158,7 @@ const Dashboard = () => {
                                 console.log(
                                   'Interactive 2D Presentation selected'
                                 )
-                                handleDropDownOption()
+                                handle2dClicked(project.workspace_id.key)
                               }}
                               className='block w-full px-4 py-2 text-left hover:bg-gray-200'
                             >
@@ -154,7 +167,7 @@ const Dashboard = () => {
                             <button
                               onClick={() => {
                                 console.log('VR Presentation selected')
-                                handleDropDownOption()
+                                handleVRClicked(project.workspace_id.key)
                               }}
                               className='block w-full px-4 py-2 text-left hover:bg-gray-200'
                             >
@@ -163,7 +176,7 @@ const Dashboard = () => {
                             <button
                               onClick={() => {
                                 console.log('AR Presentation selected')
-                                handleDropDownOption()
+                                handleARClicked(project.workspace_id.key)
                               }}
                               className='block w-full px-4 py-2 text-left hover:bg-gray-200'
                             >
@@ -241,6 +254,56 @@ const Dashboard = () => {
                       onClick={() => handleClick(project.id)}
                     >
                       <div className='relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100'>
+                      <button
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            handleDropDownOption2()
+                          }}
+                          className='absolute top-0 right-0 flex items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex'
+                        >
+                          <svg
+                            className='w-4 h-4 fill-current'
+                            xmlns='http://www.w3.org/2000/svg'
+                            viewBox='0 0 20 20'
+                            fill='currentColor'
+                          >
+                            <path d='M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z' />
+                          </svg>
+                        </button>
+                      {/*TODO: change this code so that the scroll bar on the dropdown does not appear.*/}
+                        {presentOptions2 && (
+                          <div className='absolute z-10 bg-white rounded-lg shadow-md mt-5 right-0 scrollbar-none overflow-y-hidden'>
+                            <button
+                              onClick={() => {
+                                console.log(
+                                  'Interactive 2D Presentation selected'
+                                )
+                                handle2dClicked(project.workspace_id.key)
+                              }}
+                              className='block w-full px-4 py-2 text-left hover:bg-gray-200'
+                            >
+                              2D Presentation
+                            </button>
+                            <button
+                              onClick={() => {
+                                console.log('VR Presentation selected')
+                                handleVRClicked(project.workspace_id.key)
+                              }}
+                              className='block w-full px-4 py-2 text-left hover:bg-gray-200'
+                            >
+                              VR Presentation
+                            </button>
+                            <button
+                              onClick={() => {
+                                console.log('AR Presentation selected')
+                                handleARClicked(project.workspace_id.key)
+                              }}
+                              className='block w-full px-4 py-2 text-left hover:bg-gray-200'
+                            >
+                              AR Presentation
+                            </button>
+                          </div>
+                        )}
                         <h4 className='mt-3 text-lg font-bold'>
                           {project.name}
                         </h4>

@@ -26,7 +26,7 @@ const AddCollaboration = () => {
   }
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-100 bg-opacity-50 backdrop-filter backdrop-blur-sm'>
+    <div className='flex items-center justify-center h-full w-full bg-gray-100 bg-opacity-50 backdrop-filter backdrop-blur-sm' style={{position:'absolute', top:0, left:0}}>
       <form onSubmit={handleWPSubmit} className='max-w-lg mx-auto'>
         <div className='mb-4'>
           <input
@@ -34,6 +34,7 @@ const AddCollaboration = () => {
             placeholder='Enter Workspace Pin'
             value={workspacePin}
             onChange={(event) => setWorkspacePin(event.target.value)}
+            className="bg-gray-200 border-2 border-gray-100 focus:outline-none bg-gray-100 block w-full py-2 px-4 rounded-lg focus:border-gray-700"
           />
         </div>
         <div className='flex justify-center'>
