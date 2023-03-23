@@ -27,7 +27,12 @@ export default function DisplayUsers({isXR, otherUsers}) {
 
     return (
         <div style={{
+            position:"absolute",
+            top:8,
+            right:20,
+            zIndex:10000,
             display: "flex",
+            gap:5,
             justifyContent: "right",
             alignItems: "center"
         }}>

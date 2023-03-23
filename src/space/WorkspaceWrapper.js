@@ -9,10 +9,9 @@ import useAxios from './Workspace/utils/useAxios'
 //HACK: does authTokens.access needs to be in the dependency array.
 const WorkspaceWrapper = () => {
     const { id } = useParams();
-    console.log('id inside workspacewrapper', id)
-    console.log('workspace wrapper was called.')
     const { user, authTokens } = useContext(AuthContext)
-    const [workspaceId, setWorkspaceId] = useState('')
+    const [workspaceId, setWorkspaceId] = useState('init')
+    const [loading, setLoading] = useState(true)
     const api = useAxios()
     useEffect(() => {
         const fetchWorkspaceId = async () => {
@@ -31,14 +30,19 @@ const WorkspaceWrapper = () => {
                 console.log(error)
             }*/
             try {
-                const response = await api.get('/app/workspace-id/?project_id=${id}')
-                setWorkspaceId(response.key)
+                const response = await api.get(`/app/workspace-id/?project_id=${id}`)
+                setWorkspaceId(response.data.key)
             } catch (error) {
                 console.log(error)
             }
+            setLoading(false)
         }
         fetchWorkspaceId()
     }, [])
+
+    if (loading){
+        return <div>Loading ...</div>
+    }
 
     //TODO: check if the user data is enough
     return (

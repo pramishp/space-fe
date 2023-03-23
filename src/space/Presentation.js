@@ -10,6 +10,7 @@ import {Button} from "./Editor/components/VRUIs/Button";
 import Controls from "./Editor/Controls";
 import {ARButton, VRButton, XR} from "@react-three/xr";
 import {PRESENTATION_TYPES} from "./PresentationWrapper";
+import Background from "./Editor/Background";
 
 
 function getGltfJsx({objects}) {
@@ -46,6 +47,7 @@ function UpdateMixers({seq}) {
 
 function Presentation({data, type}) {
     const {scene: sceneProps} = data;
+    console.log('scene props: ', data)
     const {jsxs: gltfJsxs, refs: gltfRefs} = getGltfJsx(data);
     // scene also has ambient light does that need to be added here.
     const {jsxs: sceneJsxs, refs: scenePropsRefs} = toSceneJSX({uuid: 'background', ...sceneProps.background})
@@ -129,13 +131,14 @@ function Presentation({data, type}) {
                 )
             })}
             {gltfJsxs && Object.entries(gltfJsxs).map(([uuid, val]) => val)}
-            {
-                sceneJsxs && Object.entries(sceneJsxs).map(([uuid, val]) => {
-                    return (
-                        val
-                    )
-                })
-            }
+            {/*{*/}
+            {/*    sceneJsxs && Object.entries(sceneJsxs).map(([uuid, val]) => {*/}
+            {/*        return (*/}
+            {/*            val*/}
+            {/*        )*/}
+            {/*    })*/}
+            {/*}*/}
+            {Object.keys(sceneProps).length > 0 ? <Background sceneBackgroundProps={sceneProps}/>: null}
             <UpdateMixers seq={seq}/>
 
         </>
