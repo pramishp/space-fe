@@ -353,7 +353,6 @@ function Workspace({ roomId, user }) {
     }
 
     const initData = getInitData()
-    console.log('init Data', initData)
     //TODO: Why console.log(initData) here is called 8 times ?
 
     // check sceneProps in initData
