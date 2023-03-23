@@ -31,7 +31,7 @@ const WorkspaceWrapper = () => {
                 console.log(error)
             }*/
             try {
-                const response = await api.get('/app/workspace-id/?project_id=${id}')
+                const response = await api.get(`/app/workspace-id/?project_id=${id}`)
                 setWorkspaceId(response.key)
             } catch (error) {
                 console.log(error)

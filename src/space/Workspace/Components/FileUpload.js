@@ -8,7 +8,7 @@ function FileUpload({onModelUpload}) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [files, setFiles] = useState([])
   //const [uploadProgress, setUploadProgress] = useState()
-  //const [uploadingFile, setUploadingFile] = useState(false)
+  const [uploadingFile, setUploadingFile] = useState(false)
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0])
@@ -65,7 +65,9 @@ function FileUpload({onModelUpload}) {
     event.preventDefault()
     console.log('form submitted')
     //setUploadingFile(true)
+    setUploadingFile(true)
     await uploadFile()
+    setUploadingFile(false)
     getFiles()
   }
   console.log(files.length)
@@ -91,6 +93,11 @@ function FileUpload({onModelUpload}) {
         </form>
         {files.length > 0 && (
                 <>
+                {uploadingFile && 
+                <div>
+                Uploadng...
+            </div>}
+                    
                     <div className='w-full rounded-sm p-4'>
                         {files.map((file) => (
                             <div key={file.id}

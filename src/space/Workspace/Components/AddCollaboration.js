@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import AuthContext from '../Context/AuthContext'
 import useAxios from '../utils/useAxios.js'
 
-const AddCollaboration = () => {
+const AddCollaboration = (props) => {
   const { authTokens, logoutUser } = useContext(AuthContext)
 
   const [workspacePin, setWorkspacePin] = useState('')
@@ -23,6 +23,7 @@ const AddCollaboration = () => {
     } catch (error) {
       console.log(error)
     }
+    props.setDisplayCollab(false)
   }
 
   return (
