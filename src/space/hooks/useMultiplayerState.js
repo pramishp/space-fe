@@ -523,6 +523,7 @@ export function useMultiplayerState(roomId, appInit) {
         event.changes.keys.forEach((val, key) => {
           switch (val.action) {
             case 'add':
+              console.log(key)
               const data = yScene.get(key).toJSON()
               app.addSceneProps({
                 uuid: key,

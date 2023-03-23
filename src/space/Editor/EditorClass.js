@@ -500,7 +500,7 @@ export default class Editor extends React.Component {
     console.log(val)
     console.log(object)
     switch (uuid) {
-      case 'background':
+      case 'color':
         if (key === 'args') {
           object.set(val)
         }
