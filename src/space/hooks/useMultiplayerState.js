@@ -10,6 +10,7 @@ import { TYPES } from '../Editor/constants'
 import { IMPORT_MESH_TYPES } from '../../common/consts'
 import { keys } from 'lodash'
 import { SCENE_PROPS_TYPES } from '../Editor/constants'
+import { ConnectingAirportsOutlined } from '@mui/icons-material'
 const _ = require('lodash')
 
 export function useMultiplayerState(roomId, appInit) {
@@ -28,10 +29,14 @@ export function useMultiplayerState(roomId, appInit) {
   const yMaterial = doc.getMap('materials')
   const yAnimation = doc.getMap('animations')
   const yScene = doc.getMap('scene')
-  const [uuid, val] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
-  const ambientLight = objectToYMap(val)
-  yScene.set(uuid, ambientLight)
-  console.log(yScene)
+
+  const [uuid_l, val_l] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
+  const ambientLight = objectToYMap(val_l)
+  yScene.set(uuid_l, ambientLight)
+
+  const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
+  const backgroundMap = objectToYMap(val_b)
+  yScene.set(uuid_b, backgroundMap)
   // add the light prop here so that it can be passed to the init data.
   // The data to be initialized is inside the constants file in the id light.
   // const yScene = doc.getMap("scene")
@@ -45,11 +50,11 @@ export function useMultiplayerState(roomId, appInit) {
   const instanceId = room.awareness.clientID
 
   /*
-                          *   app.loadRoom(roomId, room);
-                              app.setInstanceId(room.awareness.clientID);
-                              app.setOtherUsers(joinedUsers)
-                              app.setInitData(doc.toJSON())
-                          * */
+                              *   app.loadRoom(roomId, room);
+                                  app.setInstanceId(room.awareness.clientID);
+                                  app.setOtherUsers(joinedUsers)
+                                  app.setInitData(doc.toJSON())
+                              * */
 
   const onMount = useCallback(
     (app_local) => {
@@ -211,11 +216,15 @@ export function useMultiplayerState(roomId, appInit) {
           break
         case TYPES.SCENE:
           // in the background of a scene for the op type star or something else values are set.
-          // TODO: while creating the scene the op_type and val are entered into the map together so the structure needs to change either here or in the initial addition.
-          yScene.get(uuid).set(val)
+          // NOTE:while creating the scene the op_type and val are entered into the map together so the structure needs to change either here or in the initial addition.
+          // NOTE: since we are only updating here i will not pass the color hex as an args
+          //console.log(yScene.get(uuid).toJSON())
+          yScene.get(uuid).set(key, val)
+          //console.log(yScene.get(uuid).toJSON())
           break
         default:
-          console.error('No case handled for ', type, 'onUpdate')
+            console.log('No such operation found')
+            break;
       }
     })
   }
@@ -225,13 +234,8 @@ export function useMultiplayerState(roomId, appInit) {
   const onInsertSceneProps = useCallback(({ uuid, val }) => {
     undoManager.stopCapturing()
     doc.transact(() => {
-      // const params to Yjs map
-      const backgroundMap = objectToYMap({val})
-      // insert into yjs
-      // ySence.set(background, backgroundMap)
-      yScene.set(uuid, backgroundMap)
-      //yScene.set(background, )
-      //scene: {background:{ op_type: {} , val: {}}}
+      const sceneMap = objectToYMap(val)
+      yScene.set(uuid, sceneMap)
     })
   })
   const onAnimationAdd = useCallback(({ uuid, val }) => {
@@ -312,7 +316,7 @@ export function useMultiplayerState(roomId, appInit) {
         // genericProps are meant to be sent for all callbacks, they contain important decision params like isFromUndoManger
         const genericProps = { isFromUndoManager, isMyEvent }
         event.changes.keys.forEach((val, key) => {
-          console.log(val, key)
+          // console.log(val, key)
           switch (val.action) {
             case 'update':
               const targetData = event.target.toJSON()
@@ -420,8 +424,6 @@ export function useMultiplayerState(roomId, appInit) {
             default:
               console.error('no such action')
           }
-          //console.log('handle mesh changes called')
-          //console.log(key, val.action, 'level:', level)
         })
       })
       // app.replacePageContent(
@@ -467,8 +469,6 @@ export function useMultiplayerState(roomId, appInit) {
             default:
               console.error('no such action')
           }
-          //console.log('handle mesh changes called')
-          //console.log(key, val.action, 'level:', level)
         })
       })
     }
@@ -506,8 +506,6 @@ export function useMultiplayerState(roomId, appInit) {
             default:
               console.error('no such action')
           }
-          //console.log('handle mesh changes called')
-          //console.log(key, val.action, 'level:', level)
         })
       })
     }
@@ -521,30 +519,30 @@ export function useMultiplayerState(roomId, appInit) {
 
         const level = parents.length
         const genericProps = { isFromUndoManager, isMyEvent }
-
+        // console.log(event.changes.keys)
         event.changes.keys.forEach((val, key) => {
-          console.log(val, key)
-          const data = yScene.get(key).toJSON()
           switch (val.action) {
             case 'add':
-              console.log(data)
+              const data = yScene.get(key).toJSON()
               app.addSceneProps({
-                uuid: key,
+                uuid: uuid,
                 val: data,
                 ...genericProps,
               })
               break
             case 'update':
-              console.log(data)
+              const sceneProps = event.target.toJSON()
+              // console.log(sceneProps)
               app.updateSceneProps({
-                uuid: key,
-                val: data,
+                uuid: sceneProps.uuid,
+                key : key,
+                val: sceneProps[key],
                 ...genericProps,
               })
               // app.updateSceneProps()
               break
             case 'delete':
-              app.deleteSceneProps({ uuid:key, ...genericProps })
+              app.deleteSceneProps({ uuid: key, ...genericProps })
               break
 
             default:

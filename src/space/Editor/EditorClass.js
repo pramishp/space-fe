@@ -87,6 +87,8 @@ export default class Editor extends React.Component {
     this.scenePropsData = toSceneJSX(props.initData.scene)
     console.log(this.scenePropsData.jsxs)
     console.log(this.scenePropsData.refs)
+    const data = Object.entries(this.scenePropsData.refs)
+    console.log(data)
     /*
      * editorModes
      * 0: edit
@@ -139,9 +141,12 @@ export default class Editor extends React.Component {
     const shouldUpdate = nextProps.initData !== this.props.initData
     if (shouldUpdate) {
       this.jsxData = toJSX(nextProps.initData, this.clickCallbacks)
+      this.scenePropsData = toSceneJSX(nextProps.initData.scene)
       this.setState({
         graph: this.jsxData.jsxs,
         refGraph: this.jsxData.refs,
+        scenePropsGraph: this.scenePropsData.jsxs,
+        refScenePropsGraph: this.scenePropsData.refs,
         animations: nextProps.initData.animations,
       })
       this.loadInitialObjectFiles(nextProps)
@@ -271,7 +276,7 @@ export default class Editor extends React.Component {
         app.onScenePropsAdded({ uuid, val })
         break
       case EDITOR_OPS.UPDATE_SCENE_PROPS:
-        app.onScenePropsUpdated({ uuid, val })
+        app.onScenePropsUpdated({ uuid, key, val })
         break
       case EDITOR_OPS.DELETE_SCENE_PROPS:
         app.onScenePropsDeleted({ uuid })
@@ -433,6 +438,7 @@ export default class Editor extends React.Component {
           break
         default:
           mesh.material[key].set(val)
+          break;
       }
       this.rerender()
     }
@@ -475,24 +481,43 @@ export default class Editor extends React.Component {
   // editing the background type of scene prop
   // try implementing this without calling toSceneJSX
   // take the ref graph current and edit that object directly
-  updateSceneProps = ({ uuid, val }, notify = true) => {
+  updateSceneProps = ({ uuid, key, val }, notify = true) => {
     // the scenePropGraph and its ref can only be added after the toSceneJSX has been called.
     const {refScenePropsGraph} = this.state
     const object = refScenePropsGraph[uuid].current
     console.log(val)
     console.log(object)
-    switch (val.op_type) {
-      case 'color':
-        // no need to give in args foramt
-        // object.set(color hex)
+    switch (uuid) {
+      case 'background':
+        if (key === 'args') {
+          object.set(val)
+        }
         break;
       case 'light':
-        //object.color.set(color hex)
-        //object.intensity = intensity
-        break
+        if (key === 'color') {
+          object.color.set(val)
+        } else if (key === 'intensity') {
+          object.intensity = val
+        }
+        break;
       default:
         break;
     }
+    // switch (val.op_type) {
+    //   case 'color':
+    //     console.log(val)
+    //     object.set(val)
+    //     break;
+    //   case 'light':
+    //     console.log(val)
+    //     //object.color.set(color hex)
+    //     //console.log(intensity)
+    //     //object.intensity = intensity
+    //     break
+    //   default:
+    //     break;
+    // }
+    this.rerender()
     // const data = {uuid: {...val}}
     // const { jsxs: localJsxs, refs: localRefs } = toSceneJSX({data})
     // console.log(localJsxs)
@@ -502,7 +527,7 @@ export default class Editor extends React.Component {
     //     ...state.scenePropsGraph,
     //     [uuid]: localJsxs,
     //   },
-    //   scenePropsRefGraph: {
+    //   refScenePropsGraph: {
     //     ...state.refScenePropsGraph,
     //     [uuid]: localRefs
     //   }
@@ -510,7 +535,7 @@ export default class Editor extends React.Component {
     this.notifyApp(
       {
         type: EDITOR_OPS.UPDATE_SCENE_PROPS,
-        data: { uuid, val },
+        data: { uuid, val ,key},
       },
       notify
     )
@@ -518,13 +543,13 @@ export default class Editor extends React.Component {
   deleteSceneProps = ({ uuid }, notify = true) => {
     this.setState((state) => {
       const scenePropsGraph = state.scenePropsGraph
-      const scenePropsRefGraph = state.scenePropsRefGraph
+      const refScenePropsGraph = state.refScenePropsGraph
 
       delete scenePropsGraph[uuid]
-      delete scenePropsRefGraph[uuid]
+      delete refScenePropsGraph[uuid]
       return {
         scenePropsGraph: { ...scenePropsGraph },
-        scenePropsRefGraph: { ...scenePropsRefGraph },
+        refScenePropsGraph: { ...refScenePropsGraph },
       }
     })
     this.notifyApp(
@@ -617,14 +642,14 @@ export default class Editor extends React.Component {
         const data  = SCENE_PROPS_TYPES[id]
         const [uuid, val] = Object.entries(data)[0]
         console.log(uuid, val)
-        this.insertSceneProps({ uuid:uuid, val:val })
+        this.insertSceneProps({ uuid, val })
     }
 
   }
-  onChangeScenePropsSelected = ({ uuid, val }) => {
+  onChangeScenePropsSelected = ({ uuid, val, key }) => {
     console.log(uuid)
-    console.log(val)
-    this.updateSceneProps({ uuid, val })
+    console.log(val, key)
+    this.updateSceneProps({ uuid, val , key})
   }
 
   // upload model
@@ -947,7 +972,7 @@ export default class Editor extends React.Component {
               isXR={false}
               selectedItems={selectedItems}
               refs={refGraph}
-              scenePropsRefGraph={refScenePropsGraph}
+              refScenePropsGraph={refScenePropsGraph}
               animations={animations}
               onChangeScenePropsSelected={this.onChangeScenePropsSelected.bind(
                 this
@@ -1085,7 +1110,7 @@ export default class Editor extends React.Component {
               })}
               {scenePropsGraph &&
                 Object.entries(scenePropsGraph).map(([uuid, val]) => {
-                  //console.log(uuid, val)
+                  console.log(uuid, val)
                   console.log(val)
                   return val
                 })}

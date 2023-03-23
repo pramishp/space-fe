@@ -18,7 +18,7 @@ function Workspace({ roomId, user }) {
     const isXRSupported = "xr" in navigator;
     const [otherUsers, setOtherUsers] = useState([])
     /*
-     * mode 0 : editor
+     * mode 0 : edito g
      * mode 1: preview
      * */
     const [mode, setMode] = useState(0)
@@ -159,22 +159,25 @@ function Workspace({ roomId, user }) {
             }
         }
     }
-
-    app.onScenePropsUpdated = ({ uuid, val }) => {
-        onUpdate({ uuid, val, type: TYPES.SCENE })
+    // val.update as key
+    app.onScenePropsUpdated = ({ uuid, val , key }) => {
+        console.log(val)
+        onUpdate({ uuid, val, key, type: TYPES.SCENE })
     }
+
     app.updateSceneProps = ({ uuid, val, isFromUndoManager, isMyEvent }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current
             if (!isMyEvent || isFromUndoManager) {
-                editor.updateSceneProps({ uuid, val }, false)
+                editor.updateSceneProps({ uuid, val ,key}, false)
             }
         }
-
     }
+
     app.onScenePropsDeleted = ({ uuid }) => {
         onDelete({ uuid, type: TYPES.SCENE })
     }
+
     app.deleteSceneProps = ({ uuid, isFromUndoManager, isMyEvent }) => {
         if (editorRef && editorRef.current) {
             const editor = editorRef.current

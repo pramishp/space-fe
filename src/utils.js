@@ -32,13 +32,16 @@ function deepSearch(obj, key, keys_list = []) {
 
 function objectToYMap(jsonObject) {
     let map = new Y.Map();
+    console.log(jsonObject)
     for (let key of Object.keys(jsonObject)) {
         console.log(key)
         const val = jsonObject[key];
         console.log(val)
         if (typeof (val) == 'object' && !Array.isArray(val) && val !== null) {
+            console.log(val)
             map.set(key, objectToYMap(val))
         } else {
+            console.log(val)
             map.set(key, val)
         }
     }
