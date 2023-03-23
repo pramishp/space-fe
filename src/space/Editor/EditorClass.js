@@ -68,12 +68,18 @@ import {Stars} from '@react-three/drei'
 import {valuesIn} from 'lodash'
 import {XRButtonStatus} from '@react-three/xr/dist/XR'
 import {ThreeSixty} from '@mui/icons-material'
+import Background from "./Background";
+import {getNextKeyDef} from "@testing-library/user-event/dist/keyboard/getNextKeyDef";
 
 export default class Editor extends React.Component {
   constructor(props) {
     super(props)
     this.notifyApp = this.notifyApp.bind(this)
     this.onVRTransformReleased = this.onVRTransformReleased.bind(this)
+
+    this.transformRef = React.createRef()
+    this.colorRef = React.createRef()
+    this.lightRef = React.createRef()
 
     this.transformModes = ['translate', 'rotate', 'scale']
     // mesh click callback
@@ -82,25 +88,13 @@ export default class Editor extends React.Component {
       onDoubleClick: this.onMeshDoubleClick,
       onContextMenu: this.onMeshContextMenu,
     }
-    // check sceneProps in initData
-    if (Object.keys(props.initData.scene).length === 0){
-      //TODO: set proper light and color
-      const scene = {}
-
-      scene['light'] =  SCENE_PROPS_TYPES['light']
-
-      scene['color'] = SCENE_PROPS_TYPES['color']
-
-      props.initData.scene = scene;
-    }
 
     this.jsxData = toJSX(props.initData, this.clickCallbacks)
 
     this.scenePropsData = toSceneJSX(props.initData.scene)
-    console.log('jsx scene props', this.scenePropsData.jsxs)
-    console.log(this.scenePropsData.refs)
-    const data = Object.entries(this.scenePropsData.refs)
-    console.log(data)
+    // this.scenePropsData.refs['color'] = this.colorRef;
+    // this.scenePropsData.refs['light'] = this.lightRef;
+
     /*
      * editorModes
      * 0: edit
@@ -117,6 +111,7 @@ export default class Editor extends React.Component {
       refGraph: this.jsxData.refs,
       scenePropsGraph: this.scenePropsData.jsxs,
       refScenePropsGraph: this.scenePropsData.refs,
+      sceneProps: props.initData.scene,
       animations: props.initData.animations,
       transformMode: 0,
       editorMode: 0,
@@ -124,9 +119,7 @@ export default class Editor extends React.Component {
       isXR: false,
       animationSidebar: false,
     }
-    this.transformRef = React.createRef()
-    console.log(this.state.scenePropsGraph)
-    console.log(this.state.refScenePropsGraph)
+
     this.loadInitialObjectFiles(this.props)
     // this.backgroundTexture = null
     // this.testScenePropsTexture()
@@ -160,6 +153,8 @@ export default class Editor extends React.Component {
         scenePropsGraph: this.scenePropsData.jsxs,
         refScenePropsGraph: this.scenePropsData.refs,
         animations: nextProps.initData.animations,
+        sceneProps: nextProps.initData.scene, //TODO: test if this is expected behaviour
+
       })
       this.loadInitialObjectFiles(nextProps)
       return shouldUpdate
@@ -328,10 +323,8 @@ export default class Editor extends React.Component {
   // in the ref to the scene add a star object then convert it to jsx.
   // FIX: 2
   insertSceneProps = ({ uuid, val }, notify = true) => {
-        console.log(typeof uuid)
         const data = {}
         data[uuid] = {...val}
-        console.log(data)
         const { jsxs: localJsxs, refs: localRefs } = toSceneJSX(data)
 
         this.setState((prevState) => ({
@@ -496,16 +489,16 @@ export default class Editor extends React.Component {
   updateSceneProps = ({ uuid, key, val }, notify = true) => {
     // the scenePropGraph and its ref can only be added after the toSceneJSX has been called.
     const {refScenePropsGraph} = this.state
-    const object = refScenePropsGraph[uuid].current
-    console.log(val)
-    console.log(object)
+    let object;
     switch (uuid) {
       case 'color':
+        object = this.colorRef.current;
         if (key === 'args') {
-          object.set(val)
+          object.set(val[0])
         }
         break;
       case 'light':
+        object = this.lightRef.current;
         if (key === 'color') {
           object.color.set(val)
         } else if (key === 'intensity') {
@@ -515,35 +508,8 @@ export default class Editor extends React.Component {
       default:
         break;
     }
-    // switch (val.op_type) {
-    //   case 'color':
-    //     console.log(val)
-    //     object.set(val)
-    //     break;
-    //   case 'light':
-    //     console.log(val)
-    //     //object.color.set(color hex)
-    //     //console.log(intensity)
-    //     //object.intensity = intensity
-    //     break
-    //   default:
-    //     break;
-    // }
     this.rerender()
-    // const data = {uuid: {...val}}
-    // const { jsxs: localJsxs, refs: localRefs } = toSceneJSX({data})
-    // console.log(localJsxs)
-    // console.log(localRefs)
-    // this.setState((state) => ({
-    //   scenePropsGraph: {
-    //     ...state.scenePropsGraph,
-    //     [uuid]: localJsxs,
-    //   },
-    //   refScenePropsGraph: {
-    //     ...state.refScenePropsGraph,
-    //     [uuid]: localRefs
-    //   }
-    // }))
+
     this.notifyApp(
       {
         type: EDITOR_OPS.UPDATE_SCENE_PROPS,
@@ -659,8 +625,6 @@ export default class Editor extends React.Component {
 
   }
   onChangeScenePropsSelected = ({ uuid, val, key }) => {
-    console.log(uuid)
-    console.log(val, key)
     this.updateSceneProps({ uuid, val , key})
   }
 
@@ -933,7 +897,9 @@ export default class Editor extends React.Component {
       selectedAnimation,
       selectedItem,
       animationSidebar,
+        sceneProps
     } = this.state
+
     const { onModelUpload, otherUsers, XRSupported } = this.props
     return (
       <div style={{ display: 'flex' }}>
@@ -985,6 +951,7 @@ export default class Editor extends React.Component {
               selectedItems={selectedItems}
               refs={refGraph}
               refScenePropsGraph={refScenePropsGraph}
+              backgroundRefs={{color:this.colorRef, light:this.lightRef}}
               animations={animations}
               onChangeScenePropsSelected={this.onChangeScenePropsSelected.bind(
                 this
@@ -1007,6 +974,7 @@ export default class Editor extends React.Component {
               far: 1000,
               position: [0, 1, 4],
             }}
+            onCreated={(state)=>{this.rerender()}}
             onPointerMissed={this.onPointerMissed}
           >
             <XR
@@ -1120,13 +1088,13 @@ export default class Editor extends React.Component {
                   </VRItem>
                 )
               })}
-              {scenePropsGraph &&
-                Object.entries(scenePropsGraph).map(([uuid, val]) => {
-                  console.log(uuid, val)
-                  console.log(val)
-                  return val
-                })}
+              {/*{scenePropsGraph &&*/}
+              {/*  Object.entries(scenePropsGraph).map(([uuid, val]) => {*/}
+              {/*    return val*/}
+              {/*  })}*/}
 
+              {/*<color ref={this.colorRef} attach='background' args={['#2a272a']} uuid={'color'} op_type={'color'}/>*/}
+              <Background refColor={this.colorRef} refLight={this.lightRef} sceneBackgroundProps={sceneProps}/>
               <Helpers
                 refs={refGraph}
                 graph={graph}

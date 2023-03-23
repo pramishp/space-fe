@@ -6,7 +6,7 @@ import Editor from '../Editor/EditorClass'
 import Menu from './Menu'
 
 import { useMultiplayerState } from '../hooks/useMultiplayerState'
-import { FILE_TYPES, TYPES } from '../Editor/constants'
+import {FILE_TYPES, SCENE_PROPS_TYPES, TYPES} from '../Editor/constants'
 import { IMPORT_MESH_TYPES } from '../../common/consts'
 import TestCanvas from '../Editor/Editor'
 import { VRButton } from '@react-three/xr'
@@ -161,7 +161,6 @@ function Workspace({ roomId, user }) {
     }
     // val.update as key
     app.onScenePropsUpdated = ({ uuid, val , key }) => {
-        console.log(val)
         onUpdate({ uuid, val, key, type: TYPES.SCENE })
     }
 
@@ -354,7 +353,17 @@ function Workspace({ roomId, user }) {
     }
 
     const initData = getInitData()
+    console.log('init Data', initData)
     //TODO: Why console.log(initData) here is called 8 times ?
+
+    // check sceneProps in initData
+    // if (Object.keys(initData.scene).length === 0){
+    //
+    //     const scene = {}
+    //     scene['light'] =  SCENE_PROPS_TYPES['light']
+    //     scene['color'] = SCENE_PROPS_TYPES['color']
+    //     initData.scene = scene;
+    // }
 
     return (
         <>

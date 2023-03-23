@@ -9,8 +9,9 @@ import React, {useState} from 'react'
 //    (e) => {event.target.value}
 
 export default function ScenePropsEditor({
-                                             refScenePropsGraph,
+                                             backgroundRefs,
                                              onChangeScenePropsSelected,
+                                            rerender
                                          })
 {
     function rgbToHex({ r, g, b }) {
@@ -23,33 +24,33 @@ export default function ScenePropsEditor({
       }
 
 
-    const lightProps = refScenePropsGraph.light.current
-    const backgroundProps = refScenePropsGraph.color.current
+    const lightProps = backgroundRefs.light.current
+    const backgroundProps = backgroundRefs.color.current
     // console.log(backgroundProps.r, backgroundProps.g, backgroundProps.b)
-    console.log(backgroundProps.getHexString())
-    const [bgColor, setBgColor] = useState(`#${backgroundProps.getHexString()}`)
-    const [lgColor, setLgColor] = useState(`#${lightProps.color}`)
-    const [lightIntensity, setLightIntensity] = useState(lightProps.intensity)
+    // const [bgColor, setBgColor] = useState(`#${backgroundProps.getHexString()}`)
+    const bgColor = `#${backgroundProps.getHexString()}`
+    const lgColor = `#${lightProps.color}`
+    const lightIntensity = lightProps.intensity
 
     const handleBackgroundColorChange = (e) => {
-            console.log('event after picked using target value', e.target.value)
-            setBgColor(e.target.value)
+            // console.log('event after picked using target value', e.target.value)
+            // setBgColor(e.target.value)
 
             const key = 'args'
 
             const val = [e.target.value]
-            onChangeScenePropsSelected({uuid: 'background', val: val, key:key})
+            onChangeScenePropsSelected({uuid: 'color', val: val, key:key})
     }
     const handleLightColorChange = (e) => {
-        console.log('handleLightColorChange called')
-        setLgColor(e.target.value)
+        // console.log('handleLightColorChange called')
+        // setLgColor(e.target.value)
 
         const key = 'color'
         const val = e.target.value
         onChangeScenePropsSelected({uuid: 'light', val: val, key:key})
     }
     const handleLightIntensityChange = (e) => {
-        setLightIntensity(e.target.value)
+        // setLightIntensity(e.target.value)
 
         const key = 'intensity'
         const val = e.target.value

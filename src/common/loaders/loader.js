@@ -223,7 +223,6 @@ export const sampleJson = {
 // change this to a uuid and val type format as that is what comes from the initData.
 export function toSceneJSX(val) {
     const data = {...val}
-    console.log(data)
     const jsxs = {};
     let refs = {};
     let object;
@@ -251,19 +250,24 @@ export function toSceneJSX(val) {
                 default:
                     break;
             }
-        } else if (uuid === 'light') {
-            object = (<ambientLight ref={ref} {...val} />)
-        } else if (uuid === 'color') {
-            object = (
-                <color attach='background' ref={ref} {...val} />
-            )
+        }
+        // else if (uuid === 'light') {
+        //     object = (<ambientLight ref={ref} {...val} />)
+        //
+        // } else if (uuid === 'color') {
+        //     // console.log('color val ', val)
+        //     // object =  (<color ref={ref} attach='background' args={val.args} uuid={'color'} op_type={'color'}/>)
+        //     object =  (<color ref={ref} attach={'background'} {...val}/>)
+        //
+        // }
+        else {
+
         }
         jsxs[uuid] = object
         refs[uuid] = ref
 
     })
     // console.log('to background jsx data', data)
-    console.log(jsxs, refs)
     return {jsxs, refs}
 }
 

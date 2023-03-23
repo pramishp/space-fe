@@ -30,16 +30,13 @@ export function useMultiplayerState(roomId, appInit) {
   const yAnimation = doc.getMap('animations')
   const yScene = doc.getMap('scene')
 
-  // const [uuid_l, val_l] = Object.entries(SCENE_PROPS_TYPES['light'])[0]
-  // const ambientLight = objectToYMap(val_l)
-  // yScene.set(uuid_l, ambientLight)
+  // const ambientLight = objectToYMap(SCENE_PROPS_TYPES['light'])
+  // yScene.set('light', ambientLight)
   //
-  // const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
-  // const backgroundMap = objectToYMap(val_b)
-  // yScene.set(uuid_b, backgroundMap)
-  // add the light prop here so that it can be passed to the init data.
-  // The data to be initialized is inside the constants file in the id light.
-  // const yScene = doc.getMap("scene")
+  // const color = objectToYMap(SCENE_PROPS_TYPES['color'])
+  // yScene.set('color', color)
+
+
   const { undoManager } = useMemo(() => {
     //TODO: undo manager for geometry, materials
     const undoManager = new Y.UndoManager([yMeshes, yGeometry, yMaterial])
@@ -219,6 +216,7 @@ export function useMultiplayerState(roomId, appInit) {
           // NOTE:while creating the scene the op_type and val are entered into the map together so the structure needs to change either here or in the initial addition.
           // NOTE: since we are only updating here i will not pass the color hex as an args
           //console.log(yScene.get(uuid).toJSON())
+
           yScene.get(uuid).set(key, val)
           //console.log(yScene.get(uuid).toJSON())
           break
@@ -523,7 +521,6 @@ export function useMultiplayerState(roomId, appInit) {
         event.changes.keys.forEach((val, key) => {
           switch (val.action) {
             case 'add':
-              console.log(key)
               const data = yScene.get(key).toJSON()
               app.addSceneProps({
                 uuid: key,
@@ -533,7 +530,6 @@ export function useMultiplayerState(roomId, appInit) {
               break
             case 'update':
               const sceneProps = event.target.toJSON()
-              console.log('update', sceneProps)
               app.updateSceneProps({
                 uuid: sceneProps.uuid,
                 key : key,

@@ -170,14 +170,11 @@ export function PropsEditor(props) {
     // console.log('isXR', isXR)
     const Empty = isXR ? <></> : <div style={{margin: '40px'}}/>
     if (selectedItems.length === 0) {
-        if (props.refScenePropsGraph && props.refScenePropsGraph.light && (props.refScenePropsGraph.light.current === null || props.refScenePropsGraph.background.current === null)) {
-            console.log('isNull')
-            return (
-                <></>
-            )
+        if (props.backgroundRefs && props.backgroundRefs.light && props.backgroundRefs.light.current && props.backgroundRefs.color.current) {
+            return <ScenePropsEditor {...props} />
         }
+
         // bgMode is not called here
-        return <ScenePropsEditor {...props} />
         // return Empty
     }
     // handling single item selection only
