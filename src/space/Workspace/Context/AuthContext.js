@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       ? jwt_decode(localStorage.getItem('authTokens'))
       : null
   )
-  console.log(user)
+
   let [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   let loginUser = async (e) => {
@@ -88,8 +88,26 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
       }
     }*/
-  let contextData = {
-    user: user,
+
+    /*
+    * user: {
+    token_type: 'access',
+    exp: 1679561765,
+    iat: 1679559701,
+    jti: 'ebf6fc237c9d4139a9d9915f44c62829',
+    user_id: 1,
+    username: 'anubhav',
+    first_name: '',
+    last_name: ''
+    *
+    * required:
+    *     {id: "aadsd345-khajs43", "name": {"first": "Anubhav", "last": "Khanal"} }
+
+  }
+    * */
+
+    let contextData = {
+    user: {id: user.id, name: {first: user.first_name, last: user.last_name}},
     loginUser: loginUser,
     logoutUser: logoutUser,
     authTokens: authTokens,

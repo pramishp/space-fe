@@ -7,7 +7,7 @@ import {Button} from "./VRUIs/Button";
 
 
 export default function DisplayUsers({isXR, otherUsers}) {
-
+    console.log('other users', otherUsers)
     if (otherUsers.length === 0){
         return <></>
     }
