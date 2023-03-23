@@ -14,26 +14,27 @@ export default function ScenePropsEditor({
                                          })
 {
     function rgbToHex({ r, g, b }) {
-        console.log(r, g, b)
-        const red = (r*255).toString(16).padStart(2, '0');
-        const green = (g*255).toString(16).padStart(2, '0');
-        const blue = (b*255).toString(16).padStart(2, '0');
-        console.log(`#${red}${green}${blue}`)
+        // console.log(r, g, b)
+        const red = Math.round(r*255).toString(16).padStart(2, '0');
+        const green = Math.round(g*255).toString(16).padStart(2, '0');
+        const blue = Math.round(b*255).toString(16).padStart(2, '0');
+        // console.log(`#${red}${green}${blue}`)
         return `#${red}${green}${blue}`;
       }
-      console.log(refScenePropsGraph)
-    if (refScenePropsGraph.light.current === null || refScenePropsGraph.background.current === null) {
-        console.log('isNull')
+      console.log(refScenePropsGraph.color)
+    if (refScenePropsGraph.light.current === null || refScenePropsGraph.color.current === null) {
+        // console.log('isNull')
         return (
             <></>
         )
     }
 
     const lightProps = refScenePropsGraph.light.current
-    const backgroundProps = refScenePropsGraph.background.current
-
-    const [bgColor, setBgColor] = useState(rgbToHex(backgroundProps))
-    const [lgColor, setLgColor] = useState(rgbToHex(lightProps.color))
+    const backgroundProps = refScenePropsGraph.color.current
+    // console.log(backgroundProps.r, backgroundProps.g, backgroundProps.b)
+    console.log(backgroundProps.getHexString())
+    const [bgColor, setBgColor] = useState(`#${backgroundProps.getHexString()}`)
+    const [lgColor, setLgColor] = useState(`#${lightProps.color}`)
     const [lightIntensity, setLightIntensity] = useState(lightProps.intensity)
 
     const handleBackgroundColorChange = (e) => {
@@ -42,7 +43,7 @@ export default function ScenePropsEditor({
 
             const key = 'args'
             const val = e.target.value
-            onChangeScenePropsSelected({uuid: 'background', val: val, key:key})
+            onChangeScenePropsSelected({uuid: 'color', val: val, key:key})
     }
     const handleLightColorChange = (e) => {
         console.log('handleLightColorChange called')

@@ -8,6 +8,7 @@ import useAxios from './utils/useAxios'
 const Dashboard = () => {
   const { user, authTokens, logoutUser } = useContext(AuthContext)
   const api = useAxios()
+  console.log(user)
 
   // const [workspacePin, setWorkspacePin] = useState('')
   // const [presentationLink, setPresentationLink] = useState('')

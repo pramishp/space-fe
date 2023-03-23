@@ -37,6 +37,7 @@ export function useMultiplayerState(roomId, appInit) {
   const [uuid_b, val_b] = Object.entries(SCENE_PROPS_TYPES['color'])[0]
   const backgroundMap = objectToYMap(val_b)
   yScene.set(uuid_b, backgroundMap)
+  console.log(yScene)
   // add the light prop here so that it can be passed to the init data.
   // The data to be initialized is inside the constants file in the id light.
   // const yScene = doc.getMap("scene")
@@ -523,9 +524,10 @@ export function useMultiplayerState(roomId, appInit) {
         event.changes.keys.forEach((val, key) => {
           switch (val.action) {
             case 'add':
+              console.log(key)
               const data = yScene.get(key).toJSON()
               app.addSceneProps({
-                uuid: uuid,
+                uuid: key,
                 val: data,
                 ...genericProps,
               })

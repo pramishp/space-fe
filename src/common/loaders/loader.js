@@ -243,12 +243,6 @@ export function toSceneJSX(val) {
                         <Sky ref={ref} {...val} />
                     )
                     break;
-                case 'color':
-                    console.log(val)
-                    object = (
-                        <color attach="background" ref={ref} {...val} />
-                    )
-                    break;
                 case 'environment':
                     object = (
                         <Environment ref={ref} {...val} />
@@ -260,6 +254,10 @@ export function toSceneJSX(val) {
             }
         } else if (uuid === 'light') {
             object = (<ambientLight ref={ref} {...val} />)
+        } else if (uuid === 'color') {
+            object = (
+                <color attach='background' ref={ref} {...val} />
+            )
         }
         jsxs[uuid] = object
         refs[uuid] = ref

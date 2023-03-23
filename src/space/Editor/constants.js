@@ -235,10 +235,10 @@ export const SCENE_PROPS_TYPES = {
         },
     },
     color: {
-        background: {
-            uuid: 'background',
+        color: {
+            uuid: 'color',
             op_type: 'color',
-            args: ['#ff0000'], 
+            args: ['#ffccff'], 
         },
     },
     environment: {
