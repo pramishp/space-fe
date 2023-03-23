@@ -353,16 +353,19 @@ function Workspace({ roomId, user }) {
     }
 
     const initData = getInitData()
-    console.log('init Data', initData)
     //TODO: Why console.log(initData) here is called 8 times ?
 
     // check sceneProps in initData
     if (Object.keys(initData.scene).length === 0){
-    
         const scene = {}
         scene['light'] =  SCENE_PROPS_TYPES['light']
         scene['color'] = SCENE_PROPS_TYPES['color']
         initData.scene = scene;
+
+        // write this to yjs
+        onInsertSceneProps({uuid:"light", val: scene['light']})
+        onInsertSceneProps({uuid:"color", val: scene['color']})
+
     }
 
     return (
