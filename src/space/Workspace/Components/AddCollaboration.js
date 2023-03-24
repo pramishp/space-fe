@@ -12,11 +12,13 @@ const AddCollaboration = (props) => {
   const handleWPSubmit = async (event) => {
     event.preventDefault()
     try {
-      const response = api.get(
+      const response = await api.get(
         `/app/pid-by-workspace-pin/?workspace_pin=${workspacePin}`
       )
+      // console.log(response.data)
       if (response.status === 200) {
-        navigate(``)
+        // console.log(response.data)
+        navigate(`/workspace/${response.data.project_id}`)
       } else if (response.statusText === 'Unauthorized') {
         logoutUser()
       }
