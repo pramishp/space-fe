@@ -23,7 +23,7 @@ import {
 
 import MenuBar from './components/MenuBar'
 import {Canvas, useFrame} from '@react-three/fiber'
-import {XR, VRButton, Controllers} from '@react-three/xr'
+import {XR, VRButton, Controllers, Hands} from '@react-three/xr'
 import {
   gltf2JSX,
   sampleJson,
@@ -900,7 +900,7 @@ export default class Editor extends React.Component {
         sceneProps
     } = this.state
 
-    const { onModelUpload, otherUsers, XRSupported } = this.props
+    const { onModelUpload, otherUsers, isXRSupported } = this.props
     return (
       <div style={{ display: 'flex' }}>
         <div>
@@ -925,7 +925,7 @@ export default class Editor extends React.Component {
         {/*<AnimationTree slides={animations} onDragAndDrop={this.onAnimationTimelineDragNDrop}/>*/}
 
         {/*//TODO: if XR support, then only show*/}
-        {XRSupported && <VRButton />}
+        {isXRSupported && <VRButton/>}
 
         <div style={{ height: window.innerHeight, width: '100%'}}>
           <div>
@@ -981,6 +981,11 @@ export default class Editor extends React.Component {
               onSessionStart={(e) => this.onXRSessionChange(e)}
               onSessionEnd={(e) => this.onXRSessionChange(e)}
             >
+              <Controllers
+                  rayMaterial={{ color: 'blue' }}
+                  hideRaysOnBlur={false}
+              />
+              {/*<Hands/>*/}
               <GizmoHelper
                 alignment='bottom-right' // widget alignment within scene
                 margin={[100, 100]} // widget margins (X, Y)
@@ -999,12 +1004,7 @@ export default class Editor extends React.Component {
                 refs={refGraph}
                 selectedItems={selectedItems}
               />
-              <Controllers
-                /** Optional material props to pass to controllers' ray indicators */
-                rayMaterial={{ color: 'blue' }}
-                /** Whether to hide controllers' rays on blur. Default is `false` */
-                hideRaysOnBlur={false}
-              />
+
               {/* Initial Setting for grid, light and background color */}
               {/* TODO: add a texture and attach it as well. */}
 

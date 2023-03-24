@@ -106,3 +106,9 @@ code {
   padding: 12px 20px;
   border-radius: 4px;
 }
+
+.VRBUTTON button{
+  padding:20px;
+  background-color:dodgerblue;
+  color:white;
+}

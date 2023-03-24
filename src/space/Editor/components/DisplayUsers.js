@@ -37,9 +37,13 @@ export default function DisplayUsers({isXR, otherUsers}) {
             alignItems: "center"
         }}>
             {otherUsers.map((item) => {
-                return (
-                    <NameCircle {...item.tdUser.name}/>
-                )
+                if (item.tdUser.name && Object.keys(item.tdUser.name).length > 0){
+                    return (
+                        <NameCircle {...item.tdUser.name}/>
+                    )
+                }
+                return null
+
             })}
         </div>
     )
