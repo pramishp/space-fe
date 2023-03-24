@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import axiosInstance from '../utils/axiosInstance'
 
 //TODO: notify the user in the frontend that the registration has been successful
@@ -8,7 +9,7 @@ function Register() {
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+const navigate = useNavigate()
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -22,7 +23,10 @@ function Register() {
         password: password,
       })
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data, response.status)
+        if (response.status === 201) {
+          navigate('/login')
+        }
       })
       .catch((error) => {
         console.log(error.response.data)
@@ -32,7 +36,7 @@ function Register() {
     <section className='min-h-screen flex flex-col'>
       <div className='flex flex-1 items-center justify-center'>
         <div className='rounded-lg sm:border-2 px-4 lg:px-24 py-16 lg:max-w-xl sm:max-w-md w-full text-center'>
-          <form className='text-center'>
+          <form className='text-center' onSubmit={(e) => handleSubmit(e)}>
             <h1 className='font-bold tracking-wider text-3xl mb-8 w-full text-gray-600'>
               Register
             </h1>

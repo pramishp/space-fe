@@ -9,8 +9,9 @@ const AddProject = (props) => {
     const api = useAxios()
     let handleFormSubmit = async (e) => {
       e.preventDefault()
+      console.log(JSON.stringify(newProject))
       try {
-        const response = await api.post('/app/project-add/')
+        const response = await api.post('/app/project-add/', JSON.stringify(newProject))
         navigate(`/workspace/${response.data.id}`)
       } catch (error) {
         console.log(error)
@@ -34,6 +35,7 @@ const AddProject = (props) => {
     }
 
     let handleInputChange = (e) => {
+        console.log(e.target.name, e.target.value)
       setNewProject({
         ...newProject,
         [e.target.name]: e.target.value
