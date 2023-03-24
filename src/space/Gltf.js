@@ -1,11 +1,14 @@
 import {forwardRef, Suspense, useEffect} from 'react'
 import {useGLTF} from '@react-three/drei'
 import * as React from "react";
+import {useTh} from "leva/plugin";
+import {useThree} from "@react-three/fiber";
 
 
 const keys = ['position', 'quaternion', 'scale']
 
 export const GltfModel =  React.forwardRef(({val, uuid, clickCallbacks}, ref)=> {
+    const {scene: threeScene}= useThree(state=>state.scene)
     const {url} = val
 
     const gltf = useGLTF(url, true)
@@ -39,11 +42,16 @@ export const GltfModel =  React.forwardRef(({val, uuid, clickCallbacks}, ref)=> 
 
         return ()=>{
             //TODO: destroy object on unmount
+            if (ref && ref.current){
+                threeScene.remove(ref.current)
+            }
         }
     }, [])
 
+    // console.log('loading model ', val)
+
     return (
-        <Suspense>
+        <Suspense fallback={null}>
             <primitive ref={ref} object={gltf.scene} {...objectProps}/>
         </Suspense>
     )

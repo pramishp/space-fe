@@ -15,7 +15,19 @@ import PresentationWrapper, { PRESENTATION_TYPES } from '../PresentationWrapper'
 
 function Workspace({ roomId, user }) {
     const editorRef = useRef()
-    const isXRSupported = "xr" in navigator;
+    const [isXRSupported, setIsXRSupported] = useState(false);
+    const [isXRLoading, setIsXRLoading] = useState(true);
+    if ("xr" in window.navigator) {
+        // WebXR can be used!
+        navigator.xr.isSessionSupported('immersive-vr')
+            .then((isSupported) => {
+                    // immersive-vr mode is supported!
+                    setIsXRSupported(isSupported)
+                    setIsXRLoading(false)
+            });
+    } else {
+        // WebXR isn't available
+    }
     const [otherUsers, setOtherUsers] = useState([])
     /*
      * mode 0 : edito g
