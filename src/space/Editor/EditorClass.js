@@ -2,14 +2,6 @@ import * as React from 'react'
 import * as THREE from 'three'
 
 import {
-  useState,
-  useEffect,
-  useRef,
-  createRef,
-  useCallback,
-  useMemo,
-} from 'react'
-import {
   ANIMATION_TYPES,
   BASIC_LIGHTS,
   BASIC_OBJECTS,
@@ -518,6 +510,7 @@ export default class Editor extends React.Component {
       notify
     )
   }
+
   deleteSceneProps = ({ uuid }, notify = true) => {
     this.setState((state) => {
       const scenePropsGraph = state.scenePropsGraph

@@ -237,7 +237,7 @@ export const SCENE_PROPS_TYPES = {
     color: {
         uuid: 'color',
         op_type: 'color',
-        args: ['#ffccff'],
+        args: ['#343434'],
 
     },
     environment: {
