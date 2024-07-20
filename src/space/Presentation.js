@@ -147,7 +147,7 @@ function Presentation({data, type}) {
     const OrbitControls = <Controls makeDefault/>
     const app = <div style={{height: window.innerHeight}}>
         <div className="action-buttons" style={{ position:'absolute', zIndex:200000, bottom:20, display:'flex', alignItems:'center', justifyContent:'center', width:'100%'}}>
-            <button style={{alignSelf: "right"}} onClick={playAnimations}><i className="fa fa-play"></i></button>
+            <button style={{alignSelf: "right"}} onClick={playAnimations}>Play</button>
         </div>
 
         {type === PRESENTATION_TYPES.VR ? <VRButton/> : null}
