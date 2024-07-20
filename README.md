@@ -4,7 +4,7 @@ SpaceXR is a real-time collaborative 3D scene and animation creation app, based 
 
 This project was developed by a team including myself and Anubhav Khanal ([@Username-AnubhavKhanal](https://github.com/Username-AnubhavKhanal)).
 
-[//]: # (<img src="assets/easy_editor.png" width="80%"/>)
+<img src="assets/teaser.png" style="width:100%;">
 
 ## Features
 
@@ -47,47 +47,48 @@ To install and run SpaceXR locally, follow these steps:
 Here are some demo videos showcasing the features and capabilities of SpaceXR:
 
 ### How it Works - Overview
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/how-it-works-1.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/how-it-works-2.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/how-it-works-3.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 ### Real-time Collaboration
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/multi%20user%20scene%20compositino.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 ### 3D Scene and Animation Creation
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/multi%20user%20scene%20compositino.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/xr.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
-[//]: # (### Final Animation)
-
-[//]: # (<video width="320" height="240" autoplay loop muted>)
-
-[//]: # (  <source src="final animation.mov" type="video/mp4">)
-
-[//]: # (  Your browser does not support the video tag.)
-
-[//]: # (</video>)
 ### Mobile XR and VR Interaction
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/mobile%20xr%20animation%20play.MOV" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
 <video width="320" height="240" autoplay loop muted>
   <source src="assets/vr%20interaction.mp4" type="video/mp4">
   Your browser does not support the video tag.
