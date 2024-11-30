@@ -2,7 +2,7 @@
 
 SpaceXR is a real-time collaborative 3D scene and animation creation app, based on CRDT (Conflict-free Replicated Data Type) principles. Developed as a minor project for the Computer Engineering course at Pulchowk Campus, this application is designed to be easy to use and facilitate seamless collaboration.
 
-This project was developed by a team including myself and Anubhav Khanal ([@Username-AnubhavKhanal](https://github.com/Username-AnubhavKhanal)).
+This project was developed by a team including myself and Anubhav Khanal ([@KhanalAnubhav](https://github.com/KhanalAnubhav)).
 
 <img src="assets/teaser.png" style="width:100%;">
 
@@ -94,7 +94,7 @@ We welcome contributions to SpaceXR. To contribute, please follow these steps:
 For any questions or suggestions, feel free to reach out to us:
 
 - [Pramish Paudel](https://github.com/pramishp)
-- [Anubhav Khanal](https://github.com/Username-AnubhavKhanal)
+- [Anubhav Khanal](https://github.com/KhanalAnubhav)
 
 ## Useful Commands
 
